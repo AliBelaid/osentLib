@@ -1,0 +1,263 @@
+// RTL (Right-to-Left) Styles for Arabic Language Support
+// Applied automatically when dir="rtl" is set on the HTML element
+
+[dir="rtl"] {
+  // Base text alignment
+  text-align: right;
+
+  // Material Design overrides for RTL
+  .mat-drawer-container {
+    .mat-drawer {
+      &.mat-drawer-side {
+        border-left: none;
+        border-right: solid 1px rgba(0, 0, 0, 0.12);
+      }
+    }
+  }
+
+  // Sidenav positioning
+  .mat-drawer-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  // Icon positioning
+  .mat-icon {
+    &.mat-icon-rtl-mirror {
+      transform: scaleX(-1);
+    }
+  }
+
+  // Menu items
+  .mat-menu-item {
+    text-align: right;
+
+    .mat-icon {
+      margin-left: 16px;
+      margin-right: 0;
+    }
+  }
+
+  // Form fields
+  .mat-form-field {
+    text-align: right;
+
+    .mat-form-field-prefix {
+      padding-left: 8px;
+      padding-right: 0;
+    }
+
+    .mat-form-field-suffix {
+      padding-right: 8px;
+      padding-left: 0;
+    }
+  }
+
+  // Lists
+  .mat-list-item,
+  .mat-list-option {
+    text-align: right;
+
+    .mat-list-icon {
+      margin-left: 16px;
+      margin-right: 0;
+    }
+  }
+
+  // Buttons with icons
+  .mat-button,
+  .mat-raised-button,
+  .mat-flat-button,
+  .mat-stroked-button {
+    .mat-icon {
+      margin-left: 8px;
+      margin-right: -4px;
+    }
+
+    &.icon-button-start .mat-icon {
+      margin-right: 8px;
+      margin-left: -4px;
+    }
+  }
+
+  // Chips
+  .mat-chip {
+    .mat-chip-remove {
+      margin-left: 0;
+      margin-right: 4px;
+    }
+  }
+
+  // Expansion panels
+  .mat-expansion-panel-header {
+    .mat-expansion-indicator {
+      margin-right: auto;
+      margin-left: 0;
+    }
+  }
+
+  // Cards
+  .mat-card-actions {
+    margin-left: auto;
+    margin-right: 0;
+    padding: 8px 4px !important;
+  }
+
+  // Badges
+  .mat-badge-content {
+    left: auto;
+    right: 0;
+  }
+
+  // Tabs
+  .mat-tab-label {
+    padding: 0 12px;
+  }
+
+  // Stepper
+  .mat-stepper-horizontal {
+    .mat-step-icon {
+      margin-left: 8px;
+      margin-right: 0;
+    }
+  }
+
+  // Paginator
+  .mat-paginator {
+    .mat-paginator-page-size-label {
+      margin-right: auto;
+      margin-left: 0;
+    }
+
+    .mat-paginator-range-label {
+      margin: 0 16px 0 0;
+    }
+  }
+
+  // Table
+  .mat-table {
+    .mat-header-cell,
+    .mat-cell {
+      text-align: right;
+
+      &:first-child {
+        padding-right: 24px;
+        padding-left: 0;
+      }
+
+      &:last-child {
+        padding-left: 24px;
+        padding-right: 0;
+      }
+    }
+  }
+
+  // Toolbar
+  .mat-toolbar {
+    .mat-toolbar-row {
+      flex-direction: row-reverse;
+    }
+  }
+
+  // Snackbar
+  .mat-snack-bar-container {
+    .mat-simple-snackbar {
+      justify-content: flex-start;
+    }
+
+    .mat-simple-snackbar-action {
+      margin-right: auto;
+      margin-left: 0;
+    }
+  }
+
+  // Dialog
+  .mat-dialog-actions {
+    flex-direction: row-reverse;
+
+    .mat-button,
+    .mat-raised-button {
+      margin-right: 0;
+      margin-left: 8px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+
+  // Custom application styles
+  .news-card {
+    .card-actions {
+      flex-direction: row-reverse;
+    }
+  }
+
+  .threat-badge {
+    margin-right: 8px;
+    margin-left: 0;
+  }
+
+  .filters-panel {
+    border-right: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .page-header {
+    .actions {
+      margin-right: auto;
+      margin-left: 0;
+    }
+  }
+
+  // Navigation chevrons - flip for RTL
+  .mat-icon {
+    &.chevron-right,
+    &.arrow-right,
+    &.navigate-next {
+      transform: scaleX(-1);
+    }
+
+    &.chevron-left,
+    &.arrow-left,
+    &.navigate-before {
+      transform: scaleX(-1);
+    }
+  }
+
+  // Fix padding and margins
+  .ml-1 { margin-right: 0.25rem !important; margin-left: 0 !important; }
+  .ml-2 { margin-right: 0.5rem !important; margin-left: 0 !important; }
+  .ml-3 { margin-right: 1rem !important; margin-left: 0 !important; }
+  .ml-4 { margin-right: 1.5rem !important; margin-left: 0 !important; }
+  .ml-5 { margin-right: 3rem !important; margin-left: 0 !important; }
+
+  .mr-1 { margin-left: 0.25rem !important; margin-right: 0 !important; }
+  .mr-2 { margin-left: 0.5rem !important; margin-right: 0 !important; }
+  .mr-3 { margin-left: 1rem !important; margin-right: 0 !important; }
+  .mr-4 { margin-left: 1.5rem !important; margin-right: 0 !important; }
+  .mr-5 { margin-left: 3rem !important; margin-right: 0 !important; }
+
+  .pl-1 { padding-right: 0.25rem !important; padding-left: 0 !important; }
+  .pl-2 { padding-right: 0.5rem !important; padding-left: 0 !important; }
+  .pl-3 { padding-right: 1rem !important; padding-left: 0 !important; }
+  .pl-4 { padding-right: 1.5rem !important; padding-left: 0 !important; }
+  .pl-5 { padding-right: 3rem !important; padding-left: 0 !important; }
+
+  .pr-1 { padding-left: 0.25rem !important; padding-right: 0 !important; }
+  .pr-2 { padding-left: 0.5rem !important; padding-right: 0 !important; }
+  .pr-3 { padding-left: 1rem !important; padding-right: 0 !important; }
+  .pr-4 { padding-left: 1.5rem !important; padding-right: 0 !important; }
+  .pr-5 { padding-left: 3rem !important; padding-right: 0 !important; }
+
+  .text-left { text-align: right !important; }
+  .text-right { text-align: left !important; }
+
+  .float-left { float: right !important; }
+  .float-right { float: left !important; }
+}
+
+// Body class for RTL
+body.rtl {
+  direction: rtl;
+}

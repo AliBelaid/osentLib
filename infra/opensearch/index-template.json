@@ -1,0 +1,130 @@
+{
+  "index_patterns": ["au-news-*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "analysis": {
+        "analyzer": {
+          "english_analyzer": {
+            "type": "standard",
+            "stopwords": "_english_"
+          },
+          "arabic_analyzer": {
+            "type": "custom",
+            "tokenizer": "icu_tokenizer",
+            "filter": ["lowercase", "icu_folding"]
+          },
+          "multilingual_analyzer": {
+            "type": "custom",
+            "tokenizer": "icu_tokenizer",
+            "filter": ["lowercase", "icu_folding"]
+          }
+        }
+      }
+    },
+    "mappings": {
+      "properties": {
+        "articleId": {
+          "type": "keyword"
+        },
+        "title": {
+          "type": "text",
+          "analyzer": "multilingual_analyzer",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 512
+            },
+            "english": {
+              "type": "text",
+              "analyzer": "english_analyzer"
+            }
+          }
+        },
+        "body": {
+          "type": "text",
+          "analyzer": "multilingual_analyzer",
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english_analyzer"
+            }
+          }
+        },
+        "summary": {
+          "type": "text",
+          "analyzer": "multilingual_analyzer"
+        },
+        "url": {
+          "type": "keyword"
+        },
+        "sourceId": {
+          "type": "keyword"
+        },
+        "sourceName": {
+          "type": "keyword"
+        },
+        "sourceType": {
+          "type": "keyword"
+        },
+        "publishedAt": {
+          "type": "date"
+        },
+        "ingestedAt": {
+          "type": "date"
+        },
+        "classifiedAt": {
+          "type": "date"
+        },
+        "language": {
+          "type": "keyword"
+        },
+        "countryTags": {
+          "type": "keyword"
+        },
+        "categories": {
+          "type": "keyword"
+        },
+        "threatType": {
+          "type": "keyword"
+        },
+        "threatLevel": {
+          "type": "integer"
+        },
+        "credibilityScore": {
+          "type": "float"
+        },
+        "entities": {
+          "type": "nested",
+          "properties": {
+            "name": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "type": {
+              "type": "keyword"
+            }
+          }
+        },
+        "voteStats": {
+          "properties": {
+            "realCount": { "type": "integer" },
+            "misleadingCount": { "type": "integer" },
+            "unsureCount": { "type": "integer" }
+          }
+        },
+        "imageUrl": {
+          "type": "keyword"
+        },
+        "dedupHash": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

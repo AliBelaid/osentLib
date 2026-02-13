@@ -1,0 +1,31 @@
+// Import RTL styles
+@import 'styles/_rtl';
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.page-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.mat-mdc-card {
+  margin-bottom: 16px;
+}
+
+.threat-critical { color: #d32f2f; font-weight: 500; }
+.threat-high { color: #f44336; }
+.threat-elevated { color: #ff9800; }
+.threat-moderate { color: #ffc107; }
+.threat-low { color: #4caf50; }
+.threat-none { color: #9e9e9e; }
+
+.status-draft { color: #9e9e9e; }
+.status-review { color: #ff9800; }
+.status-published { color: #4caf50; }
+
+.spacer { flex: 1 1 auto; }
