@@ -41,8 +41,8 @@ public class TwitterSearchProvider : IExternalSearchProvider
 
         if (!IsConfigured)
         {
-            result.ErrorMessage = "Twitter API credentials not configured";
-            _logger.LogWarning("Twitter API not configured");
+            _logger.LogInformation("Twitter API not configured for '{Query}'", query);
+            result.ErrorMessage = "Twitter/X API key not configured. Add your API key in settings to enable real Twitter search.";
             return result;
         }
 
@@ -214,4 +214,5 @@ public class TwitterSearchProvider : IExternalSearchProvider
 
         return items;
     }
+
 }

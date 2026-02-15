@@ -79,7 +79,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     .header-actions { position: absolute; right: 8px; top: 8px; }
     .meta-row { display: flex; gap: 12px; align-items: center; margin: 16px 0; }
     .tags { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
-    .summary { border-left: 3px solid #1976d2; padding-left: 12px; color: #555; margin: 16px 0; }
+    .summary { border-left: 3px solid #667eea; padding-left: 12px; color: #8892a4; margin: 16px 0; }
     .body { line-height: 1.7; margin: 16px 0; }
     .actions { margin: 16px 0; }
   `]

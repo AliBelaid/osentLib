@@ -1,23 +1,48 @@
+// Angular Material core styles (replaces prebuilt theme)
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: mat.define-palette(mat.$indigo-palette, 400),
+    accent: mat.define-palette(mat.$cyan-palette, A200),
+    warn: mat.define-palette(mat.$red-palette, A200),
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+@include mat.all-component-themes($dark-theme);
+
 // Import RTL styles
 @import 'styles/_rtl';
+// Import dark theme (overrides Material defaults with our cyber theme)
+@import 'styles/_dark-theme';
+// Import map styles
+@import 'styles/_map';
 
 html, body {
   height: 100%;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Segoe UI', Roboto, "Helvetica Neue", sans-serif;
+  background: #0a0e17;
+  color: #e0e6f0;
 }
 
 .page-container {
-  padding: 24px;
-  max-width: 1400px;
+  padding: 20px 24px;
+  max-width: 1600px;
   margin: 0 auto;
 }
 
 .mat-mdc-card {
   margin-bottom: 16px;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
-.threat-critical { color: #d32f2f; font-weight: 500; }
+.threat-critical { color: #ff1744; font-weight: 600; }
 .threat-high { color: #f44336; }
 .threat-elevated { color: #ff9800; }
 .threat-moderate { color: #ffc107; }
@@ -29,3 +54,21 @@ html, body {
 .status-published { color: #4caf50; }
 
 .spacer { flex: 1 1 auto; }
+
+// Cyber-themed scrollbars
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(102, 126, 234, 0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(102, 126, 234, 0.6); }
+
+// Global transitions
+* {
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+}
+
+// Glow effects
+.glow-blue { box-shadow: 0 0 20px rgba(102, 126, 234, 0.15); }
+.glow-red { box-shadow: 0 0 20px rgba(244, 67, 54, 0.15); }
+.glow-green { box-shadow: 0 0 20px rgba(76, 175, 80, 0.15); }

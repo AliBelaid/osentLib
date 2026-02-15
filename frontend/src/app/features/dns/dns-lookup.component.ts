@@ -358,34 +358,34 @@ import { CreateWatchlistEntryRequest } from '@core/models';
     }
 
     .risk-banner.safe {
-      background: #e8f5e9;
-      color: #2e7d32;
+      background: rgba(0, 230, 118, 0.1);
+      color: #00e676;
     }
 
     .risk-banner.safe mat-icon {
-      color: #4caf50;
+      color: #00e676;
     }
 
     .risk-banner.moderate {
-      background: #fff3e0;
-      color: #e65100;
+      background: rgba(255, 145, 0, 0.1);
+      color: #ff9100;
     }
 
     .risk-banner.moderate mat-icon {
-      color: #ff9800;
+      color: #ff9100;
     }
 
     .risk-banner.suspicious {
-      background: #ffebee;
-      color: #c62828;
+      background: rgba(255, 23, 68, 0.1);
+      color: #ff1744;
     }
 
     .risk-banner.suspicious mat-icon {
-      color: #f44336;
+      color: #ff1744;
     }
 
     .risk-factors {
-      background: #f5f5f5;
+      background: rgba(102, 126, 234, 0.08);
       padding: 16px;
       border-radius: 4px;
       margin-bottom: 24px;
@@ -430,7 +430,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
       align-items: center;
       gap: 12px;
       padding: 12px;
-      background: #f5f5f5;
+      background: #1a1f2e;
       border-radius: 4px;
     }
 
@@ -439,7 +439,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
     }
 
     .record-item mat-icon {
-      color: #1976d2;
+      color: #667eea;
     }
 
     .record-item code {
@@ -450,7 +450,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
     .ip-geolocation {
       margin-top: 24px;
       padding: 16px;
-      background: #e3f2fd;
+      background: rgba(102, 126, 234, 0.08);
       border-radius: 4px;
     }
 
@@ -472,7 +472,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
 
     .geo-item strong {
       font-size: 12px;
-      color: #666;
+      color: #8892a4;
       text-transform: uppercase;
     }
 
@@ -490,7 +490,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
 
     .whois-item strong {
       font-size: 12px;
-      color: #666;
+      color: #8892a4;
       text-transform: uppercase;
     }
 
@@ -509,14 +509,14 @@ import { CreateWatchlistEntryRequest } from '@core/models';
       align-items: center;
       justify-content: space-between;
       padding: 12px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid rgba(255,255,255,0.06);
       border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .history-item:hover {
-      background: #f5f5f5;
+      background: rgba(102, 126, 234, 0.08);
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
@@ -528,7 +528,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
 
     .history-info .timestamp {
       font-size: 12px;
-      color: #666;
+      color: #8892a4;
     }
 
     .history-meta {

@@ -613,3 +613,81 @@ export interface ProviderInfo {
   isConfigured: boolean;
   isAvailable: boolean;
 }
+
+// Dashboard Summary
+export interface DashboardSummaryDto {
+  totalArticles: number;
+  totalAlerts: number;
+  activeAlerts: number;
+  avgThreatLevel: number;
+  articlesBySource: SourceCountDto[];
+  topCountries: FacetBucketDto[];
+  topCategories: FacetBucketDto[];
+  threatDistribution: ThreatLevelDistDto[];
+  recentTimeline: TimelinePointDto[];
+  osintSources: OsintSourceInfoDto[];
+}
+
+export interface SourceCountDto {
+  sourceName: string;
+  sourceType: string;
+  count: number;
+}
+
+export interface FacetBucketDto {
+  key: string;
+  count: number;
+}
+
+export interface ThreatLevelDistDto {
+  level: number;
+  count: number;
+  label: string;
+}
+
+export interface TimelinePointDto {
+  date: string;
+  count: number;
+}
+
+export interface OsintSourceInfoDto {
+  name: string;
+  type: string;
+  url: string;
+  description: string;
+  isActive: boolean;
+  articleCount: number;
+  lastFetchedAt?: string;
+}
+
+// Stats / GIS Map Models
+export interface CountryStatsDto {
+  countryCode: string;
+  name: string;
+  nameArabic: string;
+  region: string;
+  alertCount: number;
+  articleCount: number;
+  avgThreatLevel: number;
+  maxThreatLevel: number;
+  activeAlertCount: number;
+}
+
+export interface ThreatActivityDto {
+  id: number;
+  type: string;
+  title: string;
+  severity: number;
+  sourceCountryCode: string;
+  targetCountryCode: string;
+  timestamp: string;
+  category: string;
+}
+
+export interface TimelineBucketDto {
+  date: string;
+  countryCode: string;
+  alertCount: number;
+  articleCount: number;
+  avgThreatLevel: number;
+}

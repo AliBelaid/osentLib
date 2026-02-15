@@ -34,9 +34,7 @@ public class DnsController : ControllerBase
         var userId = GetUserId();
         var result = await _dnsService.PerformLookupAsync(request.Domain, userId);
 
-        if (!result.Success)
-            return BadRequest(new { error = result.ErrorMessage ?? "DNS lookup failed" });
-
+        // Return results even on partial failure - the client can check Success flag
         return Ok(result);
     }
 

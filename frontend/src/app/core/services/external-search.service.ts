@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { environment } from '@env/environment';
+import { environment } from '@env';
 import {
   ExternalSearchRequest,
   MultiProviderSearchRequest,
@@ -77,8 +77,11 @@ export class ExternalSearchService {
 
   getProviderIcon(provider: string): string {
     switch (provider.toLowerCase()) {
-      case 'twitter': return 'tag'; // X/Twitter
-      case 'reddit': return 'reddit';
+      case 'github': return 'code';
+      case 'reddit': return 'forum';
+      case 'hackernews': return 'trending_up';
+      case 'threatintel': return 'shield';
+      case 'twitter': return 'tag';
       case 'newsapi': return 'newspaper';
       default: return 'search';
     }
@@ -86,8 +89,11 @@ export class ExternalSearchService {
 
   getProviderColor(provider: string): string {
     switch (provider.toLowerCase()) {
-      case 'twitter': return '#1DA1F2';
+      case 'github': return '#333333';
       case 'reddit': return '#FF4500';
+      case 'hackernews': return '#FF6600';
+      case 'threatintel': return '#ff1744';
+      case 'twitter': return '#1DA1F2';
       case 'newsapi': return '#4CAF50';
       default: return '#666666';
     }

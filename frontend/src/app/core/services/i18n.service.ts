@@ -22,7 +22,7 @@ export class I18nService {
     const language = storedLanguage || this.DEFAULT_LANGUAGE;
 
     // Set up translate service
-    this.translateService.addLangs(['en', 'ar']);
+    this.translateService.addLangs(['en', 'ar', 'fr']);
     this.translateService.setDefaultLang(this.DEFAULT_LANGUAGE);
 
     // Apply the language

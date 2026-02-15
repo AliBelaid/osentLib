@@ -20,11 +20,32 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 builder.Host.UseSerilog();
 
-// Database
+// Database — use PostgreSQL if available, otherwise fall back to InMemory
 var pgConn = builder.Configuration.GetConnectionString("Postgres");
 if (string.IsNullOrEmpty(pgConn))
     pgConn = "Host=localhost;Database=ausentinel;Username=postgres;Password=postgres";
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(pgConn));
+
+bool useInMemory = false;
+try
+{
+    using var testConn = new Npgsql.NpgsqlConnection(pgConn);
+    testConn.Open();
+    testConn.Close();
+}
+catch
+{
+    useInMemory = true;
+}
+
+if (useInMemory)
+{
+    Log.Warning("PostgreSQL not available — using InMemory database for development");
+    builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("AUSentinel"));
+}
+else
+{
+    builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(pgConn));
+}
 
 // Cache — use Redis if available, otherwise in-memory
 var redisConn = builder.Configuration.GetConnectionString("Redis");
@@ -81,13 +102,23 @@ builder.Services.AddScoped<ICsvParserService, CsvParserService>();
 builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<IDnsService, DnsService>();
 builder.Services.AddScoped<IDomainWatchlistService, DomainWatchlistService>();
+builder.Services.AddScoped<IStatsService, StatsService>();
 builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.TwitterSearchProvider>();
 builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.RedditSearchProvider>();
 builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.NewsApiProvider>();
+builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.FacebookSearchProvider>();
+builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.TelegramSearchProvider>();
+builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.DarkWebSearchProvider>();
 builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.IExternalSearchService, AUSentinel.Api.Services.ExternalSearch.ExternalSearchService>();
+builder.Services.AddScoped<AUSentinel.Api.Services.IOsintToolsService, AUSentinel.Api.Services.OsintToolsService>();
 builder.Services.AddSingleton<QueryParser>();
 builder.Services.AddSingleton<IOpenSearchService, OpenSearchService>();
 builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>();
+builder.Services.AddSingleton<GdeltFetcherService>();
+builder.Services.AddSingleton<ReliefWebFetcherService>();
+builder.Services.AddSingleton<AllAfricaFetcherService>();
+builder.Services.AddSingleton<WhoOutbreakFetcherService>();
+builder.Services.AddSingleton<UNNewsFetcherService>();
 builder.Services.AddHttpClient(); // For DNS geolocation API and external search providers
 
 // Controllers
@@ -147,6 +178,58 @@ catch (Exception ex)
     Log.Warning(ex, "Could not apply migrations at startup. Ensure the database is running.");
 }
 
+// Fetch real OSINT data from all sources on startup (staggered)
+_ = Task.Run(async () =>
+{
+    try
+    {
+        await Task.Delay(2000);
+        var fetcher = app.Services.GetRequiredService<GdeltFetcherService>();
+        await fetcher.FetchAsync();
+    }
+    catch (Exception ex) { Log.Warning(ex, "GDELT data fetch failed on startup"); }
+});
+_ = Task.Run(async () =>
+{
+    try
+    {
+        await Task.Delay(6000);
+        var fetcher = app.Services.GetRequiredService<ReliefWebFetcherService>();
+        await fetcher.FetchAsync();
+    }
+    catch (Exception ex) { Log.Warning(ex, "ReliefWeb data fetch failed on startup"); }
+});
+_ = Task.Run(async () =>
+{
+    try
+    {
+        await Task.Delay(10000);
+        var fetcher = app.Services.GetRequiredService<AllAfricaFetcherService>();
+        await fetcher.FetchAsync();
+    }
+    catch (Exception ex) { Log.Warning(ex, "AllAfrica data fetch failed on startup"); }
+});
+_ = Task.Run(async () =>
+{
+    try
+    {
+        await Task.Delay(14000);
+        var fetcher = app.Services.GetRequiredService<WhoOutbreakFetcherService>();
+        await fetcher.FetchAsync();
+    }
+    catch (Exception ex) { Log.Warning(ex, "WHO data fetch failed on startup"); }
+});
+_ = Task.Run(async () =>
+{
+    try
+    {
+        await Task.Delay(18000);
+        var fetcher = app.Services.GetRequiredService<UNNewsFetcherService>();
+        await fetcher.FetchAsync();
+    }
+    catch (Exception ex) { Log.Warning(ex, "UN News data fetch failed on startup"); }
+});
+
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseSerilogRequestLogging();
 app.UseCors();
@@ -160,7 +243,7 @@ app.UseMiddleware<AuditLogMiddleware>();
 
 app.MapControllers();
 
-Log.Information("AU Sentinel API starting on port 5000");
-app.Run();
+Log.Information("AU Sentinel API starting on port 9099");
+app.Run("http://0.0.0.0:9099");
 
 public partial class Program { }

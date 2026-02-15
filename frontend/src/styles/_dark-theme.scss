@@ -1,0 +1,509 @@
+// AU Sentinel Dynamic Theme System
+// Styles scoped under [data-theme="dark"] and [data-theme="light"]
+// Shared variables
+$accent-blue: #667eea;
+$accent-cyan: #00d4ff;
+$accent-green: #00e676;
+$accent-red: #ff1744;
+$accent-orange: #ff9100;
+$accent-purple: #b388ff;
+
+// ═══════════════════════════════════════════
+// SHARED STYLES (theme-independent)
+// ═══════════════════════════════════════════
+
+// Scrollbars
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+// Threat badges (color-only, works on any bg)
+.threat-critical { color: $accent-red; font-weight: 600; }
+.threat-high { color: #ef5350; }
+.threat-elevated { color: $accent-orange; }
+.threat-moderate { color: #ffc107; }
+.threat-low { color: $accent-green; }
+
+// Active nav item
+.active {
+  border-left: 3px solid $accent-blue !important;
+}
+
+// Nav item structure
+.mat-mdc-list-item {
+  border-radius: 8px !important;
+  margin: 2px 8px !important;
+  .mdc-list-item__primary-text { color: inherit !important; }
+}
+
+// Card structure
+.mat-mdc-card, .mdc-card {
+  border-radius: 12px !important;
+}
+
+// Button toggle structure
+.mat-button-toggle-group {
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+.mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+  line-height: 40px !important;
+}
+
+// ═══════════════════════════════════════════
+// DARK THEME
+// ═══════════════════════════════════════════
+[data-theme="dark"] {
+  // CSS Custom Properties for Material components
+  --mdc-elevated-card-container-color: #1a1f2e;
+  --mdc-outlined-card-container-color: #1a1f2e;
+  --mdc-elevated-card-container-shape: 12px;
+  --mdc-filled-text-field-container-color: #1f2937;
+  --mdc-filled-text-field-label-text-color: #8892a4;
+  --mdc-filled-text-field-input-text-color: #e0e6f0;
+  --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.15);
+  --mdc-outlined-text-field-label-text-color: #8892a4;
+  --mdc-outlined-text-field-input-text-color: #e0e6f0;
+  --mdc-outlined-text-field-focus-outline-color: #{$accent-blue};
+  --mat-select-panel-background-color: #1f2937;
+  --mat-option-label-text-color: #e0e6f0;
+  --mat-option-hover-state-layer-color: rgba(102, 126, 234, 0.08);
+  --mdc-list-list-item-label-text-color: #8892a4;
+  --mdc-list-list-item-hover-label-text-color: #e0e6f0;
+  --mdc-list-list-item-hover-state-layer-color: rgba(102, 126, 234, 0.08);
+  --mdc-chip-elevated-container-color: rgba(102, 126, 234, 0.12);
+  --mdc-chip-label-text-color: #{$accent-blue};
+  --mdc-dialog-container-color: #1f2937;
+  --mat-menu-container-color: #1f2937;
+  --mat-menu-item-label-text-color: #e0e6f0;
+  --mat-menu-item-hover-state-layer-color: rgba(102, 126, 234, 0.08);
+  --mdc-tab-indicator-active-indicator-color: #{$accent-cyan};
+  --mat-tab-header-inactive-label-text-color: #8892a4;
+  --mat-tab-header-active-label-text-color: #{$accent-cyan};
+  --mat-table-background-color: #1a1f2e;
+  --mat-table-row-item-label-text-color: #e0e6f0;
+  --mat-table-header-headline-color: #e0e6f0;
+  --mat-paginator-container-background-color: #1a1f2e;
+  --mat-paginator-container-text-color: #e0e6f0;
+  --mdc-top-app-bar-container-color: #0d1117;
+  --mdc-icon-button-icon-color: #e0e6f0;
+  --mat-standard-button-toggle-text-color: #8892a4;
+  --mat-standard-button-toggle-background-color: #1f2937;
+  --mat-standard-button-toggle-selected-state-background-color: #{$accent-blue};
+  --mat-standard-button-toggle-selected-state-text-color: #fff;
+  --mat-standard-button-toggle-divider-color: rgba(255, 255, 255, 0.12);
+
+  // Base
+  body, html { background-color: #0a0e17 !important; color: #e0e6f0 !important; }
+
+  // Toolbar
+  .mat-toolbar {
+    background: linear-gradient(90deg, #0d1117 0%, #161b22 100%) !important;
+    color: #e0e6f0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  // Sidenav
+  .mat-sidenav, .mat-drawer {
+    background: linear-gradient(180deg, #0d1117 0%, #111827 100%) !important;
+    color: #e0e6f0 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  }
+  .mat-sidenav-content, .mat-drawer-content {
+    background-color: #0a0e17 !important;
+    color: #e0e6f0 !important;
+  }
+
+  // Sidenav header
+  .sidenav-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    h3 {
+      background: linear-gradient(135deg, $accent-blue, $accent-cyan);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700 !important;
+      letter-spacing: 1px;
+    }
+  }
+
+  // Nav items
+  .mat-mdc-list-item {
+    color: #b0b8c8 !important;
+    &:hover {
+      background-color: rgba(102, 126, 234, 0.08) !important;
+      color: #e0e6f0 !important;
+    }
+  }
+  .active {
+    background: linear-gradient(90deg, rgba(102,126,234,0.15), rgba(102,126,234,0.05)) !important;
+    color: $accent-blue !important;
+    .mat-icon { color: $accent-blue !important; }
+  }
+
+  // Cards
+  .mat-mdc-card, .mdc-card {
+    background: #1a1f2e !important;
+    background-color: #1a1f2e !important;
+    color: #e0e6f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    backdrop-filter: blur(10px);
+    --mdc-elevated-card-container-color: #1a1f2e;
+    --mdc-outlined-card-container-color: #1a1f2e;
+  }
+  .mat-mdc-card-title, .mat-mdc-card-header .mat-mdc-card-title { color: #e0e6f0 !important; }
+  .mat-mdc-card-subtitle, .mat-mdc-card-header .mat-mdc-card-subtitle { color: #8892a4 !important; }
+
+  // Form fields
+  .mat-mdc-form-field {
+    .mdc-text-field--filled { background-color: #1f2937 !important; }
+    .mdc-floating-label, .mat-mdc-input-element { color: #e0e6f0 !important; }
+    .mat-mdc-select-value-text { color: #e0e6f0 !important; }
+  }
+  .mdc-text-field--outlined .mdc-notched-outline__leading,
+  .mdc-text-field--outlined .mdc-notched-outline__trailing,
+  .mdc-text-field--outlined .mdc-notched-outline__notch {
+    border-color: rgba(255,255,255,0.15) !important;
+  }
+
+  // Buttons
+  .mat-mdc-button, .mat-mdc-icon-button { color: #e0e6f0 !important; }
+  .mat-mdc-raised-button:not([color]) {
+    background: linear-gradient(135deg, $accent-blue, darken($accent-blue, 10%)) !important;
+    color: #fff !important;
+  }
+  .mat-mdc-fab, .mat-mdc-mini-fab {
+    background: linear-gradient(135deg, $accent-blue, $accent-purple) !important;
+    color: #fff !important;
+  }
+
+  // Button toggle
+  .mat-button-toggle-group { border: 1px solid rgba(255,255,255,0.12) !important; }
+  .mat-button-toggle {
+    background: #1f2937 !important;
+    background-color: #1f2937 !important;
+    color: #8892a4 !important;
+    .mat-button-toggle-label-content { color: inherit !important; }
+    &.mat-button-toggle-checked {
+      background: linear-gradient(135deg, $accent-blue, darken($accent-blue, 10%)) !important;
+      color: #fff !important;
+    }
+  }
+
+  // Menu
+  .mat-mdc-menu-panel { background-color: #1f2937 !important; border: 1px solid rgba(255, 255, 255, 0.06); }
+  .mat-mdc-menu-item {
+    color: #e0e6f0 !important;
+    &:hover { background-color: rgba(102, 126, 234, 0.08) !important; }
+  }
+
+  // Chips
+  .mat-mdc-chip {
+    background-color: rgba(102, 126, 234, 0.12) !important;
+    color: $accent-blue !important;
+    border: 1px solid rgba(102, 126, 234, 0.2) !important;
+  }
+
+  // Tables
+  .mat-mdc-table { background-color: #1a1f2e !important; color: #e0e6f0 !important; }
+  .mat-mdc-header-row { background-color: #1f2937 !important; }
+  .mat-mdc-row:hover { background-color: rgba(102, 126, 234, 0.08) !important; }
+
+  // Dialog
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    background-color: #1f2937 !important;
+    color: #e0e6f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  // Select
+  .mat-mdc-select-panel { background-color: #1f2937 !important; border: 1px solid rgba(255, 255, 255, 0.06); }
+  .mat-mdc-option {
+    color: #e0e6f0 !important;
+    &:hover { background-color: rgba(102, 126, 234, 0.08) !important; }
+  }
+
+  // Paginator
+  .mat-mdc-paginator { background-color: #1a1f2e !important; color: #e0e6f0 !important; }
+
+  // Tabs
+  .mat-mdc-tab-header { background-color: #1a1f2e !important; }
+  .mat-mdc-tab .mdc-tab__text-label { color: #8892a4 !important; }
+  .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label { color: $accent-cyan !important; }
+
+  // Snackbar
+  .mat-mdc-snack-bar-container .mdc-snackbar__surface { background-color: #1f2937 !important; }
+
+  // Tooltip
+  .mat-mdc-tooltip .mdc-tooltip__surface {
+    background-color: #1f2937 !important;
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  // Progress bar
+  .mat-mdc-progress-bar {
+    --mdc-linear-progress-active-indicator-color: #{$accent-blue};
+    --mdc-linear-progress-track-color: #1f2937;
+  }
+
+  // Page container
+  .page-container { background-color: #0a0e17; }
+
+  // Level badge menu
+  .menu-level-badge {
+    background: #1f2937 !important;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  // Landing page
+  .landing-page {
+    background: linear-gradient(135deg, #0d1b2a 0%, #1b2838 50%, #0a1628 100%);
+  }
+
+  // Scrollbar
+  ::-webkit-scrollbar-thumb { background: rgba(102, 126, 234, 0.3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(102, 126, 234, 0.6); }
+
+  // Chip category colors
+  .chip-security { background: rgba(244, 67, 54, 0.15) !important; color: #ef5350 !important; }
+  .chip-politics { background: rgba(156, 39, 176, 0.15) !important; color: #ce93d8 !important; }
+  .chip-health { background: rgba(33, 150, 243, 0.15) !important; color: #64b5f6 !important; }
+  .chip-environment { background: rgba(76, 175, 80, 0.15) !important; color: #81c784 !important; }
+  .chip-economy { background: rgba(255, 193, 7, 0.15) !important; color: #ffd54f !important; }
+  .chip-technology { background: rgba(0, 188, 212, 0.15) !important; color: #4dd0e1 !important; }
+
+  // Threat badge dark enhancements
+  .threat-critical { text-shadow: 0 0 8px rgba(255, 23, 68, 0.3); }
+}
+
+// ═══════════════════════════════════════════
+// LIGHT THEME
+// ═══════════════════════════════════════════
+[data-theme="light"] {
+  // CSS Custom Properties for Material components
+  --mdc-elevated-card-container-color: #ffffff;
+  --mdc-outlined-card-container-color: #ffffff;
+  --mdc-elevated-card-container-shape: 12px;
+  --mdc-filled-text-field-container-color: #f5f7fa;
+  --mdc-filled-text-field-label-text-color: #666;
+  --mdc-filled-text-field-input-text-color: #1a1a2e;
+  --mdc-outlined-text-field-outline-color: #d0d5dd;
+  --mdc-outlined-text-field-label-text-color: #666;
+  --mdc-outlined-text-field-input-text-color: #1a1a2e;
+  --mdc-outlined-text-field-focus-outline-color: #{$accent-blue};
+  --mat-select-panel-background-color: #ffffff;
+  --mat-option-label-text-color: #1a1a2e;
+  --mat-option-hover-state-layer-color: rgba(102, 126, 234, 0.06);
+  --mdc-list-list-item-label-text-color: #555;
+  --mdc-list-list-item-hover-label-text-color: #1a1a2e;
+  --mdc-list-list-item-hover-state-layer-color: rgba(102, 126, 234, 0.06);
+  --mdc-chip-elevated-container-color: rgba(102, 126, 234, 0.08);
+  --mdc-chip-label-text-color: #{$accent-blue};
+  --mdc-dialog-container-color: #ffffff;
+  --mat-menu-container-color: #ffffff;
+  --mat-menu-item-label-text-color: #1a1a2e;
+  --mat-menu-item-hover-state-layer-color: rgba(102, 126, 234, 0.06);
+  --mdc-tab-indicator-active-indicator-color: #{$accent-blue};
+  --mat-tab-header-inactive-label-text-color: #888;
+  --mat-tab-header-active-label-text-color: #{$accent-blue};
+  --mat-table-background-color: #ffffff;
+  --mat-table-row-item-label-text-color: #1a1a2e;
+  --mat-table-header-headline-color: #1a1a2e;
+  --mat-paginator-container-background-color: #ffffff;
+  --mat-paginator-container-text-color: #1a1a2e;
+  --mdc-top-app-bar-container-color: #ffffff;
+  --mdc-icon-button-icon-color: #555;
+  --mat-standard-button-toggle-text-color: #555;
+  --mat-standard-button-toggle-background-color: #f5f7fa;
+  --mat-standard-button-toggle-selected-state-background-color: #{$accent-blue};
+  --mat-standard-button-toggle-selected-state-text-color: #fff;
+  --mat-standard-button-toggle-divider-color: #e0e0e0;
+
+  // Base
+  body, html { background-color: #f5f7fa !important; color: #1a1a2e !important; }
+
+  // Toolbar
+  .mat-toolbar {
+    background: #ffffff !important;
+    color: #1a1a2e !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  // Sidenav
+  .mat-sidenav, .mat-drawer {
+    background: #ffffff !important;
+    color: #1a1a2e !important;
+    border-right: 1px solid #e8e8e8 !important;
+  }
+  .mat-sidenav-content, .mat-drawer-content {
+    background-color: #f5f7fa !important;
+    color: #1a1a2e !important;
+  }
+
+  // Sidenav header
+  .sidenav-header {
+    border-bottom: 1px solid #e8e8e8;
+    h3 {
+      background: linear-gradient(135deg, $accent-blue, #4f46e5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+  .status-dot { box-shadow: 0 0 4px rgba(0, 200, 83, 0.5); }
+  .status-text { color: #00c853 !important; }
+
+  // Nav items
+  .mat-mdc-list-item {
+    color: #555 !important;
+    &:hover {
+      background-color: rgba(102, 126, 234, 0.06) !important;
+      color: #1a1a2e !important;
+    }
+  }
+  .active {
+    background: rgba(102, 126, 234, 0.08) !important;
+    color: $accent-blue !important;
+    .mat-icon { color: $accent-blue !important; }
+  }
+  .nav-section-label { color: $accent-blue !important; }
+
+  // Cards
+  .mat-mdc-card, .mdc-card {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #1a1a2e !important;
+    border: 1px solid #e8e8e8 !important;
+    backdrop-filter: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+    --mdc-elevated-card-container-color: #ffffff;
+    --mdc-outlined-card-container-color: #ffffff;
+  }
+  .mat-mdc-card-title, .mat-mdc-card-header .mat-mdc-card-title { color: #1a1a2e !important; }
+  .mat-mdc-card-subtitle, .mat-mdc-card-header .mat-mdc-card-subtitle { color: #666 !important; }
+
+  // Form fields
+  .mat-mdc-form-field {
+    .mdc-text-field--filled { background-color: #f5f7fa !important; }
+    .mdc-floating-label, .mat-mdc-input-element { color: #1a1a2e !important; }
+    .mat-mdc-select-value-text { color: #1a1a2e !important; }
+  }
+  .mdc-text-field--outlined .mdc-notched-outline__leading,
+  .mdc-text-field--outlined .mdc-notched-outline__trailing,
+  .mdc-text-field--outlined .mdc-notched-outline__notch {
+    border-color: #d0d5dd !important;
+  }
+
+  // Buttons
+  .mat-mdc-button, .mat-mdc-icon-button { color: #555 !important; }
+  .mat-mdc-raised-button:not([color]) {
+    background: $accent-blue !important;
+    color: #fff !important;
+  }
+  .mat-mdc-fab, .mat-mdc-mini-fab {
+    background: $accent-blue !important;
+    color: #fff !important;
+  }
+
+  // Button toggle
+  .mat-button-toggle-group { border: 1px solid #e0e0e0 !important; }
+  .mat-button-toggle {
+    background: #f5f7fa !important;
+    background-color: #f5f7fa !important;
+    color: #555 !important;
+    .mat-button-toggle-label-content { color: inherit !important; }
+    &.mat-button-toggle-checked {
+      background: $accent-blue !important;
+      color: #fff !important;
+    }
+  }
+
+  // Menu
+  .mat-mdc-menu-panel { background-color: #ffffff !important; border: 1px solid #e8e8e8; box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important; }
+  .mat-mdc-menu-item {
+    color: #1a1a2e !important;
+    &:hover { background-color: rgba(102, 126, 234, 0.06) !important; }
+  }
+
+  // Chips
+  .mat-mdc-chip {
+    background-color: rgba(102, 126, 234, 0.08) !important;
+    color: $accent-blue !important;
+    border: 1px solid rgba(102, 126, 234, 0.15) !important;
+  }
+
+  // Tables
+  .mat-mdc-table { background-color: #ffffff !important; color: #1a1a2e !important; }
+  .mat-mdc-header-row { background-color: #f8f9fa !important; }
+  .mat-mdc-row:hover { background-color: rgba(102, 126, 234, 0.04) !important; }
+
+  // Dialog
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    background-color: #ffffff !important;
+    color: #1a1a2e !important;
+    border: 1px solid #e8e8e8;
+  }
+
+  // Select
+  .mat-mdc-select-panel { background-color: #ffffff !important; border: 1px solid #e8e8e8; }
+  .mat-mdc-option {
+    color: #1a1a2e !important;
+    &:hover { background-color: rgba(102, 126, 234, 0.06) !important; }
+  }
+
+  // Paginator
+  .mat-mdc-paginator { background-color: #ffffff !important; color: #1a1a2e !important; }
+
+  // Tabs
+  .mat-mdc-tab-header { background-color: #ffffff !important; }
+  .mat-mdc-tab .mdc-tab__text-label { color: #888 !important; }
+  .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label { color: $accent-blue !important; }
+
+  // Snackbar
+  .mat-mdc-snack-bar-container .mdc-snackbar__surface { background-color: #333 !important; }
+
+  // Tooltip
+  .mat-mdc-tooltip .mdc-tooltip__surface {
+    background-color: #333 !important;
+    color: #fff !important;
+  }
+
+  // Progress bar
+  .mat-mdc-progress-bar {
+    --mdc-linear-progress-active-indicator-color: #{$accent-blue};
+    --mdc-linear-progress-track-color: #e8e8e8;
+  }
+
+  // Page container
+  .page-container { background-color: #f5f7fa; }
+
+  // Level badge menu
+  .menu-level-badge {
+    background: #f8f9fa !important;
+    border-color: #e8e8e8 !important;
+  }
+
+  // Landing page
+  .landing-page {
+    background: linear-gradient(135deg, #4158D0, #C850C0, #667eea);
+  }
+
+  // Scrollbar
+  ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3); }
+
+  // Chip category colors (lighter for light mode)
+  .chip-security { background: rgba(244, 67, 54, 0.1) !important; color: #d32f2f !important; }
+  .chip-politics { background: rgba(156, 39, 176, 0.1) !important; color: #7b1fa2 !important; }
+  .chip-health { background: rgba(33, 150, 243, 0.1) !important; color: #1565c0 !important; }
+  .chip-environment { background: rgba(76, 175, 80, 0.1) !important; color: #2e7d32 !important; }
+  .chip-economy { background: rgba(255, 193, 7, 0.1) !important; color: #f57f17 !important; }
+  .chip-technology { background: rgba(0, 188, 212, 0.1) !important; color: #00838f !important; }
+
+  // Threat badge light adjustments
+  .threat-critical { color: #d32f2f; }
+  .threat-high { color: #e53935; }
+  .threat-elevated { color: #e65100; }
+}

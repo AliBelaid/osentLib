@@ -328,7 +328,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       width: 150px;
       height: 150px;
       border-radius: 50%;
-      background-color: #f0f0f0;
+      background-color: #1f2937;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -338,7 +338,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       font-size: 100px;
       width: 100px;
       height: 100px;
-      color: #999;
+      color: #667eea;
     }
 
     .avatar-actions {
@@ -354,11 +354,11 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       align-items: center;
       gap: 8px;
       padding: 8px 0;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
     .info-row mat-icon {
-      color: #666;
+      color: #667eea;
     }
 
     .info-row .label {
@@ -367,7 +367,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     }
 
     .info-row .value {
-      color: #666;
+      color: #8892a4;
     }
 
     .profile-form {
@@ -401,7 +401,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
 
     .detail-section p {
       margin: 4px 0;
-      color: #666;
+      color: #8892a4;
     }
 
     .job-title {
@@ -416,7 +416,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     }
 
     .social-link a {
-      color: #1976d2;
+      color: #667eea;
       text-decoration: none;
     }
 
@@ -433,7 +433,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       align-items: center;
       gap: 16px;
       padding: 16px;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
     .stat-item:last-child {
@@ -441,7 +441,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     }
 
     .stat-item mat-icon {
-      color: #1976d2;
+      color: #667eea;
       font-size: 32px;
       width: 32px;
       height: 32px;
@@ -455,12 +455,12 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     .stat-value {
       font-size: 24px;
       font-weight: 500;
-      color: #1976d2;
+      color: #00d4ff;
     }
 
     .stat-label {
       font-size: 14px;
-      color: #666;
+      color: #8892a4;
     }
 
     .xp-card, .badges-card {
@@ -482,13 +482,13 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       display: flex;
       justify-content: space-between;
       font-size: 14px;
-      color: #666;
+      color: #8892a4;
       margin-bottom: 8px;
     }
 
     .xp-next-level {
       text-align: center;
-      color: #666;
+      color: #8892a4;
       font-size: 12px;
       margin: 0;
     }
@@ -502,7 +502,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     }
 
     .badge-count {
-      background: #1976d2;
+      background: #667eea;
       color: white;
       border-radius: 50%;
       width: 32px;
@@ -524,14 +524,14 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       gap: 12px;
       padding: 12px;
       border-radius: 8px;
-      background: #f5f5f5;
+      background: #1a1f2e;
       transition: transform 0.2s, box-shadow 0.2s;
       cursor: pointer;
     }
 
     .badge-item:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(102,126,234,0.2);
     }
 
     .badge-icon {
@@ -542,11 +542,11 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       display: flex;
       align-items: center;
       justify-content: center;
-      background: white;
+      background: #1f2937;
     }
 
     .badge-icon mat-icon {
-      color: #666;
+      color: #667eea;
       font-size: 28px;
       width: 28px;
       height: 28px;
@@ -578,7 +578,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       flex-direction: column;
       align-items: center;
       padding: 32px;
-      color: #999;
+      color: #8892a4;
     }
 
     .empty-badges mat-icon {

@@ -267,12 +267,12 @@ import { switchMap } from 'rxjs/operators';
     .empty-state h3 {
       margin: 0 0 8px 0;
       font-size: 24px;
-      color: #333;
+      color: #e0e6f0;
     }
 
     .empty-state p {
       margin: 0;
-      color: #666;
+      color: #8892a4;
     }
 
     .jobs-table {
@@ -280,7 +280,7 @@ import { switchMap } from 'rxjs/operators';
     }
 
     .job-row:hover {
-      background: #f5f5f5;
+      background: rgba(102, 126, 234, 0.08);
     }
 
     .file-name {
@@ -290,7 +290,7 @@ import { switchMap } from 'rxjs/operators';
     }
 
     .file-name mat-icon {
-      color: #1976d2;
+      color: #667eea;
     }
 
     .progress-cell {
@@ -358,7 +358,7 @@ import { switchMap } from 'rxjs/operators';
 
     .detail-item strong {
       font-size: 12px;
-      color: #666;
+      color: #8892a4;
       text-transform: uppercase;
     }
 
@@ -381,7 +381,7 @@ import { switchMap } from 'rxjs/operators';
     }
 
     .error-details {
-      background: #f5f5f5;
+      background: #1a1f2e;
       padding: 16px;
       border-radius: 4px;
       overflow-x: auto;

@@ -40,8 +40,8 @@ public class NewsApiProvider : IExternalSearchProvider
 
         if (!IsConfigured)
         {
-            result.ErrorMessage = "NewsAPI key not configured";
-            _logger.LogWarning("NewsAPI not configured");
+            _logger.LogInformation("NewsAPI not configured for '{Query}'", query);
+            result.ErrorMessage = "NewsAPI key not configured. Get a free key at newsapi.org and add it to settings.";
             return result;
         }
 
@@ -211,4 +211,5 @@ public class NewsApiProvider : IExternalSearchProvider
 
         return items;
     }
+
 }

@@ -12,6 +12,8 @@ import { AuthService } from './core/services/auth.service';
 import { I18nService } from './core/services/i18n.service';
 import { ExperienceService } from './core/services/experience.service';
 import { LevelBadgeComponent } from './shared/components/level-badge.component';
+import { DarkModeToggleComponent } from './shared/components/dark-mode-toggle.component';
+import { LanguageSelectorComponent } from './shared/components/language-selector.component';
 
 @Component({
   selector: 'app-root',
@@ -19,14 +21,21 @@ import { LevelBadgeComponent } from './shared/components/level-badge.component';
   imports: [
     CommonModule, RouterModule, MatToolbarModule, MatSidenavModule,
     MatListModule, MatIconModule, MatButtonModule, MatMenuModule,
-    TranslateModule, LevelBadgeComponent
+    TranslateModule, LevelBadgeComponent, DarkModeToggleComponent, LanguageSelectorComponent
   ],
   template: `
     @if (auth.isLoggedIn()) {
       <mat-sidenav-container class="shell">
         <mat-sidenav mode="side" opened class="sidenav">
           <div class="sidenav-header">
-            <h3>AU Sentinel</h3>
+            <div class="logo-area">
+              <mat-icon class="logo-icon">security</mat-icon>
+              <h3>AU Sentinel</h3>
+            </div>
+            <div class="status-line">
+              <span class="status-dot"></span>
+              <span class="status-text">OSINT ACTIVE</span>
+            </div>
           </div>
           <mat-nav-list>
             <a mat-list-item routerLink="/dashboard" routerLinkActive="active">
@@ -45,6 +54,10 @@ import { LevelBadgeComponent } from './shared/components/level-badge.component';
               <mat-icon matListItemIcon>notifications</mat-icon>
               <span>{{ 'nav.alerts' | translate }}</span>
             </a>
+            <a mat-list-item routerLink="/maps" routerLinkActive="active">
+              <mat-icon matListItemIcon>public</mat-icon>
+              <span>{{ 'nav.maps' | translate }}</span>
+            </a>
             <a mat-list-item routerLink="/bookmarks" routerLinkActive="active">
               <mat-icon matListItemIcon>bookmark</mat-icon>
               <span>{{ 'bookmarks.title' | translate }}</span>
@@ -53,16 +66,68 @@ import { LevelBadgeComponent } from './shared/components/level-badge.component';
               <mat-icon matListItemIcon>leaderboard</mat-icon>
               <span>{{ 'nav.leaderboard' | translate }}</span>
             </a>
+            <div class="nav-divider"></div>
+            <div class="nav-section-label">{{ 'nav.cyberOps' | translate }}</div>
+            <a mat-list-item routerLink="/cyber/threats" routerLinkActive="active">
+              <mat-icon matListItemIcon>policy</mat-icon>
+              <span>{{ 'nav.threatIntel' | translate }}</span>
+            </a>
+            <a mat-list-item routerLink="/cyber/attack-map" routerLinkActive="active">
+              <mat-icon matListItemIcon>language</mat-icon>
+              <span>{{ 'nav.attackMap' | translate }}</span>
+            </a>
+            <a mat-list-item routerLink="/cyber/countries" routerLinkActive="active">
+              <mat-icon matListItemIcon>flag</mat-icon>
+              <span>{{ 'nav.countryIntel' | translate }}</span>
+            </a>
+            <a mat-list-item routerLink="/cyber/incidents" routerLinkActive="active">
+              <mat-icon matListItemIcon>local_fire_department</mat-icon>
+              <span>{{ 'nav.incidents' | translate }}</span>
+            </a>
+            <div class="nav-divider"></div>
+            <div class="nav-section-label">OSINT TOOLS</div>
+            <a mat-list-item routerLink="/maltego" routerLinkActive="active">
+              <mat-icon matListItemIcon>hub</mat-icon>
+              <span>Maltego Graph</span>
+            </a>
+            <a mat-list-item routerLink="/social-search" routerLinkActive="active">
+              <mat-icon matListItemIcon>people_alt</mat-icon>
+              <span>{{ 'nav.socialSearch' | translate }}</span>
+            </a>
+            <a mat-list-item routerLink="/search/advanced" routerLinkActive="active">
+              <mat-icon matListItemIcon>manage_search</mat-icon>
+              <span>{{ 'nav.advancedSearch' | translate }}</span>
+            </a>
+            <a mat-list-item routerLink="/search/keywords" routerLinkActive="active">
+              <mat-icon matListItemIcon>key</mat-icon>
+              <span>{{ 'nav.keywords' | translate }}</span>
+            </a>
+            <a mat-list-item routerLink="/dns/lookup" routerLinkActive="active">
+              <mat-icon matListItemIcon>dns</mat-icon>
+              <span>{{ 'nav.dnsLookup' | translate }}</span>
+            </a>
+            <a mat-list-item routerLink="/dns/watchlist" routerLinkActive="active">
+              <mat-icon matListItemIcon>visibility</mat-icon>
+              <span>{{ 'nav.domainWatch' | translate }}</span>
+            </a>
+            <a mat-list-item routerLink="/osint-tools" routerLinkActive="active">
+              <mat-icon matListItemIcon>biotech</mat-icon>
+              <span>OSINT Framework</span>
+            </a>
             @if (auth.hasRole('CountryAdmin') || auth.hasRole('AUAdmin')) {
+              <div class="nav-divider"></div>
+              <div class="nav-section-label">ADMINISTRATION</div>
               <a mat-list-item routerLink="/alerts/rules" routerLinkActive="active">
                 <mat-icon matListItemIcon>rule</mat-icon>
                 <span>{{ 'nav.alertRules' | translate }}</span>
               </a>
-            }
-            @if (auth.hasRole('CountryAdmin') || auth.hasRole('AUAdmin')) {
               <a mat-list-item routerLink="/admin/users" routerLinkActive="active">
                 <mat-icon matListItemIcon>group</mat-icon>
                 <span>{{ 'nav.users' | translate }}</span>
+              </a>
+              <a mat-list-item routerLink="/admin/import" routerLinkActive="active">
+                <mat-icon matListItemIcon>cloud_upload</mat-icon>
+                <span>{{ 'nav.import' | translate }}</span>
               </a>
             }
             @if (auth.isAUAdmin()) {
@@ -75,11 +140,18 @@ import { LevelBadgeComponent } from './shared/components/level-badge.component';
         </mat-sidenav>
 
         <mat-sidenav-content>
-          <mat-toolbar color="primary">
-            <span>AU Sentinel</span>
+          <mat-toolbar class="top-bar">
+            <mat-icon class="toolbar-icon">radar</mat-icon>
+            <span class="toolbar-title">AU Sentinel</span>
+            <span class="toolbar-subtitle">OSINT Intelligence Platform</span>
             <span class="spacer"></span>
-            <span>{{ auth.user()?.fullName }}</span>
-            <button mat-icon-button [matMenuTriggerFor]="userMenu">
+            <app-language-selector />
+            <app-dark-mode-toggle />
+            <div class="user-info">
+              <span class="user-name">{{ auth.user()?.fullName }}</span>
+              <span class="user-role">{{ auth.user()?.roles?.[0] }}</span>
+            </div>
+            <button mat-icon-button [matMenuTriggerFor]="userMenu" class="avatar-btn">
               <mat-icon>account_circle</mat-icon>
             </button>
             <mat-menu #userMenu="matMenu">
@@ -106,10 +178,6 @@ import { LevelBadgeComponent } from './shared/components/level-badge.component';
                 <mat-icon>account_box</mat-icon>
                 <span>{{ 'nav.profile' | translate }}</span>
               </button>
-              <button mat-menu-item (click)="toggleLanguage()">
-                <mat-icon>translate</mat-icon>
-                <span>{{ getCurrentLanguageLabel() }}</span>
-              </button>
               <button mat-menu-item (click)="auth.logout()">
                 <mat-icon>logout</mat-icon>
                 <span>{{ 'auth.logout' | translate }}</span>
@@ -127,18 +195,146 @@ import { LevelBadgeComponent } from './shared/components/level-badge.component';
   `,
   styles: [`
     .shell { height: 100vh; }
-    .sidenav { width: 240px; }
-    .sidenav-header { padding: 16px; text-align: center; }
-    .sidenav-header h3 { margin: 0; font-weight: 500; }
-    .active { background: rgba(0,0,0,0.04); }
+
+    /* ─── SIDENAV ─── */
+    .sidenav {
+      width: 260px;
+      background: linear-gradient(180deg, #0d1117 0%, #111827 100%) !important;
+      border-right: 1px solid rgba(102, 126, 234, 0.1) !important;
+    }
+
+    .sidenav-header {
+      padding: 20px 16px 14px;
+      border-bottom: 1px solid rgba(102, 126, 234, 0.12);
+      background: rgba(10, 14, 23, 0.5);
+    }
+    .logo-area {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo-icon {
+      font-size: 30px; width: 30px; height: 30px;
+      background: linear-gradient(135deg, #667eea, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
+    }
+    .sidenav-header h3 {
+      margin: 0; font-weight: 700; font-size: 18px; letter-spacing: 1px;
+      color: #ffffff;
+    }
+    .status-line {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 10px; padding-left: 2px;
+    }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #00e676;
+      box-shadow: 0 0 8px rgba(0, 230, 118, 0.7);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .status-text {
+      font-size: 10px; letter-spacing: 2px;
+      color: #00e676; font-weight: 700;
+    }
+
+    /* ─── NAV ITEMS ─── */
+    ::ng-deep .sidenav .mat-mdc-list-item {
+      color: #a0aec0 !important;
+      border-radius: 8px !important;
+      margin: 2px 8px !important;
+      height: 44px !important;
+      transition: all 0.2s ease !important;
+    }
+    ::ng-deep .sidenav .mat-mdc-list-item:hover {
+      background: rgba(102, 126, 234, 0.1) !important;
+      color: #e2e8f0 !important;
+    }
+    ::ng-deep .sidenav .mat-mdc-list-item .mat-icon {
+      color: #667eea !important;
+      font-size: 22px !important;
+      width: 22px !important;
+      height: 22px !important;
+      margin-right: 12px !important;
+    }
+    ::ng-deep .sidenav .mat-mdc-list-item span {
+      font-size: 13.5px !important;
+      font-weight: 500 !important;
+      letter-spacing: 0.3px !important;
+    }
+
+    .nav-divider {
+      height: 1px; margin: 12px 16px;
+      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.15), transparent);
+    }
+    .nav-section-label {
+      font-size: 10px; letter-spacing: 2.5px;
+      color: #667eea; padding: 12px 24px 6px;
+      font-weight: 700; text-transform: uppercase;
+    }
+
+    .active {
+      background: linear-gradient(90deg, rgba(102,126,234,0.18), rgba(102,126,234,0.04)) !important;
+      border-left: 3px solid #667eea !important;
+    }
+    ::ng-deep .sidenav .active .mat-icon {
+      color: #00d4ff !important;
+      filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.4));
+    }
+    ::ng-deep .sidenav .active span {
+      color: #ffffff !important;
+      font-weight: 600 !important;
+    }
+
+    /* ─── TOP BAR ─── */
+    .top-bar {
+      height: 56px;
+      background: linear-gradient(90deg, #0d1117 0%, #161b22 100%) !important;
+      border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+      color: #e0e6f0 !important;
+    }
+    .toolbar-icon {
+      font-size: 22px; width: 22px; height: 22px;
+      margin-right: 8px; color: #667eea;
+    }
+    .toolbar-title {
+      font-weight: 600; font-size: 16px; letter-spacing: 0.5px;
+      color: #ffffff;
+    }
+    .toolbar-subtitle {
+      font-size: 11px; color: #5a6b80; margin-left: 8px;
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+
+    .user-info {
+      display: flex; flex-direction: column; align-items: flex-end;
+      margin-right: 8px;
+    }
+    .user-name { font-size: 13px; font-weight: 500; color: #e0e6f0; }
+    .user-role { font-size: 10px; color: #667eea; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+
+    .avatar-btn mat-icon {
+      font-size: 30px; width: 30px; height: 30px; color: #667eea;
+    }
+
     .menu-level-badge {
       padding: 12px 16px;
-      display: flex;
-      justify-content: center;
-      background: #f5f5f5;
-      border-top: 1px solid #e0e0e0;
-      border-bottom: 1px solid #e0e0e0;
+      display: flex; justify-content: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       margin: 4px 0;
+    }
+
+    /* ─── PAGE CONTAINER ─── */
+    ::ng-deep .mat-sidenav-content {
+      background: #0a0e17 !important;
+    }
+    .page-container {
+      background: #0a0e17;
+      min-height: calc(100vh - 56px);
     }
   `]
 })
@@ -150,18 +346,8 @@ export class AppComponent {
     public i18n: I18nService,
     private experienceService: ExperienceService
   ) {
-    // Load user experience on init if logged in
     if (this.auth.isLoggedIn()) {
       this.experienceService.getMyExperience().subscribe();
     }
   }
-
-  toggleLanguage(): void {
-    this.i18n.toggleLanguage();
-  }
-
-  getCurrentLanguageLabel(): string {
-    return this.i18n.getCurrentLanguage() === 'en' ? 'العربية' : 'English';
-  }
 }
-

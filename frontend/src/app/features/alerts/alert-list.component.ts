@@ -53,10 +53,15 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
     }
   `,
   styles: [`
+    h2 { color: #e0e6f0; display: flex; align-items: center; gap: 8px; }
     .alert-card { margin-bottom: 12px; }
+    .alert-card ::ng-deep .mat-mdc-card-title { color: #e0e6f0 !important; font-size: 16px; }
+    .alert-card ::ng-deep .mat-mdc-card-subtitle { color: #8892a4 !important; }
+    .alert-card p { color: #8892a4; font-size: 13px; line-height: 1.5; }
     .acknowledged { opacity: 0.6; }
     .meta { display: flex; gap: 8px; align-items: center; }
-    .ack { color: #4caf50; font-size: 0.9em; }
+    .ack { color: #00e676; font-size: 0.9em; }
+    mat-card-actions a, mat-card-actions button { color: #667eea !important; }
   `]
 })
 export class AlertListComponent implements OnInit {

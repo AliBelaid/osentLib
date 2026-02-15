@@ -302,17 +302,17 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
     }
 
     .validation-status.valid {
-      background: #e8f5e9;
-      color: #2e7d32;
+      background: rgba(0, 230, 118, 0.1);
+      color: #00e676;
     }
 
     .validation-status.invalid {
-      background: #ffebee;
-      color: #c62828;
+      background: rgba(255, 23, 68, 0.1);
+      color: #ff1744;
     }
 
     .query-preview {
-      background: #f5f5f5;
+      background: #1a1f2e;
       padding: 12px;
       border-radius: 4px;
       margin: 16px 0;
@@ -321,7 +321,7 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
     .query-preview code {
       display: block;
       margin-top: 8px;
-      color: #1976d2;
+      color: #00d4ff;
       word-break: break-all;
     }
 
@@ -365,14 +365,15 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
 
     .result-item {
       padding: 16px;
-      border: 1px solid #e0e0e0;
+      border: 1px solid rgba(255,255,255,0.06);
       border-radius: 4px;
       cursor: pointer;
       transition: box-shadow 0.2s;
     }
 
     .result-item:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: rgba(102, 126, 234, 0.08);
+      box-shadow: 0 2px 8px rgba(102,126,234,0.15);
     }
 
     .result-item h3 {
@@ -382,7 +383,7 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
 
     .result-item .summary {
       margin: 0 0 8px 0;
-      color: #666;
+      color: #8892a4;
     }
 
     .result-item .meta {
@@ -394,7 +395,7 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
     }
 
     .help-card {
-      background: #f9f9f9;
+      background: #1a1f2e;
     }
 
     .help-grid {
@@ -410,16 +411,16 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
     }
 
     .help-item code {
-      background: white;
+      background: #1f2937;
       padding: 8px;
       border-radius: 4px;
-      color: #1976d2;
+      color: #00d4ff;
       font-weight: 500;
     }
 
     .help-item span {
       font-size: 14px;
-      color: #666;
+      color: #8892a4;
     }
   `]
 })

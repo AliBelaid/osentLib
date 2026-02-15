@@ -4,6 +4,10 @@ import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   {
+    path: 'welcome',
+    loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent)
+  },
+  {
     path: 'login',
     loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent)
   },
@@ -64,6 +68,25 @@ export const routes: Routes = [
         canActivate: [roleGuard('CountryAdmin', 'AUAdmin')]
       },
       {
+        path: 'maps',
+        loadComponent: () => import('./features/maps/maps-layout.component').then(m => m.MapsLayoutComponent),
+        children: [
+          { path: '', redirectTo: 'threats', pathMatch: 'full' },
+          {
+            path: 'threats',
+            loadComponent: () => import('./features/maps/threat-map/threat-map.component').then(m => m.ThreatMapComponent)
+          },
+          {
+            path: 'alerts',
+            loadComponent: () => import('./features/maps/alert-map/alert-map.component').then(m => m.AlertMapComponent)
+          },
+          {
+            path: 'timeline',
+            loadComponent: () => import('./features/maps/timeline-map/timeline-map.component').then(m => m.TimelineMapComponent)
+          }
+        ]
+      },
+      {
         path: 'admin/sources',
         loadComponent: () => import('./features/admin/sources.component').then(m => m.SourcesComponent),
         canActivate: [roleGuard('AUAdmin')]
@@ -87,12 +110,40 @@ export const routes: Routes = [
         canActivate: [roleGuard('CountryAdmin', 'AUAdmin')]
       },
       {
+        path: 'maltego',
+        loadComponent: () => import('./features/maltego/maltego-graph.component').then(m => m.MaltegoGraphComponent)
+      },
+      {
+        path: 'social-search',
+        loadComponent: () => import('./features/social-search/social-search.component').then(m => m.SocialSearchComponent)
+      },
+      {
         path: 'dns/lookup',
         loadComponent: () => import('./features/dns/dns-lookup.component').then(m => m.DnsLookupComponent)
       },
       {
         path: 'dns/watchlist',
         loadComponent: () => import('./features/dns/domain-watchlist.component').then(m => m.DomainWatchlistComponent)
+      },
+      {
+        path: 'cyber/threats',
+        loadComponent: () => import('./features/cyber/threat-intel.component').then(m => m.ThreatIntelComponent)
+      },
+      {
+        path: 'cyber/attack-map',
+        loadComponent: () => import('./features/cyber/attack-map.component').then(m => m.AttackMapComponent)
+      },
+      {
+        path: 'cyber/countries',
+        loadComponent: () => import('./features/cyber/country-intel.component').then(m => m.CountryIntelComponent)
+      },
+      {
+        path: 'cyber/incidents',
+        loadComponent: () => import('./features/cyber/incident-tracker.component').then(m => m.IncidentTrackerComponent)
+      },
+      {
+        path: 'osint-tools',
+        loadComponent: () => import('./features/osint-tools/osint-tools.component').then(m => m.OsintToolsComponent)
       }
     ]
   }

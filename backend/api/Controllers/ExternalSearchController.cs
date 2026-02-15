@@ -6,7 +6,7 @@ using System.Security.Claims;
 namespace AUSentinel.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/external-search")]
 [Authorize]
 public class ExternalSearchController : ControllerBase
 {

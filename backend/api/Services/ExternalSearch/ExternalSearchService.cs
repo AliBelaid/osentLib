@@ -25,17 +25,23 @@ public class ExternalSearchService : IExternalSearchService
         ILogger<ExternalSearchService> logger,
         TwitterSearchProvider twitterProvider,
         RedditSearchProvider redditProvider,
-        NewsApiProvider newsApiProvider)
+        NewsApiProvider newsApiProvider,
+        FacebookSearchProvider githubProvider,
+        TelegramSearchProvider hackerNewsProvider,
+        DarkWebSearchProvider threatIntelProvider)
     {
         _db = db;
         _logger = logger;
 
-        // Register all providers
+        // Register all providers (GitHub, HackerNews, ThreatIntel use real free APIs)
         _providers = new Dictionary<string, IExternalSearchProvider>(StringComparer.OrdinalIgnoreCase)
         {
             [twitterProvider.ProviderName] = twitterProvider,
             [redditProvider.ProviderName] = redditProvider,
-            [newsApiProvider.ProviderName] = newsApiProvider
+            [newsApiProvider.ProviderName] = newsApiProvider,
+            [githubProvider.ProviderName] = githubProvider,
+            [hackerNewsProvider.ProviderName] = hackerNewsProvider,
+            [threatIntelProvider.ProviderName] = threatIntelProvider
         };
     }
 
@@ -111,9 +117,15 @@ public class ExternalSearchService : IExternalSearchService
         ExternalSearchFilters filters,
         Guid userId)
     {
-        var tasks = providers.Select(provider => SearchAsync(provider, query, filters, userId));
-        var results = await Task.WhenAll(tasks);
-        return results.ToList();
+        // Run searches sequentially to avoid DbContext concurrency errors
+        // (EF Core DbContext is not thread-safe for parallel operations)
+        var results = new List<ExternalSearchResult>();
+        foreach (var provider in providers)
+        {
+            var result = await SearchAsync(provider, query, filters, userId);
+            results.Add(result);
+        }
+        return results;
     }
 
     public async Task<List<ExternalSearchQueryDto>> GetSearchHistoryAsync(Guid userId, int page = 1, int pageSize = 20)

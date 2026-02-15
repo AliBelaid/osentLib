@@ -59,17 +59,21 @@ public class DnsService : IDnsService
 
         try
         {
-            // Perform DNS lookups
-            var aRecords = await GetARecordsAsync(domain);
-            var mxRecords = await GetMxRecordsAsync(domain);
-            var txtRecords = await GetTxtRecordsAsync(domain);
-            var nsRecords = await GetNsRecordsAsync(domain);
+            // Perform DNS lookups - each wrapped individually so partial results are still returned
+            var aRecords = new List<string>();
+            var mxRecords = new List<string>();
+            var txtRecords = new List<string>();
+            var nsRecords = new List<string>();
+            try { aRecords = await GetARecordsAsync(domain); } catch (Exception ex) { _logger.LogDebug(ex, "A record lookup failed for {Domain}", domain); }
+            try { mxRecords = await GetMxRecordsAsync(domain); } catch (Exception ex) { _logger.LogDebug(ex, "MX record lookup failed for {Domain}", domain); }
+            try { txtRecords = await GetTxtRecordsAsync(domain); } catch (Exception ex) { _logger.LogDebug(ex, "TXT record lookup failed for {Domain}", domain); }
+            try { nsRecords = await GetNsRecordsAsync(domain); } catch (Exception ex) { _logger.LogDebug(ex, "NS record lookup failed for {Domain}", domain); }
 
             result.ARecords = aRecords;
             result.MxRecords = mxRecords;
             result.TxtRecords = txtRecords;
             result.NsRecords = nsRecords;
-            result.Success = aRecords.Any() || mxRecords.Any() || nsRecords.Any();
+            result.Success = aRecords.Any() || mxRecords.Any() || nsRecords.Any() || txtRecords.Any();
 
             // Get IP geolocation from first A record
             if (aRecords.Any())
