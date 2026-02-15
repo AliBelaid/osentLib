@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Signing in...</p>
+<script>
+fetch('http://localhost:9099/api/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username: 'admin', password: 'Admin123!' })
+})
+.then(r => r.json())
+.then(data => {
+  localStorage.setItem('ausentinel_token', data.token);
+  localStorage.setItem('ausentinel_user', JSON.stringify(data.user));
+  window.location.href = 'http://localhost:4100/dashboard';
+})
+.catch(e => document.body.innerText = 'Error: ' + e.message);
+</script>
+</body>
+</html>
