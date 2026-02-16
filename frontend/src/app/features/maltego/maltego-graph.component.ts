@@ -71,7 +71,7 @@ interface TransformResponse {
 const ENTITY_TYPES: string[] = [
   'Person', 'Email', 'Domain', 'IP', 'Phone', 'Organization',
   'SocialProfile', 'Hash', 'URL', 'Location', 'Breach',
-  'Technology', 'SSLCert', 'ASN', 'Port'
+  'Technology', 'SSLCert', 'ASN', 'Port', 'Service', 'Vulnerability'
 ];
 
 const TYPE_COLORS: Record<string, string> = {
@@ -89,18 +89,33 @@ const TYPE_COLORS: Record<string, string> = {
   Technology: '#ff7043',
   SSLCert: '#66bb6a',
   ASN: '#ab47bc',
-  Port: '#78909c'
+  Port: '#78909c',
+  Service: '#546e7a',
+  Vulnerability: '#f44336'
 };
 
 const LINK_COLORS: Record<string, string> = {
   owns: '#4a90d9',
   resolves: '#27ae60',
+  resolves_to: '#27ae60',
   contains: '#e67e22',
   associated: '#8e44ad',
   registered: '#e74c3c',
   uses: '#00bcd4',
   hosts: '#f1c40f',
   member: '#3498db',
+  belongs_to: '#8e44ad',
+  mx_record: '#e67e22',
+  ns_record: '#3498db',
+  subdomain: '#66bb6a',
+  has_vulnerability: '#f44336',
+  has_service: '#546e7a',
+  located_in: '#009688',
+  hosted_by: '#e74c3c',
+  reverse_dns: '#ab47bc',
+  has_hostname: '#00bcd4',
+  owned_by: '#4a90d9',
+  found_in: '#dc143c',
   default: '#5a6b80'
 };
 
@@ -117,8 +132,28 @@ function getLinkColor(type: string): string {
   return LINK_COLORS[type] || LINK_COLORS['default'];
 }
 
+const TYPE_ICONS: Record<string, string> = {
+  Person: 'Pe',
+  Email: '@',
+  Domain: 'D',
+  IP: 'IP',
+  Phone: 'Ph',
+  Organization: 'Org',
+  SocialProfile: 'So',
+  Hash: '#',
+  URL: 'Url',
+  Location: 'Loc',
+  Breach: 'Br',
+  Technology: 'Te',
+  SSLCert: 'SSL',
+  ASN: 'AS',
+  Port: 'Pt',
+  Service: 'Svc',
+  Vulnerability: 'CVE'
+};
+
 function getTypeIcon(type: string): string {
-  return type.charAt(0).toUpperCase();
+  return TYPE_ICONS[type] || type.charAt(0).toUpperCase();
 }
 
 /* ────────────────────────── Component ────────────────────────── */
@@ -243,16 +278,16 @@ function getTypeIcon(type: string): string {
                       [attr.opacity]="hoveredLink === link ? 1 : 0.5"
                       (mouseenter)="hoveredLink = link"
                       (mouseleave)="hoveredLink = null"/>
-                <!-- Link label on hover -->
-                @if (hoveredLink === link) {
-                  <text class="link-label"
-                        [attr.x]="(getNodeX(link.source) + getNodeX(link.target)) / 2"
-                        [attr.y]="(getNodeY(link.source) + getNodeY(link.target)) / 2 - 8"
-                        text-anchor="middle"
-                        [attr.fill]="link.color">
-                    {{ link.label }}
-                  </text>
-                }
+                <!-- Link label (always visible) -->
+                <text class="link-label"
+                      [attr.x]="(getNodeX(link.source) + getNodeX(link.target)) / 2"
+                      [attr.y]="(getNodeY(link.source) + getNodeY(link.target)) / 2 - 6"
+                      text-anchor="middle"
+                      [attr.fill]="link.color"
+                      [attr.opacity]="hoveredLink === link ? 1 : 0.7"
+                      [attr.font-size]="hoveredLink === link ? '11' : '9'">
+                  {{ link.label }}
+                </text>
               }
 
               <!-- Nodes -->
@@ -284,7 +319,7 @@ function getTypeIcon(type: string): string {
                       [attr.y]="node.y + 1"
                       text-anchor="middle"
                       dominant-baseline="central"
-                      [attr.font-size]="node.radius * 0.9"
+                      [attr.font-size]="node.icon.length > 2 ? node.radius * 0.6 : node.radius * 0.85"
                       fill="#ffffff"
                       style="pointer-events: none; font-weight: 700; font-family: monospace;">
                   {{ node.icon }}
@@ -297,7 +332,7 @@ function getTypeIcon(type: string): string {
                       fill="#b0b8c8"
                       font-size="11"
                       style="pointer-events: none;">
-                  {{ truncate(node.entity.label || node.entity.value, 20) }}
+                  {{ truncate(node.entity.label || node.entity.value, 30) }}
                 </text>
                 <!-- Pin indicator -->
                 @if (node.pinned) {
@@ -536,9 +571,9 @@ function getTypeIcon(type: string): string {
     .graph-link:hover { opacity: 1 !important; }
 
     .link-label {
-      font-size: 10px; font-weight: 600;
+      font-size: 9px; font-weight: 600;
       pointer-events: none;
-      text-shadow: 0 0 4px #0a0e17, 0 0 8px #0a0e17;
+      text-shadow: 0 0 3px #0a0e17, 0 0 6px #0a0e17, 0 0 10px #0a0e17, 1px 1px 2px #000;
     }
 
     .graph-node {
