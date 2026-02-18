@@ -54,6 +54,10 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
               <mat-icon matListItemIcon>notifications</mat-icon>
               <span>{{ 'nav.alerts' | translate }}</span>
             </a>
+            <a mat-list-item routerLink="/submit-report" routerLinkActive="active">
+              <mat-icon matListItemIcon>assignment</mat-icon>
+              <span>{{ 'nav.submitReport' | translate }}</span>
+            </a>
             <a mat-list-item routerLink="/maps" routerLinkActive="active">
               <mat-icon matListItemIcon>public</mat-icon>
               <span>{{ 'nav.maps' | translate }}</span>
@@ -199,14 +203,14 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
     /* ─── SIDENAV ─── */
     .sidenav {
       width: 260px;
-      background: linear-gradient(180deg, #0d1117 0%, #111827 100%) !important;
-      border-right: 1px solid rgba(102, 126, 234, 0.1) !important;
+      background: var(--bg-sidenav-gradient) !important;
+      border-inline-end: 1px solid var(--border-default) !important;
     }
 
     .sidenav-header {
       padding: 20px 16px 14px;
-      border-bottom: 1px solid rgba(102, 126, 234, 0.12);
-      background: rgba(10, 14, 23, 0.5);
+      border-bottom: 1px solid var(--border-default);
+      background: var(--bg-header);
     }
     .logo-area {
       display: flex; align-items: center; gap: 12px;
@@ -220,11 +224,11 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
     }
     .sidenav-header h3 {
       margin: 0; font-weight: 700; font-size: 18px; letter-spacing: 1px;
-      color: #ffffff;
+      color: var(--text-heading);
     }
     .status-line {
       display: flex; align-items: center; gap: 6px;
-      margin-top: 10px; padding-left: 2px;
+      margin-top: 10px; padding-inline-start: 2px;
     }
     .status-dot {
       width: 8px; height: 8px; border-radius: 50%;
@@ -243,7 +247,7 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
 
     /* ─── NAV ITEMS ─── */
     ::ng-deep .sidenav .mat-mdc-list-item {
-      color: #a0aec0 !important;
+      color: var(--text-secondary) !important;
       border-radius: 8px !important;
       margin: 2px 8px !important;
       height: 44px !important;
@@ -251,14 +255,14 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
     }
     ::ng-deep .sidenav .mat-mdc-list-item:hover {
       background: rgba(102, 126, 234, 0.1) !important;
-      color: #e2e8f0 !important;
+      color: var(--text-primary) !important;
     }
     ::ng-deep .sidenav .mat-mdc-list-item .mat-icon {
       color: #667eea !important;
       font-size: 22px !important;
       width: 22px !important;
       height: 22px !important;
-      margin-right: 12px !important;
+      margin-inline-end: 12px !important;
     }
     ::ng-deep .sidenav .mat-mdc-list-item span {
       font-size: 13.5px !important;
@@ -277,43 +281,43 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
     }
 
     .active {
-      background: linear-gradient(90deg, rgba(102,126,234,0.18), rgba(102,126,234,0.04)) !important;
-      border-left: 3px solid #667eea !important;
+      background: rgba(102,126,234,0.12) !important;
+      border-inline-start: 3px solid #667eea !important;
     }
     ::ng-deep .sidenav .active .mat-icon {
       color: #00d4ff !important;
       filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.4));
     }
     ::ng-deep .sidenav .active span {
-      color: #ffffff !important;
+      color: var(--text-heading) !important;
       font-weight: 600 !important;
     }
 
     /* ─── TOP BAR ─── */
     .top-bar {
       height: 56px;
-      background: linear-gradient(90deg, #0d1117 0%, #161b22 100%) !important;
+      background: var(--bg-header-gradient) !important;
       border-bottom: 1px solid rgba(102, 126, 234, 0.1);
-      color: #e0e6f0 !important;
+      color: var(--text-primary) !important;
     }
     .toolbar-icon {
       font-size: 22px; width: 22px; height: 22px;
-      margin-right: 8px; color: #667eea;
+      margin-inline-end: 8px; color: #667eea;
     }
     .toolbar-title {
       font-weight: 600; font-size: 16px; letter-spacing: 0.5px;
-      color: #ffffff;
+      color: var(--text-heading);
     }
     .toolbar-subtitle {
-      font-size: 11px; color: #5a6b80; margin-left: 8px;
+      font-size: 11px; color: var(--text-tertiary); margin-inline-start: 8px;
       letter-spacing: 1px; text-transform: uppercase;
     }
 
     .user-info {
       display: flex; flex-direction: column; align-items: flex-end;
-      margin-right: 8px;
+      margin-inline-end: 8px;
     }
-    .user-name { font-size: 13px; font-weight: 500; color: #e0e6f0; }
+    .user-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
     .user-role { font-size: 10px; color: #667eea; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 
     .avatar-btn mat-icon {
@@ -323,18 +327,20 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
     .menu-level-badge {
       padding: 12px 16px;
       display: flex; justify-content: center;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid var(--border-default);
+      border-bottom: 1px solid var(--border-default);
       margin: 4px 0;
     }
 
     /* ─── PAGE CONTAINER ─── */
     ::ng-deep .mat-sidenav-content {
-      background: #0a0e17 !important;
+      background: var(--bg-page) !important;
+      overflow-x: hidden !important;
     }
     .page-container {
-      background: #0a0e17;
+      background: var(--bg-page);
       min-height: calc(100vh - 56px);
+      overflow-x: hidden;
     }
   `]
 })
@@ -346,8 +352,6 @@ export class AppComponent {
     public i18n: I18nService,
     private experienceService: ExperienceService
   ) {
-    if (this.auth.isLoggedIn()) {
-      this.experienceService.getMyExperience().subscribe();
-    }
+    this.experienceService.getMyExperience().subscribe();
   }
 }

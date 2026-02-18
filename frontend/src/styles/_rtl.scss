@@ -5,21 +5,33 @@
   // Base text alignment
   text-align: right;
 
-  // Material Design overrides for RTL
+  // ─── SIDENAV / DRAWER ───
+  // Material MDC sidenav: flip border and fix content margin
   .mat-drawer-container {
     .mat-drawer {
       &.mat-drawer-side {
-        border-left: none;
-        border-right: solid 1px rgba(0, 0, 0, 0.12);
+        border-left: none !important;
+        border-right: none !important;
+        border-inline-end: 1px solid var(--border-default, rgba(0, 0, 0, 0.12)) !important;
       }
     }
   }
 
-  // Sidenav positioning
-  .mat-drawer-content {
+  // Fix sidenav content margin — Material may set margin-left for side drawer
+  // before dir="rtl" applies. Swap it: remove margin-left and set margin-right
+  // to match the sidenav width (260px as defined in app.component.ts).
+  .mat-drawer-content,
+  .mat-sidenav-content {
     margin-left: 0 !important;
-    margin-right: 0 !important;
+    margin-right: 260px;
   }
+
+  // Sidenav section labels
+  .nav-section-label {
+    text-align: right;
+  }
+
+  // ─── MATERIAL COMPONENT OVERRIDES ───
 
   // Icon positioning
   .mat-icon {
@@ -28,7 +40,8 @@
     }
   }
 
-  // Menu items
+  // Menu items (MDC)
+  .mat-mdc-menu-item,
   .mat-menu-item {
     text-align: right;
 
@@ -39,25 +52,30 @@
   }
 
   // Form fields
+  .mat-mdc-form-field,
   .mat-form-field {
     text-align: right;
 
+    .mat-mdc-form-field-icon-prefix,
     .mat-form-field-prefix {
       padding-left: 8px;
       padding-right: 0;
     }
 
+    .mat-mdc-form-field-icon-suffix,
     .mat-form-field-suffix {
       padding-right: 8px;
       padding-left: 0;
     }
   }
 
-  // Lists
+  // Lists (MDC)
+  .mat-mdc-list-item,
   .mat-list-item,
   .mat-list-option {
     text-align: right;
 
+    .mat-mdc-list-item-icon,
     .mat-list-icon {
       margin-left: 16px;
       margin-right: 0;
@@ -65,6 +83,10 @@
   }
 
   // Buttons with icons
+  .mat-mdc-button,
+  .mat-mdc-raised-button,
+  .mat-mdc-flat-button,
+  .mat-mdc-outlined-button,
   .mat-button,
   .mat-raised-button,
   .mat-flat-button,
@@ -81,8 +103,10 @@
   }
 
   // Chips
+  .mat-mdc-chip,
   .mat-chip {
-    .mat-chip-remove {
+    .mat-chip-remove,
+    .mat-mdc-chip-remove {
       margin-left: 0;
       margin-right: 4px;
     }
@@ -97,19 +121,15 @@
   }
 
   // Cards
+  .mat-mdc-card-actions,
   .mat-card-actions {
     margin-left: auto;
     margin-right: 0;
     padding: 8px 4px !important;
   }
 
-  // Badges
-  .mat-badge-content {
-    left: auto;
-    right: 0;
-  }
-
   // Tabs
+  .mat-mdc-tab,
   .mat-tab-label {
     padding: 0 12px;
   }
@@ -123,19 +143,25 @@
   }
 
   // Paginator
+  .mat-mdc-paginator,
   .mat-paginator {
+    .mat-mdc-paginator-page-size-label,
     .mat-paginator-page-size-label {
       margin-right: auto;
       margin-left: 0;
     }
 
+    .mat-mdc-paginator-range-label,
     .mat-paginator-range-label {
       margin: 0 16px 0 0;
     }
   }
 
   // Table
+  .mat-mdc-table,
   .mat-table {
+    .mat-mdc-header-cell,
+    .mat-mdc-cell,
     .mat-header-cell,
     .mat-cell {
       text-align: right;
@@ -152,19 +178,15 @@
     }
   }
 
-  // Toolbar
-  .mat-toolbar {
-    .mat-toolbar-row {
-      flex-direction: row-reverse;
-    }
-  }
-
   // Snackbar
+  .mat-mdc-snack-bar-container,
   .mat-snack-bar-container {
+    .mat-mdc-simple-snackbar,
     .mat-simple-snackbar {
       justify-content: flex-start;
     }
 
+    .mat-mdc-snack-bar-action,
     .mat-simple-snackbar-action {
       margin-right: auto;
       margin-left: 0;
@@ -172,9 +194,11 @@
   }
 
   // Dialog
+  .mat-mdc-dialog-actions,
   .mat-dialog-actions {
     flex-direction: row-reverse;
 
+    .mat-mdc-button,
     .mat-button,
     .mat-raised-button {
       margin-right: 0;
@@ -186,7 +210,7 @@
     }
   }
 
-  // Custom application styles
+  // ─── CUSTOM APPLICATION STYLES ───
   .news-card {
     .card-actions {
       flex-direction: row-reverse;
@@ -225,7 +249,7 @@
     }
   }
 
-  // Fix padding and margins
+  // ─── UTILITY CLASSES ───
   .ml-1 { margin-right: 0.25rem !important; margin-left: 0 !important; }
   .ml-2 { margin-right: 0.5rem !important; margin-left: 0 !important; }
   .ml-3 { margin-right: 1rem !important; margin-left: 0 !important; }
