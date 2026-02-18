@@ -1,79 +1,102 @@
 # AU Sentinel
 
-**News Monitoring & Emergency Alert Platform for African Union Member States**
+**OSINT Intelligence Platform for African Union Member States**
 
-AU Sentinel is a comprehensive, open-source platform that ingests news from open sources, classifies articles using AI (or rule-based fallback), performs threat assessment, and serves them through a country-scoped dashboard with real-time alerts, DNS intelligence, and multi-language support (English/Arabic with RTL).
+AU Sentinel is a comprehensive platform that aggregates real-time news from open-source intelligence feeds, classifies articles by threat level, and serves them through a country-scoped dashboard with alerts, cyber intelligence tools, and multi-language support (English, Arabic, French) with full RTL layout.
+
+---
+
+## Screenshots
+
+| Dashboard (Dark) | Dashboard (Arabic RTL) |
+|:---:|:---:|
+| ![Dashboard Dark](screen/01-dashboard-dark.png) | ![Dashboard Arabic](screen/dashboard-arabic.png) |
+
+| News (Light) | Threat Intelligence |
+|:---:|:---:|
+| ![News Light](screen/03-news-light.png) | ![Threat Intel](screen/07-threat-intel-dark.png) |
+
+| Leaderboard | Bookmarks |
+|:---:|:---:|
+| ![Leaderboard](screen/08-leaderboard-dark.png) | ![Bookmarks](screen/05-bookmarks-dark.png) |
 
 ---
 
 ## Features
 
 ### Core Platform
-- Multi-language support (English/Arabic) with automatic RTL layout
+- Dark/light theme with CSS variable system
+- Multi-language support (English, Arabic, French) with automatic RTL layout
 - JWT authentication & role-based authorization (User, Editor, CountryAdmin, AUAdmin)
+- Dev auto-login middleware for seamless local development
 - Country-scoped multi-tenancy with audit logging
-- User profiles with avatars and metadata
 
-### User Engagement
-- Bookmark articles with custom collections
+### OSINT Data Sources
+- **GDELT 2.1 DOC API** - Global event monitoring for Africa
+- **ReliefWeb** - Humanitarian crisis reporting
+- **AllAfrica** - Pan-African news aggregation
+- **WHO Disease Outbreaks** - Health emergency tracking
+- **UN News** - United Nations Africa coverage
+
+### Intelligence & Analysis
+- OSINT dashboard with stats, charts, threat distribution, and activity timeline
+- Threat level classification (Low / Guarded / High / Critical)
 - Community voting (REAL / MISLEADING / UNSURE)
-- Gamification system with XP, 10 levels (Novice to Elite), and 22 badges
-- Leaderboard with global/country rankings
-
-### Search & Import
+- Maltego-style entity relationship graph visualization
+- Social media search (Twitter/X, Reddit, Facebook, Telegram, Dark Web)
 - Advanced search with boolean operators (AND/OR/NOT), phrase matching, wildcards
-- Field-specific searches (title, body, category)
-- Saved searches with execution tracking
-- Keyword list management
-- Bulk CSV import (Articles, Users, Sources, Keywords) with background processing
-
-### Intelligence Tools
 - DNS lookup & analysis (A/MX/TXT/NS records, IP geolocation, risk scoring)
 - Domain watchlist (Monitor/Block/Trust with detection tracking)
-- Bulletin management with draft/review/publish workflow
-- Alert rules with configurable notifications
+- Country intelligence profiles
+- Cyber attack map & incident tracker
+- OSINT framework tool directory
 
-### Coming Soon
-- External search integration (Twitter/X, Reddit, NewsAPI)
-- Face detection & AI-powered person recognition
-- Unified search with command palette (Ctrl+K)
+### Content Management
+- News articles with source attribution and country tagging
+- Bulletin management with draft/review/publish workflow and file attachments
+- Submit reports from the field
+- Alert rules with configurable notifications
+- Bookmark articles with custom collections
+- Keyword list management
+- Bulk CSV import (Articles, Users, Sources, Keywords)
+
+### User Engagement
+- Gamification system with XP, 10 levels (Novice to Elite), and 22 badges
+- Leaderboard with global/country rankings
+- User profiles with avatars and metadata
 
 ---
 
 ## Architecture
 
 ```
- RSS / GDELT / MediaCloud
-         |
-         v
- +-----------------+     +------------+     +---------+
- | Ingestion Worker| --> | AI Worker  | --> | Indexer  |
- +-----------------+     +------------+     +---------+
-         |                     |                 |
-    RabbitMQ              RabbitMQ          RabbitMQ
-         |                     |                 |
-         v                     v                 v
-    PostgreSQL            PostgreSQL         OpenSearch
-                                                 |
-                                                 v
-                                          ASP.NET Core API
-                                                 |
-                                                 v
-                                          Angular Frontend
+ GDELT / ReliefWeb / AllAfrica / WHO / UN News
+                    |
+                    v
+            +-----------------+
+            |  Fetcher Svcs   |  (staggered startup)
+            +-----------------+
+                    |
+                    v
+              PostgreSQL / InMemory
+                    |
+                    v
+             ASP.NET Core API  (:9099)
+                    |
+                    v
+             Angular Frontend  (:4100)
 ```
 
 | Layer          | Technology                              |
 |----------------|-----------------------------------------|
-| Frontend       | Angular 17+, Angular Material, Signals  |
+| Frontend       | Angular 17, Angular Material, Signals   |
 | Backend API    | ASP.NET Core 8, Entity Framework Core   |
-| Workers        | .NET 8 Worker Services                  |
-| Database       | PostgreSQL 16                           |
-| Cache          | Redis 7                                 |
-| Search         | OpenSearch 2.x                          |
-| Message Queue  | RabbitMQ 3.x                            |
-| Object Storage | MinIO (optional)                        |
-| AI             | Local LLM via HTTP or rule-based        |
-| Containers     | Docker Compose                          |
+| Database       | PostgreSQL 16 (InMemory fallback)       |
+| Cache          | Redis 7 (MemoryCache fallback)          |
+| Search         | OpenSearch 2.x (optional)               |
+| Message Queue  | RabbitMQ 3.x (optional)                 |
+| Auth           | JWT Bearer with BCrypt hashing          |
+| i18n           | @ngx-translate (en, ar, fr)             |
 
 ---
 
@@ -82,32 +105,36 @@ AU Sentinel is a comprehensive, open-source platform that ingests news from open
 ```
 osentLib/
 ├── backend/
-│   ├── api/                    # REST API (ASP.NET Core 8)
-│   │   ├── Controllers/
-│   │   ├── Services/
-│   │   ├── Data/Entities/
-│   │   ├── Models/
-│   │   ├── Middleware/
-│   │   └── Migrations/
-│   ├── shared/                 # Shared libraries
-│   └── workers/
-│       ├── ai-worker/          # Article classification
-│       ├── ingestion-worker/   # RSS/GDELT feed aggregation
-│       └── indexer-worker/     # OpenSearch indexing
+│   └── api/                       # REST API (ASP.NET Core 8)
+│       ├── Controllers/           # 14 API controllers
+│       ├── Services/              # Business logic + OSINT fetchers
+│       ├── Data/                  # DbContext, entities, seed data
+│       ├── Models/                # DTOs and request/response models
+│       ├── Middleware/            # Auth, country scoping, audit log
+│       └── Validators/           # FluentValidation rules
 ├── frontend/
 │   └── src/
 │       ├── app/
-│       │   ├── core/           # Services, guards, interceptors
-│       │   ├── features/       # Feature components
-│       │   └── shared/         # Shared components
-│       └── assets/i18n/        # Translation files (en, ar)
-├── infra/
-│   ├── docker-compose.yml      # Infrastructure services
-│   ├── postgres/init.sql
-│   └── opensearch/
-├── Start-AUSentinel.ps1        # One-command launcher
-├── Stop-AUSentinel.ps1         # Stop all services
-└── osentLib.sln                # .NET solution file
+│       │   ├── core/              # Services, guards, interceptors
+│       │   ├── features/          # 20+ feature components
+│       │   │   ├── dashboard/     # OSINT dashboard with charts
+│       │   │   ├── news/          # News list & detail
+│       │   │   ├── bulletins/     # Bulletin CRUD
+│       │   │   ├── alerts/        # Alerts & alert rules
+│       │   │   ├── cyber/         # Threat intel, attack map, incidents
+│       │   │   ├── maltego/       # Entity graph visualization
+│       │   │   ├── social-search/ # Multi-platform social search
+│       │   │   ├── dns/           # DNS lookup & domain watchlist
+│       │   │   ├── search/        # Advanced search & keywords
+│       │   │   ├── maps/          # Threat, alert, timeline maps
+│       │   │   ├── reports/       # Submit reports
+│       │   │   ├── admin/         # Users, sources, import
+│       │   │   └── ...
+│       │   └── shared/            # Reusable components
+│       ├── assets/i18n/           # Translations (en, ar, fr)
+│       └── styles/                # Global styles, dark theme, RTL
+├── screen/                        # Screenshots (dark/light/RTL)
+└── cdp-*.js                       # Dev screenshot utilities
 ```
 
 ---
@@ -116,64 +143,39 @@ osentLib/
 
 ### Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Node.js 18+](https://nodejs.org/)
+- PostgreSQL 16 (optional - falls back to InMemory database)
 
-### One-Command Launch (Windows)
-
-```powershell
-.\Start-AUSentinel.ps1
-```
-
-This will check prerequisites, start Docker services, launch the backend API, and start the frontend dev server.
-
-### Manual Launch
+### Launch
 
 ```bash
-# 1. Start infrastructure services
-cd infra
-docker compose up -d
-
-# 2. Start backend API (new terminal)
+# 1. Start backend API
 cd backend/api
 dotnet restore
 dotnet run
 
-# 3. Start frontend (new terminal)
+# 2. Start frontend (new terminal)
 cd frontend
 npm install    # first time only
 npm start
 ```
 
+The backend auto-detects available services (PostgreSQL, Redis) and falls back to in-memory alternatives, so no Docker infrastructure is required for development.
+
 ### Access Points
 
-| Service         | URL                          |
-|-----------------|------------------------------|
-| Web App         | http://localhost:4200         |
-| API             | http://localhost:5000         |
-| Swagger Docs    | http://localhost:5000/swagger |
-| RabbitMQ UI     | http://localhost:15672        |
-| OpenSearch      | http://localhost:9200         |
-| MinIO Console   | http://localhost:9001         |
+| Service         | URL                           |
+|-----------------|-------------------------------|
+| Web App         | http://localhost:4100          |
+| API             | http://localhost:9099          |
+| Swagger Docs    | http://localhost:9099/swagger  |
 
 ### Default Credentials
 
 - **Admin:** admin / Admin123!
-- **User:** user / User123!
 
----
-
-## Docker Services
-
-```yaml
-PostgreSQL:         localhost:5432    # Main database
-Redis:              localhost:6379    # Cache & sessions
-RabbitMQ:           localhost:5672    # Message queue
-OpenSearch:         localhost:9200    # Full-text search
-MinIO:              localhost:9000    # Object storage
-OpenSearch Dashboards: localhost:5601 # Search analytics
-```
+In development mode, the auto-login middleware automatically authenticates all requests as the admin user, so no login is required.
 
 ---
 
@@ -184,8 +186,7 @@ OpenSearch Dashboards: localhost:5601 # Search analytics
 ```bash
 cd backend/api
 dotnet restore           # Restore packages
-dotnet ef database update # Apply migrations
-dotnet run               # Start API
+dotnet run               # Start API on port 9099
 dotnet watch run         # Start with hot reload
 ```
 
@@ -194,17 +195,17 @@ dotnet watch run         # Start with hot reload
 ```bash
 cd frontend
 npm install              # Install dependencies
-npm start                # Start dev server (localhost:4200)
+npm start                # Dev server on port 4100 (proxies /api to :9099)
 npm run build            # Production build
 ```
 
-### Database Migrations
+### Screenshots
+
+CDP-based screenshot scripts are included for automated visual testing:
 
 ```bash
-cd backend/api
-dotnet ef migrations add MigrationName   # Create migration
-dotnet ef database update                # Apply migrations
-dotnet ef migrations remove              # Remove last migration
+node cdp-screenshot-dashboard.js   # Capture dashboard
+node screenshot-theme-verify.js    # Capture all pages in dark/light
 ```
 
 ---
@@ -224,12 +225,16 @@ dotnet ef migrations remove              # Remove last migration
 
 ## Roadmap
 
-- [x] Phase 1: Foundation (i18n, User Profiles)
+- [x] Phase 1: Foundation (i18n, User Profiles, Auth)
 - [x] Phase 2: User Engagement (Bookmarks, XP, Badges, Leaderboard)
-- [x] Phase 3: Enhanced Search (Advanced Query, Bulk Import)
+- [x] Phase 3: Enhanced Search (Advanced Query, Bulk Import, Keywords)
 - [x] Phase 4: Intelligence Tools (DNS Lookup, Domain Watchlist)
-- [ ] Phase 5: External Search Integration (Twitter, Reddit, NewsAPI)
-- [ ] Phase 6: Advanced AI (Face Detection, POI Database, Unified Search)
+- [x] Phase 5: Real OSINT Data (GDELT, ReliefWeb, AllAfrica, WHO, UN News)
+- [x] Phase 6: Cyber Operations (Threat Intel, Attack Map, Incidents, Country Intel)
+- [x] Phase 7: OSINT Tools (Maltego Graph, Social Search, OSINT Framework)
+- [x] Phase 8: Theme System (Dark/Light modes, RTL Arabic support)
+- [ ] Phase 9: Advanced AI (Article classification, entity extraction)
+- [ ] Phase 10: Real-time (WebSocket alerts, live feed updates)
 
 ---
 
@@ -239,4 +244,4 @@ Proprietary - African Union Member States
 
 ---
 
-**Version:** 1.0.0-beta
+**Version:** 1.1.0
