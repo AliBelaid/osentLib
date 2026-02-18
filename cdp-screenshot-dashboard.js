@@ -4,9 +4,9 @@ const fs = require('fs');
 const net = require('net');
 
 const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const OUTPUT = 'C:\\osentLib\\screen\\dashboard.png';
-const TEMP_DIR = process.env.TEMP + '\\cdp-dash-' + Date.now();
-const PORT = 9225;
+const OUTPUT = 'C:\\osentLib\\screen\\dashboard-english.png';
+const TEMP_DIR = process.env.TEMP + '\\cdp-dash-en-' + Date.now();
+const PORT = 9227;
 
 function httpGet(url) {
   return new Promise((resolve, reject) => {
@@ -108,21 +108,22 @@ async function main() {
   const targetTab = tabs.find(t => t.type === 'page') || tabs[0];
   const ws = await connectWS(targetTab.webSocketDebuggerUrl);
 
-  // Navigate to app and set token
+  // Navigate to app and set token + Arabic language
   await ws.call('Page.navigate', { url: 'http://localhost:4100' });
   await new Promise(r => setTimeout(r, 3000));
 
   await ws.call('Runtime.evaluate', { expression: `
     localStorage.setItem('ausentinel_token', '${loginResult.token}');
     localStorage.setItem('ausentinel_user', '${JSON.stringify(loginResult.user || {}).replace(/'/g, "\\'")}');
+    localStorage.setItem('preferredLanguage', 'en');
     'done';
   `});
 
   // Navigate to dashboard
-  console.log('Navigating to dashboard...');
+  console.log('Navigating to dashboard in English...');
   await ws.call('Page.navigate', { url: 'http://localhost:4100/dashboard' });
-  console.log('Waiting 10s for dashboard to render...');
-  await new Promise(r => setTimeout(r, 10000));
+  console.log('Waiting 12s for dashboard to render...');
+  await new Promise(r => setTimeout(r, 12000));
 
   await ws.call('Emulation.setDeviceMetricsOverride', { width: 1920, height: 1080, deviceScaleFactor: 1, mobile: false });
   await new Promise(r => setTimeout(r, 1000));
