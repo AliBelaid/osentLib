@@ -174,9 +174,9 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
     :host {
       display: block;
       min-height: 100vh;
-      background: #0a0e17;
+      background: var(--bg-page);
       padding: 32px 40px;
-      color: #c8cdd8;
+      color: var(--text-secondary);
       font-family: 'Inter', 'Roboto', sans-serif;
     }
 
@@ -187,7 +187,7 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       align-items: flex-start;
       margin-bottom: 28px;
       padding-bottom: 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--border-default);
     }
 
     .title-row {
@@ -215,7 +215,7 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       font-size: 1.65rem;
       font-weight: 700;
       letter-spacing: 0.5px;
-      color: #eef0f6;
+      color: var(--text-primary);
       background: linear-gradient(135deg, #667eea 0%, #00d4ff 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -248,7 +248,7 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       gap: 6px;
       margin: 8px 0 0;
       font-size: 0.82rem;
-      color: #667a8a;
+      color: var(--text-tertiary);
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
     }
 
@@ -302,8 +302,8 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       gap: 16px;
       padding: 20px 24px;
       border-radius: 12px;
-      background: #1a1f2e;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
       overflow: hidden;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
@@ -363,13 +363,13 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
     .stat-value {
       font-size: 1.6rem;
       font-weight: 700;
-      color: #eef0f6;
+      color: var(--text-primary);
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
     }
 
     .stat-label {
       font-size: 0.78rem;
-      color: #667a8a;
+      color: var(--text-tertiary);
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-top: 2px;
@@ -380,8 +380,8 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       display: flex;
       margin-bottom: 16px;
       border-radius: 12px;
-      background: rgba(26, 31, 46, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bg-card-glass);
+      border: 1px solid var(--border-default);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       overflow: hidden;
@@ -488,7 +488,7 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       margin: 0 0 10px;
       font-size: 1.15rem;
       font-weight: 600;
-      color: #eef0f6;
+      color: var(--text-primary);
       line-height: 1.4;
     }
 
@@ -500,23 +500,23 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       margin-bottom: 14px;
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
       font-size: 0.76rem;
-      color: #556677;
+      color: var(--text-tertiary);
     }
 
     .meta-icon {
       font-size: 15px;
       width: 15px;
       height: 15px;
-      color: #4a5568;
+      color: var(--text-secondary);
     }
 
     .meta-text {
-      color: #778899;
+      color: var(--text-secondary);
     }
 
     .meta-sep {
       margin: 0 4px;
-      color: #334455;
+      color: var(--text-primary);
     }
 
     /* Content preview */
@@ -524,7 +524,7 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       margin: 0 0 14px;
       font-size: 0.88rem;
       line-height: 1.6;
-      color: #8892a4;
+      color: var(--text-secondary);
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
@@ -648,8 +648,8 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       width: 100px;
       height: 100px;
       border-radius: 50%;
-      background: rgba(26, 31, 46, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bg-card-glass);
+      border: 1px solid var(--border-default);
       margin-bottom: 28px;
       overflow: hidden;
     }
@@ -658,7 +658,7 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       font-size: 44px;
       width: 44px;
       height: 44px;
-      color: #334155;
+      color: var(--text-primary);
     }
 
     .empty-scan-line {
@@ -682,14 +682,14 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
       margin: 0 0 10px;
       font-size: 1.2rem;
       font-weight: 600;
-      color: #556677;
+      color: var(--text-tertiary);
       letter-spacing: 0.5px;
     }
 
     .empty-subtitle {
       margin: 0;
       font-size: 0.85rem;
-      color: #445566;
+      color: var(--text-tertiary);
       line-height: 1.7;
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
     }

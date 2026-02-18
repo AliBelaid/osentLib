@@ -256,7 +256,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     /* ===================== */
     :host {
       display: block;
-      background: #0a0e17;
+      background: var(--bg-page);
       min-height: 100vh;
     }
 
@@ -264,8 +264,8 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       padding: 32px 24px;
       max-width: 1200px;
       margin: 0 auto;
-      background: #0a0e17;
-      color: #e0e6ed;
+      background: var(--bg-page);
+      color: var(--text-primary);
       font-family: 'Inter', 'Segoe UI', sans-serif;
     }
 
@@ -319,7 +319,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       font-size: 26px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #ffffff 0%, #a0b4f0 100%);
+      background: linear-gradient(135deg, var(--text-heading) 0%, var(--text-secondary) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -384,8 +384,8 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       gap: 6px;
       padding: 10px 18px;
       border: none;
-      background: #1a1f2e;
-      color: #8892a4;
+      background: var(--bg-card);
+      color: var(--text-secondary);
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
@@ -405,8 +405,8 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     }
 
     .lb-toggle-btn:hover:not(.active) {
-      background: #242a3d;
-      color: #c0c8d8;
+      background: var(--bg-surface-hover);
+      color: var(--text-primary);
     }
 
     .lb-refresh-btn {
@@ -477,10 +477,10 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
 
     .lb-podium-card {
       position: relative;
-      background: rgba(26, 31, 46, 0.85);
+      background: var(--bg-card-glass);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-default);
       border-radius: 20px;
       padding: 50px 24px 24px;
       text-align: center;
@@ -534,7 +534,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       font-size: 24px;
       width: 24px;
       height: 24px;
-      color: #0a0e17;
+      color: var(--bg-page);
     }
 
     /* --- SILVER (2nd) --- */
@@ -579,7 +579,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       justify-content: center;
       font-size: 16px;
       font-weight: 900;
-      color: #0a0e17;
+      color: var(--bg-page);
       z-index: 2;
     }
 
@@ -617,7 +617,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #151929;
+      background: var(--bg-surface);
       border: 3px solid;
     }
 
@@ -648,7 +648,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       margin: 0 0 2px;
       font-size: 17px;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--text-heading);
     }
 
     .lb-podium-card.gold .lb-podium-name {
@@ -665,7 +665,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     .lb-podium-country {
       margin: 0 0 12px;
       font-size: 12px;
-      color: #8892a4;
+      color: var(--text-secondary);
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -709,10 +709,10 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     /*  TABLE                */
     /* ===================== */
     .lb-table-wrapper {
-      background: rgba(26, 31, 46, 0.6);
+      background: var(--bg-card-glass);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-default);
       border-radius: 16px;
       overflow: hidden;
       margin-bottom: 32px;
@@ -745,8 +745,8 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       transition: background 0.2s ease;
     }
 
-    .lb-row-even { background: #1a1f2e; }
-    .lb-row-odd  { background: #151929; }
+    .lb-row-even { background: var(--bg-card); }
+    .lb-row-odd  { background: var(--bg-surface); }
 
     .lb-row:hover {
       background: rgba(102, 126, 234, 0.06) !important;
@@ -771,7 +771,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     .lb-rank-num {
       font-size: 16px;
       font-weight: 800;
-      color: #4a5268;
+      color: var(--text-tertiary);
       font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
     }
 
@@ -790,7 +790,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #1a1f2e, #242a3d);
+      background: var(--bg-card);
       border: 1px solid rgba(102, 126, 234, 0.2);
       display: flex;
       align-items: center;
@@ -814,7 +814,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     .lb-user-name {
       font-size: 14px;
       font-weight: 600;
-      color: #e0e6ed;
+      color: var(--text-primary);
     }
 
     .lb-user-handle {
@@ -836,7 +836,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
 
     .lb-country-tag {
       font-size: 13px;
-      color: #8892a4;
+      color: var(--text-secondary);
       font-weight: 600;
       letter-spacing: 0.5px;
     }
@@ -870,8 +870,8 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       align-items: center;
       gap: 14px;
       padding: 18px 20px;
-      background: rgba(26, 31, 46, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bg-card-glass);
+      border: 1px solid var(--border-default);
       border-radius: 14px;
       transition: border-color 0.25s ease, box-shadow 0.25s ease;
     }
@@ -898,7 +898,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
     .lb-stat-value {
       font-size: 18px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--text-heading);
       font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
     }
 
@@ -919,7 +919,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       align-items: center;
       justify-content: center;
       padding: 80px;
-      color: #4a5268;
+      color: var(--text-tertiary);
     }
 
     .lb-empty mat-icon {
@@ -927,12 +927,12 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       width: 64px;
       height: 64px;
       margin-bottom: 16px;
-      color: #2a3040;
+      color: var(--text-primary);
     }
 
     .lb-empty p {
       font-size: 15px;
-      color: #4a5268;
+      color: var(--text-tertiary);
     }
 
     /* ===================== */

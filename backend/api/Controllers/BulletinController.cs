@@ -33,6 +33,25 @@ public class BulletinController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>Submit a report (any authenticated user)</summary>
+    [HttpPost("report")]
+    public async Task<ActionResult<BulletinDto>> SubmitReport([FromBody] SubmitReportRequest request)
+    {
+        var userId = HttpContext.GetUserId();
+        var country = HttpContext.GetUserCountryCode() ?? "";
+        var bulletinRequest = new CreateBulletinRequest(
+            request.Title,
+            request.Content,
+            request.Urgency,
+            request.ReportType
+        );
+        var result = await _bulletinService.CreateAsync(userId, country, bulletinRequest);
+        // Auto-submit for review
+        await _bulletinService.SubmitForReviewAsync(result.Id, userId);
+        var updated = await _bulletinService.GetAsync(result.Id);
+        return CreatedAtAction(nameof(Get), new { id = updated.Id }, updated);
+    }
+
     /// <summary>Create a new bulletin draft</summary>
     [HttpPost]
     [Authorize(Roles = "Editor,CountryAdmin,AUAdmin")]

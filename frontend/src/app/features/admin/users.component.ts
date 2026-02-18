@@ -204,7 +204,7 @@ import { UserDto, CountryDto, CreateUserRequest, UpdateUserRequest } from '@core
       justify-content: center; z-index: 1000;
     }
     .dialog-content {
-      background: #1f2937; color: #e0e6f0; border: 1px solid rgba(255,255,255,0.06);
+      background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-default);
       padding: 24px; border-radius: 8px;
       width: 480px; max-height: 80vh; overflow-y: auto;
     }

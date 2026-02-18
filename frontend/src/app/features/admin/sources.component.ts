@@ -231,10 +231,10 @@ import { SourceDto } from '../../core/models';
   styles: [`
     :host {
       display: block;
-      background: #0a0e17;
+      background: var(--bg-page);
       min-height: 100vh;
       padding: 32px;
-      color: #c8d6e5;
+      color: var(--text-primary);
     }
 
     /* ===== Header ===== */
@@ -269,7 +269,7 @@ import { SourceDto } from '../../core/models';
     }
     .header-subtitle {
       margin: 2px 0 0; font-size: 13px;
-      color: #576574; letter-spacing: 1.5px;
+      color: var(--text-tertiary); letter-spacing: 1.5px;
       text-transform: uppercase; font-family: 'Courier New', monospace;
     }
     .header-decoration {
@@ -301,8 +301,8 @@ import { SourceDto } from '../../core/models';
     }
     .stat-card {
       display: flex; align-items: center; gap: 14px;
-      background: #1a1f2e;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
       border-radius: 12px;
       padding: 18px 20px;
       transition: all 0.25s ease;
@@ -321,15 +321,15 @@ import { SourceDto } from '../../core/models';
     .active-icon { background: linear-gradient(135deg, #00e676, #00c853); }
     .inactive-icon { background: linear-gradient(135deg, #576574, #3d4455); }
     .types-icon { background: linear-gradient(135deg, #00d4ff, #667eea); }
-    .stat-value { font-size: 26px; font-weight: 700; color: #e2e8f0; font-family: 'Courier New', monospace; }
+    .stat-value { font-size: 26px; font-weight: 700; color: var(--text-primary); font-family: 'Courier New', monospace; }
     .active-value { color: #00e676; }
-    .inactive-value { color: #576574; }
-    .stat-label { font-size: 12px; color: #576574; text-transform: uppercase; letter-spacing: 1px; }
+    .inactive-value { color: var(--text-tertiary); }
+    .stat-label { font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; }
 
     /* ===== Form Card ===== */
     .form-card {
-      background: #1a1f2e !important;
-      border: 1px solid rgba(255, 255, 255, 0.06) !important;
+      background: var(--bg-card) !important;
+      border: 1px solid var(--border-default) !important;
       border-radius: 12px !important;
       margin-bottom: 24px;
       overflow: hidden;
@@ -338,7 +338,7 @@ import { SourceDto } from '../../core/models';
       display: flex; align-items: center; gap: 10px;
       padding: 16px 24px;
       background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), transparent);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--border-default);
       font-size: 14px; font-weight: 600; color: #667eea;
       text-transform: uppercase; letter-spacing: 1px;
     }
@@ -356,7 +356,7 @@ import { SourceDto } from '../../core/models';
     /* Dark form field overrides */
     .form-card ::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; }
     .form-card ::ng-deep .mdc-text-field--outlined {
-      background: rgba(10, 14, 23, 0.6) !important;
+      background: var(--bg-input) !important;
     }
     .form-card ::ng-deep .mdc-notched-outline__leading,
     .form-card ::ng-deep .mdc-notched-outline__notch,
@@ -370,10 +370,10 @@ import { SourceDto } from '../../core/models';
     }
     .form-card ::ng-deep .mat-mdc-input-element,
     .form-card ::ng-deep .mat-mdc-select-value {
-      color: #c8d6e5 !important;
+      color: var(--text-primary) !important;
     }
     .form-card ::ng-deep .mat-mdc-floating-label {
-      color: #576574 !important;
+      color: var(--text-tertiary) !important;
     }
 
     /* Option dot indicators */
@@ -415,8 +415,8 @@ import { SourceDto } from '../../core/models';
 
     /* ===== Table ===== */
     .table-container {
-      background: #1a1f2e;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
       border-radius: 12px;
       overflow: hidden;
     }
@@ -424,14 +424,14 @@ import { SourceDto } from '../../core/models';
       display: flex; align-items: center; gap: 10px;
       padding: 16px 24px;
       background: linear-gradient(90deg, rgba(102, 126, 234, 0.08), transparent);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--border-default);
       font-size: 14px; font-weight: 600; color: #667eea;
       text-transform: uppercase; letter-spacing: 1px;
     }
     .table-header mat-icon { font-size: 20px; width: 20px; height: 20px; }
     .table-count {
       margin-left: auto;
-      font-size: 11px; color: #576574;
+      font-size: 11px; color: var(--text-tertiary);
       font-family: 'Courier New', monospace;
       letter-spacing: 1px;
     }
@@ -441,11 +441,11 @@ import { SourceDto } from '../../core/models';
       background: transparent !important;
     }
     .sources-table ::ng-deep .mat-mdc-header-row {
-      background: rgba(10, 14, 23, 0.5) !important;
+      background: var(--bg-input) !important;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
     .sources-table ::ng-deep .mat-mdc-header-cell {
-      color: #576574 !important;
+      color: var(--text-tertiary) !important;
       font-size: 11px !important;
       font-weight: 600 !important;
       letter-spacing: 1.5px;
@@ -463,7 +463,7 @@ import { SourceDto } from '../../core/models';
       background: rgba(102, 126, 234, 0.06) !important;
     }
     .sources-table ::ng-deep .mat-mdc-cell {
-      color: #c8d6e5 !important;
+      color: var(--text-primary) !important;
       border-bottom: none !important;
       padding: 14px 16px !important;
       font-size: 13px;
@@ -558,7 +558,7 @@ import { SourceDto } from '../../core/models';
     }
 
     /* Name cell */
-    .name-cell { font-weight: 600; color: #e2e8f0 !important; }
+    .name-cell { font-weight: 600; color: var(--text-primary) !important; }
 
     /* URL cell */
     .url-cell {
@@ -588,7 +588,7 @@ import { SourceDto } from '../../core/models';
       font-size: 16px !important;
       width: 16px !important;
       height: 16px !important;
-      color: #576574;
+      color: var(--text-tertiary);
     }
 
     /* Last Fetched cell */
@@ -596,9 +596,9 @@ import { SourceDto } from '../../core/models';
       font-family: 'Courier New', monospace;
       font-size: 12px !important;
     }
-    .fetched-time { color: #c8d6e5; }
+    .fetched-time { color: var(--text-primary); }
     .never-fetched {
-      color: #576574;
+      color: var(--text-tertiary);
       letter-spacing: 1px;
       font-size: 10px;
     }
@@ -623,11 +623,11 @@ import { SourceDto } from '../../core/models';
       color: #00e676;
       text-shadow: 0 0 8px rgba(0, 230, 118, 0.4);
     }
-    .status-inactive { color: #576574; }
+    .status-inactive { color: var(--text-tertiary); }
 
     /* Delete button */
     .delete-btn {
-      color: #576574 !important;
+      color: var(--text-tertiary) !important;
       transition: all 0.2s ease !important;
     }
     .delete-btn:hover {
@@ -638,7 +638,7 @@ import { SourceDto } from '../../core/models';
     /* Empty State */
     .empty-state {
       display: flex; flex-direction: column; align-items: center;
-      padding: 48px 24px; color: #576574;
+      padding: 48px 24px; color: var(--text-tertiary);
     }
     .empty-state mat-icon {
       font-size: 48px; width: 48px; height: 48px;
@@ -646,7 +646,7 @@ import { SourceDto } from '../../core/models';
     }
     .empty-state p {
       font-size: 16px; font-weight: 600; margin: 0 0 4px;
-      color: #c8d6e5;
+      color: var(--text-primary);
     }
     .empty-state span {
       font-size: 13px;

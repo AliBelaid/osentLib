@@ -111,7 +111,7 @@ export class KeywordDialogComponent {
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .list-card { margin-bottom: 16px; }
     .actions { margin-left: auto; }
-    .meta { margin-top: 12px; font-size: 14px; color: #8892a4; }
+    .meta { margin-top: 12px; font-size: 14px; color: var(--text-secondary); }
   `]
 })
 export class KeywordManagerComponent implements OnInit {

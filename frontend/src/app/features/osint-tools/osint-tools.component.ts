@@ -281,16 +281,16 @@ interface SpiderFootResult {
                     <div class="threat-overview">
                       <div class="risk-gauge">
                         <svg viewBox="0 0 120 70" class="gauge-svg">
-                          <path d="M 10 65 A 50 50 0 0 1 110 65" fill="none" stroke="#1a1f2e" stroke-width="10" stroke-linecap="round"/>
+                          <path d="M 10 65 A 50 50 0 0 1 110 65" fill="none" stroke="var(--bg-card)" stroke-width="10" stroke-linecap="round"/>
                           <path d="M 10 65 A 50 50 0 0 1 110 65" fill="none"
                                 [attr.stroke]="getGaugeColor(domainResult.threatIntel.riskScore)"
                                 stroke-width="10" stroke-linecap="round"
                                 [attr.stroke-dasharray]="getGaugeDash(domainResult.threatIntel.riskScore)"
                                 stroke-dashoffset="0"/>
-                          <text x="60" y="58" text-anchor="middle" fill="#e0e6f0" font-size="22" font-weight="bold">
+                          <text x="60" y="58" text-anchor="middle" fill="var(--text-primary)" font-size="22" font-weight="bold">
                             {{ domainResult.threatIntel.riskScore }}
                           </text>
-                          <text x="60" y="70" text-anchor="middle" fill="#8892a4" font-size="8">/100</text>
+                          <text x="60" y="70" text-anchor="middle" fill="var(--text-secondary)" font-size="8">/100</text>
                         </svg>
                         <div class="risk-level-label" [style.color]="getGaugeColor(domainResult.threatIntel.riskScore)">
                           {{ domainResult.threatIntel.riskLevel }}
@@ -768,14 +768,14 @@ interface SpiderFootResult {
     .page-title {
       display: flex; align-items: center; gap: 10px;
       font-size: 24px; font-weight: 700; margin: 0 0 4px;
-      color: #e0e6f0;
+      color: var(--text-primary);
     }
     .page-title mat-icon {
       color: #667eea; font-size: 28px; width: 28px; height: 28px;
     }
 
     .page-subtitle {
-      margin: 0; font-size: 13px; color: #5a6b80;
+      margin: 0; font-size: 13px; color: var(--text-tertiary);
       letter-spacing: 0.5px;
     }
 
@@ -787,12 +787,12 @@ interface SpiderFootResult {
     }
 
     ::ng-deep .osint-tabs .mat-mdc-tab-header {
-      background: #0d1117;
-      border-bottom: 1px solid rgba(102,126,234,0.15);
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border-default);
       border-radius: 8px 8px 0 0;
     }
     ::ng-deep .osint-tabs .mat-mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
-      color: #8892a4 !important;
+      color: var(--text-secondary) !important;
     }
     ::ng-deep .osint-tabs .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
       color: #667eea !important;
@@ -868,9 +868,9 @@ interface SpiderFootResult {
     .status-card .summary-icon { background: linear-gradient(135deg, #4facfe, #00f2fe); }
 
     .summary-value {
-      font-size: 24px; font-weight: 700; color: #e0e6f0; line-height: 1.2;
+      font-size: 24px; font-weight: 700; color: var(--text-primary); line-height: 1.2;
     }
-    .summary-label { font-size: 12px; color: #8892a4; margin-top: 2px; }
+    .summary-label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
     .text-danger { color: #ff5252 !important; }
     .text-safe { color: #00e676 !important; }
@@ -886,14 +886,14 @@ interface SpiderFootResult {
        ═════════════════════════════════════════════ */
     .section-heading {
       display: flex; align-items: center; gap: 8px;
-      font-size: 17px; font-weight: 600; color: #e0e6f0;
+      font-size: 17px; font-weight: 600; color: var(--text-primary);
       margin: 24px 0 14px;
     }
     .section-heading mat-icon { color: #667eea; }
 
     .section-title-inline {
       display: flex; align-items: center; gap: 8px;
-      font-size: 15px; font-weight: 600; color: #e0e6f0;
+      font-size: 15px; font-weight: 600; color: var(--text-primary);
       margin: 0 0 14px;
     }
     .section-title-inline mat-icon { color: #667eea; font-size: 20px; width: 20px; height: 20px; }
@@ -946,11 +946,11 @@ interface SpiderFootResult {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 8px;
     }
-    .breach-name { font-size: 16px; font-weight: 600; color: #e0e6f0; }
+    .breach-name { font-size: 16px; font-weight: 600; color: var(--text-primary); }
 
     .breach-meta {
       display: flex; align-items: center; gap: 12px;
-      font-size: 12px; color: #8892a4; margin-bottom: 8px;
+      font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;
       flex-wrap: wrap;
     }
     .breach-date, .pwn-count { white-space: nowrap; }
@@ -962,13 +962,13 @@ interface SpiderFootResult {
     .verified-badge mat-icon { font-size: 14px; width: 14px; height: 14px; }
 
     .breach-desc {
-      font-size: 13px; color: #8892a4; line-height: 1.5; margin: 0 0 10px;
+      font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin: 0 0 10px;
     }
 
     .data-classes { display: flex; flex-wrap: wrap; gap: 6px; }
     .data-chip {
       padding: 3px 10px; border-radius: 12px; font-size: 11px;
-      background: rgba(102,126,234,0.12); color: #a0b4f0;
+      background: rgba(102,126,234,0.12); color: var(--text-secondary);
       border: 1px solid rgba(102,126,234,0.2);
     }
 
@@ -1013,7 +1013,7 @@ interface SpiderFootResult {
       font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
       color: #667eea; font-weight: 600;
     }
-    .info-val { font-size: 13px; color: #e0e6f0; word-break: break-all; }
+    .info-val { font-size: 13px; color: var(--text-primary); word-break: break-all; }
 
     /* Ports Table */
     .ports-table {
@@ -1025,13 +1025,13 @@ interface SpiderFootResult {
       color: #667eea; border-bottom: 1px solid rgba(102,126,234,0.15);
     }
     .ports-table td {
-      padding: 8px 12px; font-size: 13px; color: #e0e6f0;
+      padding: 8px 12px; font-size: 13px; color: var(--text-primary);
       border-bottom: 1px solid rgba(255,255,255,0.04);
     }
     .port-num { color: #ffab40; font-weight: 600; }
     .state-badge {
       padding: 2px 8px; border-radius: 8px; font-size: 11px;
-      background: rgba(128,128,128,0.15); color: #8892a4;
+      background: rgba(128,128,128,0.15); color: var(--text-secondary);
     }
     .state-badge.open { background: rgba(76,175,80,0.15); color: #69f0ae; }
 
@@ -1051,7 +1051,7 @@ interface SpiderFootResult {
     .subdomain-item {
       padding: 6px 12px; border-radius: 4px;
       background: rgba(102,126,234,0.06);
-      color: #a0b4f0; font-size: 13px;
+      color: var(--text-secondary); font-size: 13px;
     }
 
     /* ═════════════════════════════════════════════
@@ -1059,7 +1059,7 @@ interface SpiderFootResult {
        ═════════════════════════════════════════════ */
     .dorks-count {
       display: flex; align-items: center; gap: 8px;
-      font-size: 14px; color: #8892a4; margin-bottom: 16px;
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;
     }
     .dorks-count mat-icon { color: #667eea; }
 
@@ -1079,11 +1079,11 @@ interface SpiderFootResult {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 10px;
     }
-    .dork-title { font-size: 14px; font-weight: 600; color: #e0e6f0; }
+    .dork-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
 
     .dork-query-row {
       display: flex; align-items: center; gap: 8px;
-      background: #0d1117; border-radius: 6px;
+      background: var(--bg-header); border-radius: 6px;
       padding: 10px 12px; margin-bottom: 10px;
       border: 1px solid rgba(102,126,234,0.12);
     }
@@ -1098,7 +1098,7 @@ interface SpiderFootResult {
     .copy-btn mat-icon { font-size: 18px; width: 18px; height: 18px; color: #667eea; }
 
     .dork-desc {
-      font-size: 12px; color: #8892a4; line-height: 1.4; margin: 0 0 8px;
+      font-size: 12px; color: var(--text-secondary); line-height: 1.4; margin: 0 0 8px;
     }
 
     .dork-category-chip {
@@ -1116,7 +1116,7 @@ interface SpiderFootResult {
     .snapshot-item {
       display: flex; align-items: center; gap: 16px;
       padding: 12px 16px; border-radius: 8px;
-      background: #1a1f2e;
+      background: var(--bg-card);
       border: 1px solid rgba(255,255,255,0.04);
       transition: border-color 0.2s;
     }
@@ -1126,7 +1126,7 @@ interface SpiderFootResult {
       display: flex; align-items: center; gap: 8px; flex: 1;
     }
     .snap-icon { color: #667eea; font-size: 18px; width: 18px; height: 18px; }
-    .snap-date { font-size: 13px; color: #e0e6f0; }
+    .snap-date { font-size: 13px; color: var(--text-primary); }
 
     .status-code-badge {
       padding: 3px 10px; border-radius: 8px; font-size: 12px;
@@ -1159,7 +1159,7 @@ interface SpiderFootResult {
       display: flex; align-items: center; gap: 12px;
     }
     .module-name {
-      min-width: 160px; font-size: 13px; color: #e0e6f0;
+      min-width: 160px; font-size: 13px; color: var(--text-primary);
       font-weight: 500; text-align: right;
     }
     .module-bar-track {
@@ -1186,9 +1186,9 @@ interface SpiderFootResult {
       border-bottom: 1px solid rgba(102,126,234,0.1);
     }
     .findings-group-header mat-icon { color: #667eea; }
-    .group-module { font-size: 15px; font-weight: 600; color: #e0e6f0; }
+    .group-module { font-size: 15px; font-weight: 600; color: var(--text-primary); }
     .group-count {
-      margin-left: auto; font-size: 12px; color: #8892a4;
+      margin-left: auto; font-size: 12px; color: var(--text-secondary);
       padding: 2px 10px; border-radius: 10px;
       background: rgba(102,126,234,0.1);
     }
@@ -1212,11 +1212,11 @@ interface SpiderFootResult {
     }
     .finding-type { font-size: 12px; color: #667eea; font-weight: 500; }
     .finding-data {
-      font-size: 13px; color: #e0e6f0; word-break: break-all;
+      font-size: 13px; color: var(--text-primary); word-break: break-all;
     }
-    .finding-source { font-size: 11px; color: #5a6b80; }
+    .finding-source { font-size: 11px; color: var(--text-tertiary); }
 
-    .finding-date { font-size: 11px; color: #5a6b80; white-space: nowrap; flex-shrink: 0; }
+    .finding-date { font-size: 11px; color: var(--text-tertiary); white-space: nowrap; flex-shrink: 0; }
 
     /* ═════════════════════════════════════════════
        RESPONSIVE

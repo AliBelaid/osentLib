@@ -143,8 +143,8 @@ import { ThreatBadgeComponent } from '../../../shared/components/threat-badge.co
       width: 360px; flex-shrink: 0;
       max-height: calc(100vh - 200px); overflow-y: auto;
     }
-    .map-side-panel h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; color: #e0e6f0; }
-    .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .map-side-panel h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; color: var(--text-primary); }
+    .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-default); }
 
     .alerts-heading {
       margin-top: 20px;
@@ -158,7 +158,7 @@ import { ThreatBadgeComponent } from '../../../shared/components/threat-badge.co
       display: flex; flex-direction: column; gap: 8px;
     }
     .alert-item {
-      background: #1a1f2e; border-radius: 8px; padding: 12px;
+      background: var(--bg-card); border-radius: 8px; padding: 12px;
       border-left: 3px solid #667eea;
       transition: all 0.2s;
     }
@@ -177,14 +177,14 @@ import { ThreatBadgeComponent } from '../../../shared/components/threat-badge.co
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 6px;
     }
-    .alert-time { font-size: 11px; color: #8892a4; }
+    .alert-time { font-size: 11px; color: var(--text-secondary); }
     .alert-title {
-      font-size: 13px; font-weight: 600; color: #e0e6f0;
+      font-size: 13px; font-weight: 600; color: var(--text-primary);
       margin-bottom: 4px;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
     .alert-message {
-      font-size: 12px; color: #8892a4; line-height: 1.4;
+      font-size: 12px; color: var(--text-secondary); line-height: 1.4;
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
     .alert-nav {
@@ -199,7 +199,7 @@ import { ThreatBadgeComponent } from '../../../shared/components/threat-badge.co
     .alert-ack mat-icon { font-size: 14px; width: 14px; height: 14px; }
 
     .no-alerts {
-      text-align: center; padding: 24px; color: #8892a4;
+      text-align: center; padding: 24px; color: var(--text-secondary);
     }
     .no-alerts mat-icon {
       font-size: 36px; width: 36px; height: 36px; color: #00e676; margin-bottom: 8px;
@@ -210,7 +210,7 @@ import { ThreatBadgeComponent } from '../../../shared/components/threat-badge.co
     }
     .nav-actions button { flex: 1; font-size: 12px; }
 
-    .select-prompt { text-align: center; color: #8892a4; padding: 40px 16px; }
+    .select-prompt { text-align: center; color: var(--text-secondary); padding: 40px 16px; }
     .select-prompt mat-icon { font-size: 48px; width: 48px; height: 48px; margin-bottom: 8px; color: #667eea; }
     @media (max-width: 900px) {
       .alert-map-layout { flex-direction: column; }

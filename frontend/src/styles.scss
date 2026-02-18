@@ -26,8 +26,8 @@ html, body {
   height: 100%;
   margin: 0;
   font-family: 'Segoe UI', Roboto, "Helvetica Neue", sans-serif;
-  background: #0a0e17;
-  color: #e0e6f0;
+  background: var(--bg-page, #0a0e17);
+  color: var(--text-primary, #e0e6f0);
 }
 
 .page-container {

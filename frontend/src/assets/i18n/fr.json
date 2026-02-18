@@ -69,7 +69,8 @@
     "attackMap": "Carte d'Attaques",
     "countryIntel": "Intel Pays",
     "incidents": "Incidents",
-    "socialSearch": "Recherche Médias Sociaux"
+    "socialSearch": "Recherche Médias Sociaux",
+    "submitReport": "Soumettre un Rapport"
   },
   "socialSearch": {
     "title": "Recherche OSINT Médias Sociaux",
@@ -376,6 +377,25 @@
     "dark": "Mode sombre",
     "light": "Mode clair",
     "toggle": "Changer de th\u00e8me"
+  },
+  "submitReport": {
+    "title": "Soumettre un Rapport",
+    "subtitle": "Soumettre des nouvelles d'urgence, des rapports de renseignement ou des alertes",
+    "reportType": "Type de Rapport",
+    "typeEmergency": "Alerte d'Urgence",
+    "typeIntelligence": "Rapport de Renseignement",
+    "typeNews": "Information Urgente",
+    "reportTitle": "Titre du Rapport",
+    "reportContent": "Description Détaillée",
+    "affectedCountry": "Pays Affecté",
+    "urgencyLevel": "Niveau d'Urgence",
+    "urgencyLow": "Faible",
+    "urgencyMedium": "Moyen",
+    "urgencyHigh": "Élevé",
+    "urgencyCritical": "Critique",
+    "submit": "Soumettre le Rapport",
+    "success": "Rapport soumis avec succès. Il sera examiné par les administrateurs.",
+    "error": "Échec de la soumission du rapport"
   },
   "cyber": {
     "threatIntel": {

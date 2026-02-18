@@ -136,6 +136,14 @@ export interface BulletinDto {
   publishedAt?: string;
 }
 
+export interface SubmitReportRequest {
+  title: string;
+  content: string;
+  reportType: string;
+  urgency: number;
+  affectedCountry?: string;
+}
+
 export interface CreateAlertRuleRequest {
   name: string;
   category?: string;

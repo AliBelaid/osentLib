@@ -239,7 +239,7 @@ function getTypeIcon(type: string): string {
               <!-- Arrow markers -->
               <marker id="arrow-default" viewBox="0 0 10 10" refX="10" refY="5"
                       markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#5a6b80" opacity="0.7"/>
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--text-tertiary)" opacity="0.7"/>
               </marker>
               @for (link of links; track linkTrack(link)) {
                 <marker [id]="'arrow-' + linkTrack(link)" viewBox="0 0 10 10" refX="10" refY="5"
@@ -329,7 +329,7 @@ function getTypeIcon(type: string): string {
                       [attr.x]="node.x"
                       [attr.y]="node.y + node.radius + 14"
                       text-anchor="middle"
-                      fill="#b0b8c8"
+                      fill="var(--text-secondary)"
                       font-size="11"
                       style="pointer-events: none;">
                   {{ truncate(node.entity.label || node.entity.value, 30) }}
@@ -492,14 +492,14 @@ function getTypeIcon(type: string): string {
 
     .maltego-container {
       display: flex; flex-direction: column;
-      height: 100%; background: #0a0e17;
+      height: 100%; background: var(--bg-page);
     }
 
     /* ─── Control Panel ─── */
     .control-panel {
       display: flex; align-items: center; gap: 12px;
       padding: 8px 16px;
-      background: linear-gradient(90deg, #0d1117, #161b22);
+      background: var(--bg-header-gradient);
       border-bottom: 1px solid rgba(102, 126, 234, 0.15);
       z-index: 10; flex-shrink: 0;
     }
@@ -507,8 +507,8 @@ function getTypeIcon(type: string): string {
       display: flex; align-items: center; gap: 8px; flex-shrink: 0;
     }
     .panel-logo { color: #667eea; font-size: 28px; width: 28px; height: 28px; }
-    .panel-title { font-size: 16px; font-weight: 700; color: #e0e6f0; letter-spacing: 0.5px; }
-    .panel-subtitle { font-size: 10px; color: #5a6b80; letter-spacing: 1px; text-transform: uppercase; }
+    .panel-title { font-size: 16px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.5px; }
+    .panel-subtitle { font-size: 10px; color: var(--text-tertiary); letter-spacing: 1px; text-transform: uppercase; }
 
     .control-center {
       display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center;
@@ -523,7 +523,7 @@ function getTypeIcon(type: string): string {
       display: flex; align-items: center; gap: 6px;
     }
     .clear-btn {
-      height: 42px; font-size: 13px; color: #8892a4 !important;
+      height: 42px; font-size: 13px; color: var(--text-secondary) !important;
       border-color: rgba(255,255,255,0.12) !important;
       display: flex; align-items: center; gap: 4px;
     }
@@ -532,7 +532,7 @@ function getTypeIcon(type: string): string {
     .graph-stats { display: flex; gap: 12px; }
     .stat-chip {
       display: flex; align-items: center; gap: 4px;
-      font-size: 12px; color: #8892a4; font-weight: 500;
+      font-size: 12px; color: var(--text-secondary); font-weight: 500;
       padding: 4px 10px; border-radius: 12px;
       background: rgba(102, 126, 234, 0.08);
       border: 1px solid rgba(102, 126, 234, 0.12);
@@ -573,7 +573,7 @@ function getTypeIcon(type: string): string {
     .link-label {
       font-size: 9px; font-weight: 600;
       pointer-events: none;
-      text-shadow: 0 0 3px #0a0e17, 0 0 6px #0a0e17, 0 0 10px #0a0e17, 1px 1px 2px #000;
+      text-shadow: 0 0 3px var(--bg-page), 0 0 6px var(--bg-page), 0 0 10px var(--bg-page), 1px 1px 2px #000;
     }
 
     .graph-node {
@@ -594,12 +594,12 @@ function getTypeIcon(type: string): string {
       display: flex; flex-direction: column; gap: 8px; z-index: 5;
     }
     .zoom-controls button {
-      background: #1a1f2e !important; color: #667eea !important;
+      background: var(--bg-card) !important; color: #667eea !important;
       border: 1px solid rgba(102, 126, 234, 0.2);
       width: 36px; height: 36px;
     }
     .zoom-controls button:hover {
-      background: #252b3d !important;
+      background: var(--bg-surface) !important;
       border-color: #667eea;
     }
     .zoom-controls ::ng-deep .mat-mdc-mini-fab .mat-icon {
@@ -609,16 +609,16 @@ function getTypeIcon(type: string): string {
     /* ─── Context Menu ─── */
     .context-menu {
       position: absolute; z-index: 100;
-      background: #1a1f2e; border: 1px solid rgba(102, 126, 234, 0.2);
+      background: var(--bg-card); border: 1px solid rgba(102, 126, 234, 0.2);
       border-radius: 8px; padding: 4px 0; min-width: 180px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     }
     .context-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 8px 16px; cursor: pointer; color: #b0b8c8;
+      padding: 8px 16px; cursor: pointer; color: var(--text-secondary);
       font-size: 13px; transition: background 0.1s;
     }
-    .context-item:hover { background: rgba(102, 126, 234, 0.1); color: #e0e6f0; }
+    .context-item:hover { background: rgba(102, 126, 234, 0.1); color: var(--text-primary); }
     .context-item mat-icon { font-size: 18px; width: 18px; height: 18px; color: #667eea; }
     .context-divider {
       height: 1px; margin: 4px 8px;
@@ -629,27 +629,27 @@ function getTypeIcon(type: string): string {
     .empty-overlay {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      text-align: center; color: #5a6b80;
+      text-align: center; color: var(--text-tertiary);
       pointer-events: none;
     }
     .empty-icon { font-size: 80px; width: 80px; height: 80px; color: rgba(102, 126, 234, 0.2); }
-    .empty-overlay h3 { font-size: 22px; color: #8892a4; margin: 12px 0 8px; }
+    .empty-overlay h3 { font-size: 22px; color: var(--text-secondary); margin: 12px 0 8px; }
     .empty-overlay p { font-size: 14px; max-width: 420px; line-height: 1.5; }
-    .empty-overlay .hint { font-size: 12px; color: #4a5568; margin-top: 4px; }
+    .empty-overlay .hint { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
 
     .entity-type-legend {
       display: flex; flex-wrap: wrap; gap: 8px 14px;
       justify-content: center; margin-top: 24px; max-width: 500px;
     }
     .legend-item {
-      display: flex; align-items: center; gap: 5px; font-size: 11px; color: #8892a4;
+      display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-secondary);
     }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
     /* ─── Properties Panel ─── */
     .properties-panel {
       width: 0; overflow: hidden; flex-shrink: 0;
-      background: #111827; border-left: 1px solid rgba(102, 126, 234, 0.1);
+      background: var(--bg-surface); border-left: 1px solid var(--border-default);
       transition: width 0.25s ease;
       display: flex; flex-direction: column;
     }
@@ -675,9 +675,9 @@ function getTypeIcon(type: string): string {
     }
     .props-value {
       display: block; font-size: 14px; font-weight: 600;
-      color: #e0e6f0; word-break: break-all;
+      color: var(--text-primary); word-break: break-all;
     }
-    .props-close { flex-shrink: 0; color: #5a6b80 !important; }
+    .props-close { flex-shrink: 0; color: var(--text-tertiary) !important; }
 
     .props-section {
       padding: 12px 16px; border-bottom: 1px solid rgba(102, 126, 234, 0.06);
@@ -690,9 +690,9 @@ function getTypeIcon(type: string): string {
       display: flex; justify-content: space-between; align-items: flex-start;
       padding: 5px 0; gap: 8px;
     }
-    .props-key { font-size: 12px; color: #5a6b80; flex-shrink: 0; min-width: 60px; }
+    .props-key { font-size: 12px; color: var(--text-tertiary); flex-shrink: 0; min-width: 60px; }
     .props-val {
-      font-size: 12px; color: #b0b8c8; text-align: right;
+      font-size: 12px; color: var(--text-secondary); text-align: right;
       word-break: break-all; font-weight: 500;
     }
     .type-badge { font-weight: 700 !important; }
@@ -708,7 +708,7 @@ function getTypeIcon(type: string): string {
       font-size: 10px; text-transform: uppercase; color: #667eea;
       font-weight: 700; letter-spacing: 0.5px; flex-shrink: 0;
     }
-    .cn-value { font-size: 12px; color: #b0b8c8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cn-value { font-size: 12px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     .props-actions {
       padding: 16px; display: flex; flex-direction: column; gap: 8px;
@@ -721,7 +721,7 @@ function getTypeIcon(type: string): string {
 
     .props-empty {
       display: flex; flex-direction: column; align-items: center;
-      justify-content: center; height: 100%; color: #4a5568;
+      justify-content: center; height: 100%; color: var(--text-secondary);
       padding: 20px; text-align: center;
     }
     .props-empty mat-icon { font-size: 48px; width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.3; }

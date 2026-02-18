@@ -284,7 +284,7 @@ import { ImportJobDto, ImportTemplateType } from '@core/models';
     .import-type-card p {
       margin: 0;
       font-size: 14px;
-      color: #8892a4;
+      color: var(--text-secondary);
     }
 
     .role-badge {
@@ -334,7 +334,7 @@ import { ImportJobDto, ImportTemplateType } from '@core/models';
       align-items: center;
       gap: 12px;
       padding: 16px;
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid var(--border-default);
       border-radius: 4px;
       width: 100%;
     }
@@ -351,7 +351,7 @@ import { ImportJobDto, ImportTemplateType } from '@core/models';
 
     .file-info span {
       font-size: 14px;
-      color: #8892a4;
+      color: var(--text-secondary);
     }
 
     .success-message {
@@ -372,7 +372,7 @@ import { ImportJobDto, ImportTemplateType } from '@core/models';
 
     .import-summary {
       width: 100%;
-      background: #1a1f2e;
+      background: var(--bg-card);
       padding: 16px;
       border-radius: 4px;
     }
@@ -404,14 +404,14 @@ import { ImportJobDto, ImportTemplateType } from '@core/models';
 
     .job-details {
       width: 100%;
-      background: #1a1f2e;
+      background: var(--bg-card);
       padding: 16px;
       border-radius: 4px;
     }
 
     .info-text {
       font-size: 14px;
-      color: #8892a4;
+      color: var(--text-secondary);
       font-style: italic;
     }
 

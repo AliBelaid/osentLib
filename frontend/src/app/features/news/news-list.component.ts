@@ -186,10 +186,10 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
 
     :host {
       display: block;
-      background: #0a0e17;
+      background: var(--bg-page);
       min-height: 100vh;
       padding: 0 0 48px 0;
-      color: #c8d6e5;
+      color: var(--text-primary);
       font-family: 'Inter', 'Segoe UI', sans-serif;
     }
 
@@ -235,7 +235,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
 
     .intel-hero {
       position: relative;
-      background: linear-gradient(135deg, #0d1321 0%, #141b2d 50%, #0f1724 100%);
+      background: var(--bg-header-gradient);
       border-bottom: 1px solid rgba(102, 126, 234, 0.15);
       padding: 40px 32px 32px;
       overflow: hidden;
@@ -309,7 +309,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     .hero-subtitle {
       margin: 4px 0 0;
       font-size: 14px;
-      color: #5a6b80;
+      color: var(--text-tertiary);
       letter-spacing: 0.3px;
     }
 
@@ -357,7 +357,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
       background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-default);
     }
 
     .stat-badge--danger {
@@ -383,13 +383,13 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     .stat-value {
       font-size: 18px;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--text-heading);
       font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
     }
 
     .stat-label {
       font-size: 12px;
-      color: #5a6b80;
+      color: var(--text-tertiary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -397,10 +397,10 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     /* ---- FILTER BAR ---- */
 
     .filter-bar {
-      background: rgba(26, 31, 46, 0.7);
+      background: var(--bg-card-glass);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--border-default);
       padding: 20px 32px;
       position: sticky;
       top: 0;
@@ -429,7 +429,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: #5a6b80;
+      color: var(--text-tertiary);
     }
 
     .input-wrapper {
@@ -444,7 +444,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
       font-size: 18px;
       width: 18px;
       height: 18px;
-      color: #5a6b80;
+      color: var(--text-tertiary);
       pointer-events: none;
       z-index: 1;
     }
@@ -452,10 +452,10 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     .cyber-input {
       width: 100%;
       padding: 10px 14px 10px 40px;
-      background: rgba(10, 14, 23, 0.8);
+      background: var(--bg-input);
       border: 1px solid rgba(102, 126, 234, 0.2);
       border-radius: 8px;
-      color: #e0e6ed;
+      color: var(--text-primary);
       font-size: 14px;
       outline: none;
       transition: all 0.25s ease;
@@ -463,7 +463,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     }
 
     .cyber-input::placeholder {
-      color: #3d4f63;
+      color: var(--text-tertiary);
     }
 
     .cyber-input:focus {
@@ -473,10 +473,10 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
 
     .cyber-select {
       padding: 10px 14px;
-      background: rgba(10, 14, 23, 0.8);
+      background: var(--bg-input);
       border: 1px solid rgba(102, 126, 234, 0.2);
       border-radius: 8px;
-      color: #e0e6ed;
+      color: var(--text-primary);
       font-size: 14px;
       outline: none;
       transition: all 0.25s ease;
@@ -496,8 +496,8 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     }
 
     .cyber-select option {
-      background: #1a1f2e;
-      color: #e0e6ed;
+      background: var(--bg-card);
+      color: var(--text-primary);
     }
 
     .cyber-btn {
@@ -562,8 +562,8 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     /* ---- ARTICLE CARD ---- */
 
     .article-card {
-      background: #1a1f2e;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
       border-radius: 12px;
       padding: 24px 24px 20px 28px;
       cursor: pointer;
@@ -673,7 +673,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     .source-name {
       font-size: 13px;
       font-weight: 600;
-      color: #8892a4;
+      color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.8px;
     }
@@ -686,7 +686,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
 
     .article-date {
       font-size: 12px;
-      color: #5a6b80;
+      color: var(--text-tertiary);
       font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
       letter-spacing: 0.5px;
     }
@@ -697,7 +697,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
       margin: 0 0 10px;
       font-size: 17px;
       font-weight: 600;
-      color: #e8edf3;
+      color: var(--text-primary);
       line-height: 1.45;
       transition: color 0.2s ease;
     }
@@ -709,7 +709,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     .article-summary {
       margin: 0 0 16px;
       font-size: 14px;
-      color: #7a8a9e;
+      color: var(--text-secondary);
       line-height: 1.6;
       display: -webkit-box;
       -webkit-line-clamp: 3;
@@ -741,7 +741,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
       border-radius: 6px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #8892a4;
+      color: var(--text-secondary);
       font-size: 12px;
       font-weight: 500;
       letter-spacing: 0.3px;
@@ -782,21 +782,21 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
       font-size: 56px;
       width: 56px;
       height: 56px;
-      color: #2d3748;
+      color: var(--text-primary);
       margin-bottom: 16px;
     }
 
     .empty-state h3 {
       margin: 0 0 8px;
       font-size: 18px;
-      color: #5a6b80;
+      color: var(--text-tertiary);
       font-weight: 600;
     }
 
     .empty-state p {
       margin: 0;
       font-size: 14px;
-      color: #3d4f63;
+      color: var(--text-tertiary);
     }
 
     /* ---- PAGINATION ---- */
@@ -808,20 +808,20 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     }
 
     ::ng-deep .pagination-wrapper .mat-mdc-paginator {
-      background: #1a1f2e !important;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bg-card) !important;
+      border: 1px solid var(--border-default);
       border-radius: 12px;
-      color: #8892a4 !important;
+      color: var(--text-secondary) !important;
     }
 
     ::ng-deep .pagination-wrapper .mat-mdc-paginator-container {
-      color: #8892a4;
+      color: var(--text-secondary);
     }
 
     ::ng-deep .pagination-wrapper .mat-mdc-select-value,
     ::ng-deep .pagination-wrapper .mat-mdc-paginator-page-size-label,
     ::ng-deep .pagination-wrapper .mat-mdc-paginator-range-label {
-      color: #8892a4 !important;
+      color: var(--text-secondary) !important;
     }
 
     ::ng-deep .pagination-wrapper .mat-mdc-icon-button {
@@ -829,17 +829,17 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     }
 
     ::ng-deep .pagination-wrapper .mat-mdc-icon-button:disabled {
-      color: #2d3748 !important;
+      color: var(--text-primary) !important;
     }
 
     ::ng-deep .pagination-wrapper .mat-mdc-select-arrow {
-      color: #5a6b80 !important;
+      color: var(--text-tertiary) !important;
     }
 
     /* ---- BOOKMARK BUTTON OVERRIDE ---- */
 
     ::ng-deep .article-card app-bookmark-button .mat-mdc-icon-button {
-      color: #5a6b80;
+      color: var(--text-tertiary);
     }
 
     ::ng-deep .article-card app-bookmark-button .mat-mdc-icon-button:hover {
@@ -889,7 +889,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
 
     ::ng-deep .article-card .threat-none {
       background: rgba(255, 255, 255, 0.04);
-      color: #5a6b80;
+      color: var(--text-tertiary);
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 

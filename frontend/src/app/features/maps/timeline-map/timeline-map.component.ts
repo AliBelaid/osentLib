@@ -47,14 +47,14 @@ import { TimelineBucketDto } from '../../../core/models';
     .timeline-map { display: flex; flex-direction: column; gap: 12px; }
     .timeline-controls {
       display: flex; align-items: center; gap: 12px;
-      padding: 12px 16px; background: #1a1f2e; border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.06);
+      padding: 12px 16px; background: var(--bg-card); border-radius: 8px;
+      border: 1px solid var(--border-default);
       box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
     .timeline-slider { flex: 1; }
     .date-label { font-size: 14px; font-weight: 500; min-width: 90px; text-align: center; }
     .speed-select { width: 80px; }
-    .date-label { color: #e0e6f0; }
+    .date-label { color: var(--text-primary); }
   `]
 })
 export class TimelineMapComponent implements OnInit, OnDestroy {

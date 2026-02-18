@@ -116,10 +116,10 @@ import { LanguageSelectorComponent } from '../../shared/components/language-sele
   styles: [`
     .login-page {
       min-height: 100vh;
-      background: #0a0e17;
+      background: var(--bg-page);
       position: relative;
       overflow: hidden;
-      color: #c0c8d8;
+      color: var(--text-primary);
     }
 
     /* Animated grid background */
@@ -155,7 +155,7 @@ import { LanguageSelectorComponent } from '../../shared/components/language-sele
       padding: 12px 24px;
     }
     .back-link {
-      color: #5a6a8a;
+      color: var(--text-tertiary);
       text-decoration: none;
       display: flex;
       align-items: center;
@@ -206,13 +206,13 @@ import { LanguageSelectorComponent } from '../../shared/components/language-sele
       font-size: 24px;
       font-weight: 700;
       letter-spacing: 4px;
-      color: #e8edf5;
+      color: var(--text-primary);
       margin: 8px 0 4px;
     }
     .logo-subtitle {
       font-size: 11px;
       letter-spacing: 3px;
-      color: #5a6a8a;
+      color: var(--text-tertiary);
       text-transform: uppercase;
       margin: 0;
     }
@@ -250,7 +250,7 @@ import { LanguageSelectorComponent } from '../../shared/components/language-sele
       font-weight: 500;
       letter-spacing: 1px;
       text-transform: uppercase;
-      color: #5a6a8a;
+      color: var(--text-tertiary);
       margin-bottom: 4px;
       mat-icon { font-size: 16px; width: 16px; height: 16px; }
     }
@@ -274,7 +274,7 @@ import { LanguageSelectorComponent } from '../../shared/components/language-sele
         border-color: #00ff88 !important;
       }
       .mat-mdc-input-element {
-        color: #e0e8f0 !important;
+        color: var(--text-primary) !important;
         caret-color: #00ff88;
       }
       .mdc-text-field--filled { background-color: rgba(0,0,0,0.3) !important; }
@@ -303,7 +303,7 @@ import { LanguageSelectorComponent } from '../../shared/components/language-sele
       letter-spacing: 2px;
       text-transform: uppercase;
       background: linear-gradient(135deg, #00cc6a, #00aa55) !important;
-      color: #0a0e17 !important;
+      color: var(--bg-page) !important;
       border: none;
       display: flex;
       align-items: center;
@@ -324,9 +324,9 @@ import { LanguageSelectorComponent } from '../../shared/components/language-sele
       align-items: center;
       gap: 8px;
       font-size: 11px;
-      color: #3a4a6a;
+      color: var(--text-tertiary);
       margin-bottom: 6px;
-      mat-icon { font-size: 14px; width: 14px; height: 14px; color: #2a3a5a; }
+      mat-icon { font-size: 14px; width: 14px; height: 14px; color: var(--text-tertiary); }
     }
   `]
 })

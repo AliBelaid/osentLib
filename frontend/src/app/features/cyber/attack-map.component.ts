@@ -207,7 +207,7 @@ interface GeoCoord {
     /* ---- host ---- */
     :host {
       display: block; padding: 0 16px 32px;
-      background: #0a0e17; min-height: 100vh;
+      background: var(--bg-page); min-height: 100vh;
     }
 
     /* ---- header ---- */
@@ -251,12 +251,12 @@ interface GeoCoord {
     /* ---- map card ---- */
     .map-card { padding: 0 !important; overflow: hidden; margin-bottom: 0; }
     .map-wrapper { position: relative; }
-    .leaflet-host { width: 100%; height: 620px; background: #0a0e17; }
+    .leaflet-host { width: 100%; height: 620px; background: var(--bg-page); }
 
     /* ---- overlays on top of map ---- */
     .map-overlay {
       position: absolute; padding: 8px 12px; border-radius: 8px;
-      background: rgba(10,14,23,0.85); border: 1px solid rgba(255,255,255,0.06);
+      background: var(--bg-input); border: 1px solid var(--border-default);
       backdrop-filter: blur(8px); z-index: 800; pointer-events: auto;
     }
     .top-left { top: 12px; left: 12px; }

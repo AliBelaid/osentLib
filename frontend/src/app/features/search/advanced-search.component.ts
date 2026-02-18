@@ -312,7 +312,7 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
     }
 
     .query-preview {
-      background: #1a1f2e;
+      background: var(--bg-card);
       padding: 12px;
       border-radius: 4px;
       margin: 16px 0;
@@ -365,7 +365,7 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
 
     .result-item {
       padding: 16px;
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid var(--border-default);
       border-radius: 4px;
       cursor: pointer;
       transition: box-shadow 0.2s;
@@ -383,7 +383,7 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
 
     .result-item .summary {
       margin: 0 0 8px 0;
-      color: #8892a4;
+      color: var(--text-secondary);
     }
 
     .result-item .meta {
@@ -395,7 +395,7 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
     }
 
     .help-card {
-      background: #1a1f2e;
+      background: var(--bg-card);
     }
 
     .help-grid {
@@ -411,7 +411,7 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
     }
 
     .help-item code {
-      background: #1f2937;
+      background: var(--bg-surface);
       padding: 8px;
       border-radius: 4px;
       color: #00d4ff;
@@ -420,7 +420,7 @@ import { ParseQueryResponse, NewsSearchResult } from '@core/models';
 
     .help-item span {
       font-size: 14px;
-      color: #8892a4;
+      color: var(--text-secondary);
     }
   `]
 })

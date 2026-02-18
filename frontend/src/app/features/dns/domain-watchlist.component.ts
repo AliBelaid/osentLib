@@ -356,7 +356,7 @@ export class WatchlistDialogComponent {
     }
 
     .detection-cell mat-icon {
-      color: #8892a4;
+      color: var(--text-secondary);
     }
 
     .no-tags {
@@ -367,7 +367,7 @@ export class WatchlistDialogComponent {
 
     .username {
       font-size: 14px;
-      color: #8892a4;
+      color: var(--text-secondary);
     }
 
     .empty-state {
@@ -389,12 +389,12 @@ export class WatchlistDialogComponent {
     .empty-state h3 {
       margin: 0 0 8px 0;
       font-size: 24px;
-      color: #e0e6f0;
+      color: var(--text-primary);
     }
 
     .empty-state p {
       margin: 0;
-      color: #8892a4;
+      color: var(--text-secondary);
     }
 
     .stats-card {
@@ -412,7 +412,7 @@ export class WatchlistDialogComponent {
       align-items: center;
       gap: 16px;
       padding: 16px;
-      background: #1a1f2e;
+      background: var(--bg-card);
       border-radius: 8px;
     }
 
@@ -430,12 +430,12 @@ export class WatchlistDialogComponent {
 
     .stat-item strong {
       font-size: 24px;
-      color: #e0e6f0;
+      color: var(--text-primary);
     }
 
     .stat-item span {
       font-size: 14px;
-      color: #8892a4;
+      color: var(--text-secondary);
     }
   `]
 })

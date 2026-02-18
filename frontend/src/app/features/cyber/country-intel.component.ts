@@ -227,11 +227,11 @@ interface CountryProfile {
     .overview-center { text-align: center; }
     .gauge-circle {
       width: 110px; height: 110px; border-radius: 50%; margin: 0 auto 8px;
-      background: conic-gradient(#667eea var(--pct), rgba(255,255,255,0.06) 0deg);
+      background: conic-gradient(#667eea var(--pct), var(--border-default) 0deg);
       display: flex; align-items: center; justify-content: center;
     }
     .gauge-inner {
-      width: 88px; height: 88px; border-radius: 50%; background: #1a1f2e;
+      width: 88px; height: 88px; border-radius: 50%; background: var(--bg-card);
       display: flex; align-items: center; justify-content: center; gap: 2px;
     }
     .gauge-val { font-size: 28px; font-weight: 700; }
@@ -253,15 +253,15 @@ interface CountryProfile {
     .metric-card { display: flex; flex-direction: column; align-items: center; padding: 20px 12px !important; }
     .m-gauge {
       width: 80px; height: 80px; border-radius: 50%; margin-bottom: 8px;
-      background: conic-gradient(#667eea var(--pct), rgba(255,255,255,0.06) 0deg);
+      background: conic-gradient(#667eea var(--pct), var(--border-default) 0deg);
       display: flex; align-items: center; justify-content: center;
     }
-    .ir-gauge { background: conic-gradient(#00d4ff var(--pct), rgba(255,255,255,0.06) 0deg); }
-    .lg-gauge { background: conic-gradient(#b388ff var(--pct), rgba(255,255,255,0.06) 0deg); }
-    .cn-gauge { background: conic-gradient(#00e676 var(--pct), rgba(255,255,255,0.06) 0deg); }
-    .cc-gauge { background: conic-gradient(#ff1744 var(--pct), rgba(255,255,255,0.06) 0deg); }
+    .ir-gauge { background: conic-gradient(#00d4ff var(--pct), var(--border-default) 0deg); }
+    .lg-gauge { background: conic-gradient(#b388ff var(--pct), var(--border-default) 0deg); }
+    .cn-gauge { background: conic-gradient(#00e676 var(--pct), var(--border-default) 0deg); }
+    .cc-gauge { background: conic-gradient(#ff1744 var(--pct), var(--border-default) 0deg); }
     .m-inner {
-      width: 62px; height: 62px; border-radius: 50%; background: #1a1f2e;
+      width: 62px; height: 62px; border-radius: 50%; background: var(--bg-card);
       display: flex; align-items: center; justify-content: center;
     }
     .m-inner span { font-size: 18px; font-weight: 700; }
@@ -287,7 +287,7 @@ interface CountryProfile {
     .dot-high { background: #f44336; }
     .dot-medium { background: #ff9100; }
     .dot-low { background: #00e676; }
-    .tl-line { width: 2px; flex: 1; background: rgba(255,255,255,0.06); min-height: 20px; }
+    .tl-line { width: 2px; flex: 1; background: var(--border-default); min-height: 20px; }
     .tl-body { flex: 1; padding-bottom: 14px; }
     .tl-date { font-size: 10px; opacity: 0.4; margin-bottom: 2px; }
     .tl-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
@@ -326,7 +326,7 @@ interface CountryProfile {
       display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1.2fr;
       gap: 12px; padding: 10px 12px; align-items: center;
     }
-    .comp-header { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; opacity: 0.5; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .comp-header { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; opacity: 0.5; border-bottom: 1px solid var(--border-default); }
     .comp-row { font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.2s; }
     .comp-row:hover { background: rgba(102,126,234,0.04); }
     .comp-selected { background: rgba(102,126,234,0.08) !important; border-left: 3px solid #667eea; }

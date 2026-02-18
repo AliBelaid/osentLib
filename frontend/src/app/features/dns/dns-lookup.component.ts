@@ -430,7 +430,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
       align-items: center;
       gap: 12px;
       padding: 12px;
-      background: #1a1f2e;
+      background: var(--bg-card);
       border-radius: 4px;
     }
 
@@ -472,7 +472,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
 
     .geo-item strong {
       font-size: 12px;
-      color: #8892a4;
+      color: var(--text-secondary);
       text-transform: uppercase;
     }
 
@@ -490,7 +490,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
 
     .whois-item strong {
       font-size: 12px;
-      color: #8892a4;
+      color: var(--text-secondary);
       text-transform: uppercase;
     }
 
@@ -509,7 +509,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
       align-items: center;
       justify-content: space-between;
       padding: 12px;
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid var(--border-default);
       border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s;
@@ -528,7 +528,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
 
     .history-info .timestamp {
       font-size: 12px;
-      color: #8892a4;
+      color: var(--text-secondary);
     }
 
     .history-meta {

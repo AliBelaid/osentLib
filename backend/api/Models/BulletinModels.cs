@@ -7,6 +7,14 @@ public record CreateBulletinRequest(
     string? Category
 );
 
+public record SubmitReportRequest(
+    string Title,
+    string Content,
+    string ReportType,
+    int Urgency,
+    string? AffectedCountry
+);
+
 public record UpdateBulletinRequest(
     string? Title,
     string? Content,

@@ -53,11 +53,11 @@ import { ThreatBadgeComponent } from '../../shared/components/threat-badge.compo
     }
   `,
   styles: [`
-    h2 { color: #e0e6f0; display: flex; align-items: center; gap: 8px; }
+    h2 { color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
     .alert-card { margin-bottom: 12px; }
-    .alert-card ::ng-deep .mat-mdc-card-title { color: #e0e6f0 !important; font-size: 16px; }
-    .alert-card ::ng-deep .mat-mdc-card-subtitle { color: #8892a4 !important; }
-    .alert-card p { color: #8892a4; font-size: 13px; line-height: 1.5; }
+    .alert-card ::ng-deep .mat-mdc-card-title { color: var(--text-primary) !important; font-size: 16px; }
+    .alert-card ::ng-deep .mat-mdc-card-subtitle { color: var(--text-secondary) !important; }
+    .alert-card p { color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
     .acknowledged { opacity: 0.6; }
     .meta { display: flex; gap: 8px; align-items: center; }
     .ack { color: #00e676; font-size: 0.9em; }

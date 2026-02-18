@@ -53,6 +53,24 @@ $accent-purple: #b388ff;
 // DARK THEME
 // ═══════════════════════════════════════════
 [data-theme="dark"] {
+  // Semantic design tokens
+  --bg-page: #0a0e17;
+  --bg-card: #1a1f2e;
+  --bg-surface: #1f2937;
+  --bg-surface-hover: rgba(102, 126, 234, 0.08);
+  --bg-header: #0d1117;
+  --bg-header-gradient: linear-gradient(90deg, #0d1117 0%, #161b22 100%);
+  --bg-sidenav-gradient: linear-gradient(180deg, #0d1117 0%, #111827 100%);
+  --text-primary: #e0e6f0;
+  --text-secondary: #8892a4;
+  --text-tertiary: #5a6b80;
+  --text-heading: #ffffff;
+  --border-default: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --bg-card-glass: rgba(26, 31, 46, 0.7);
+  --bg-input: rgba(10, 14, 23, 0.6);
+
   // CSS Custom Properties for Material components
   --mdc-elevated-card-container-color: #1a1f2e;
   --mdc-outlined-card-container-color: #1a1f2e;
@@ -281,6 +299,24 @@ $accent-purple: #b388ff;
 // LIGHT THEME
 // ═══════════════════════════════════════════
 [data-theme="light"] {
+  // Semantic design tokens
+  --bg-page: #f5f7fa;
+  --bg-card: #ffffff;
+  --bg-surface: #f5f7fa;
+  --bg-surface-hover: rgba(102, 126, 234, 0.06);
+  --bg-header: #ffffff;
+  --bg-header-gradient: #ffffff;
+  --bg-sidenav-gradient: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #666666;
+  --text-tertiary: #888888;
+  --text-heading: #1a1a2e;
+  --border-default: #e8e8e8;
+  --border-hover: #c0c0c0;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --bg-card-glass: rgba(255, 255, 255, 0.85);
+  --bg-input: rgba(245, 247, 250, 0.8);
+
   // CSS Custom Properties for Material components
   --mdc-elevated-card-container-color: #ffffff;
   --mdc-outlined-card-container-color: #ffffff;

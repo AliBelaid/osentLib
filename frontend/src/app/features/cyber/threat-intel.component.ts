@@ -393,7 +393,7 @@ interface BarItem {
       padding: 2px 8px; border-radius: 4px;
     }
     .apt-status.active { background: rgba(0, 230, 118, 0.1); color: #00e676; }
-    .apt-status.dormant { background: rgba(136, 146, 164, 0.1); color: #8892a4; }
+    .apt-status.dormant { background: rgba(136, 146, 164, 0.1); color: var(--text-secondary); }
     .apt-origin { display: flex; align-items: center; gap: 4px; font-size: 12px; opacity: 0.7; margin-top: 2px; }
     .apt-flag { font-size: 14px; }
     .apt-targets { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
@@ -443,7 +443,7 @@ interface BarItem {
     }
     .ioc-header-row {
       font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 1px; opacity: 0.5; border-bottom: 1px solid rgba(255,255,255,0.06);
+      letter-spacing: 1px; opacity: 0.5; border-bottom: 1px solid var(--border-default);
     }
     .ioc-row {
       font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.03);

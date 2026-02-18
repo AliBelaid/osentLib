@@ -240,10 +240,10 @@ import { AlertRuleDto } from '../../core/models';
     /* ===== HOST ===== */
     :host {
       display: block;
-      background: #0a0e17;
+      background: var(--bg-page);
       min-height: 100vh;
       padding: 32px;
-      color: #c8d6e5;
+      color: var(--text-primary);
       font-family: 'Inter', 'Segoe UI', sans-serif;
     }
 
@@ -297,7 +297,7 @@ import { AlertRuleDto } from '../../core/models';
     .page-subtitle {
       margin: 4px 0 0;
       font-size: 13px;
-      color: #5a6a7e;
+      color: var(--text-tertiary);
       letter-spacing: 0.2px;
     }
 
@@ -338,8 +338,8 @@ import { AlertRuleDto } from '../../core/models';
       align-items: center;
       gap: 16px;
       padding: 20px 24px;
-      background: #1a1f2e;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
       border-radius: 14px;
       transition: border-color 0.25s, box-shadow 0.25s;
     }
@@ -375,7 +375,7 @@ import { AlertRuleDto } from '../../core/models';
     }
     .stat-inactive {
       background: rgba(255, 255, 255, 0.05);
-      color: #5a6a7e;
+      color: var(--text-tertiary);
     }
 
     .stat-content {
@@ -386,17 +386,17 @@ import { AlertRuleDto } from '../../core/models';
     .stat-value {
       font-size: 28px;
       font-weight: 700;
-      color: #e8eef5;
+      color: var(--text-primary);
       line-height: 1.1;
       font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
     }
 
     .stat-value-green { color: #00e676; }
-    .stat-value-muted { color: #5a6a7e; }
+    .stat-value-muted { color: var(--text-tertiary); }
 
     .stat-label {
       font-size: 12px;
-      color: #5a6a7e;
+      color: var(--text-tertiary);
       letter-spacing: 0.5px;
       text-transform: uppercase;
       font-weight: 600;
@@ -406,8 +406,8 @@ import { AlertRuleDto } from '../../core/models';
     /* ===== SHARED CARD STYLES ===== */
     .form-card,
     .table-card {
-      background: #1a1f2e;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
       border-radius: 14px;
       overflow: hidden;
       margin-bottom: 24px;
@@ -426,7 +426,7 @@ import { AlertRuleDto } from '../../core/models';
       align-items: center;
       gap: 10px;
       padding: 18px 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--border-default);
     }
 
     .card-header-icon {
@@ -439,14 +439,14 @@ import { AlertRuleDto } from '../../core/models';
     .card-header-title {
       font-size: 15px;
       font-weight: 600;
-      color: #e8eef5;
+      color: var(--text-primary);
       letter-spacing: -0.2px;
     }
 
     .card-header-count {
       margin-left: auto;
       font-size: 12px;
-      color: #5a6a7e;
+      color: var(--text-tertiary);
       font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
       background: rgba(255, 255, 255, 0.04);
       padding: 4px 10px;
@@ -488,7 +488,7 @@ import { AlertRuleDto } from '../../core/models';
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      color: #5a6a7e;
+      color: var(--text-tertiary);
     }
 
     .cyber-input,
@@ -497,8 +497,8 @@ import { AlertRuleDto } from '../../core/models';
       padding: 10px 14px;
       font-size: 14px;
       font-family: 'Inter', 'Segoe UI', sans-serif;
-      color: #c8d6e5;
-      background: rgba(10, 14, 23, 0.8);
+      color: var(--text-primary);
+      background: var(--bg-input);
       border: 1px solid rgba(102, 126, 234, 0.2);
       border-radius: 8px;
       outline: none;
@@ -518,12 +518,12 @@ import { AlertRuleDto } from '../../core/models';
     }
 
     .cyber-select option {
-      background: #1a1f2e;
-      color: #c8d6e5;
+      background: var(--bg-card);
+      color: var(--text-primary);
     }
 
     .cyber-input::placeholder {
-      color: #3d4a5c;
+      color: var(--text-tertiary);
     }
 
     .cyber-input:focus,
@@ -578,17 +578,17 @@ import { AlertRuleDto } from '../../core/models';
 
     /* Header row */
     :host ::ng-deep .rules-table .mat-mdc-header-row {
-      background: #151929 !important;
+      background: var(--bg-surface) !important;
       height: 48px;
     }
 
     :host ::ng-deep .rules-table .mat-mdc-header-cell {
-      color: #5a6a7e !important;
+      color: var(--text-tertiary) !important;
       font-size: 11px !important;
       font-weight: 700 !important;
       letter-spacing: 1px !important;
       text-transform: uppercase;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+      border-bottom: 1px solid var(--border-default) !important;
       padding: 0 16px !important;
       font-family: 'Inter', 'Segoe UI', sans-serif !important;
     }
@@ -601,11 +601,11 @@ import { AlertRuleDto } from '../../core/models';
     }
 
     :host ::ng-deep .rules-table .mat-mdc-row:nth-child(odd) {
-      background: #1a1f2e !important;
+      background: var(--bg-card) !important;
     }
 
     :host ::ng-deep .rules-table .mat-mdc-row:nth-child(even) {
-      background: #141821 !important;
+      background: var(--bg-surface) !important;
     }
 
     :host ::ng-deep .rules-table .mat-mdc-row:hover {
@@ -613,7 +613,7 @@ import { AlertRuleDto } from '../../core/models';
     }
 
     :host ::ng-deep .rules-table .mat-mdc-cell {
-      color: #c8d6e5 !important;
+      color: var(--text-primary) !important;
       font-size: 13px !important;
       border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
       padding: 0 16px !important;
@@ -638,7 +638,7 @@ import { AlertRuleDto } from '../../core/models';
 
     .rule-name-text {
       font-weight: 600;
-      color: #e8eef5;
+      color: var(--text-primary);
     }
 
     /* Tags */
@@ -709,7 +709,7 @@ import { AlertRuleDto } from '../../core/models';
     }
 
     .status-on  { color: #00e676; }
-    .status-off { color: #5a6a7e; }
+    .status-off { color: var(--text-tertiary); }
 
     /* Toggle override for active state */
     :host ::ng-deep .toggle-active .mdc-switch--selected .mdc-switch__handle::after,
@@ -718,7 +718,7 @@ import { AlertRuleDto } from '../../core/models';
     }
 
     :host ::ng-deep .toggle-active .mdc-switch--selected .mdc-switch__icon {
-      fill: #0a0e17 !important;
+      fill: var(--bg-page) !important;
     }
 
     :host ::ng-deep .toggle-inactive .mdc-switch__track {
@@ -766,7 +766,7 @@ import { AlertRuleDto } from '../../core/models';
       font-size: 48px;
       width: 48px;
       height: 48px;
-      color: #2a3142;
+      color: var(--text-primary);
       margin-bottom: 16px;
     }
 
@@ -774,12 +774,12 @@ import { AlertRuleDto } from '../../core/models';
       margin: 0;
       font-size: 16px;
       font-weight: 600;
-      color: #5a6a7e;
+      color: var(--text-tertiary);
     }
 
     .empty-state span {
       font-size: 13px;
-      color: #3d4a5c;
+      color: var(--text-tertiary);
       margin-top: 4px;
     }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env';
-import { BulletinDto, CreateBulletinRequest, UpdateBulletinRequest } from '../models';
+import { BulletinDto, CreateBulletinRequest, UpdateBulletinRequest, SubmitReportRequest } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class BulletinService {
@@ -33,5 +33,9 @@ export class BulletinService {
 
   delete(id: string) {
     return this.http.delete<void>(`${environment.apiUrl}/bulletin/${id}`);
+  }
+
+  submitReport(request: SubmitReportRequest) {
+    return this.http.post<BulletinDto>(`${environment.apiUrl}/bulletin/report`, request);
   }
 }

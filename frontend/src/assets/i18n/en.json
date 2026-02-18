@@ -69,7 +69,8 @@
     "attackMap": "Attack Map",
     "countryIntel": "Country Intel",
     "incidents": "Incidents",
-    "socialSearch": "Social Media Search"
+    "socialSearch": "Social Media Search",
+    "submitReport": "Submit Report"
   },
   "dashboard": {
     "title": "OSINT Dashboard",
@@ -376,6 +377,25 @@
     "hackerNewsDesc": "Search Hacker News stories, comments, and tech discussions",
     "threatIntelDesc": "Search Shodan, crt.sh, and URLScan for threat intelligence",
     "newsDesc": "Search 150,000+ news sources worldwide for breaking stories"
+  },
+  "submitReport": {
+    "title": "Submit Report",
+    "subtitle": "Submit emergency news, intelligence reports, or alerts",
+    "reportType": "Report Type",
+    "typeEmergency": "Emergency Alert",
+    "typeIntelligence": "Intelligence Report",
+    "typeNews": "News Tip",
+    "reportTitle": "Report Title",
+    "reportContent": "Detailed Description",
+    "affectedCountry": "Affected Country",
+    "urgencyLevel": "Urgency Level",
+    "urgencyLow": "Low",
+    "urgencyMedium": "Medium",
+    "urgencyHigh": "High",
+    "urgencyCritical": "Critical",
+    "submit": "Submit Report",
+    "success": "Report submitted successfully. It will be reviewed by administrators.",
+    "error": "Failed to submit report"
   },
   "cyber": {
     "threatIntel": {

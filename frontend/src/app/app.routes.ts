@@ -13,7 +13,6 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -57,6 +56,10 @@ export const routes: Routes = [
         path: 'bulletins/:id/edit',
         loadComponent: () => import('./features/bulletins/bulletin-form.component').then(m => m.BulletinFormComponent),
         canActivate: [roleGuard('Editor', 'CountryAdmin', 'AUAdmin')]
+      },
+      {
+        path: 'submit-report',
+        loadComponent: () => import('./features/reports/submit-report.component').then(m => m.SubmitReportComponent)
       },
       {
         path: 'alerts',

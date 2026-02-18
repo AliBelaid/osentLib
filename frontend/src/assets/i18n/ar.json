@@ -43,7 +43,8 @@
     "loginButton": "دخول",
     "loginTitle": "تسجيل الدخول إلى AU Sentinel",
     "loginError": "اسم مستخدم أو كلمة مرور غير صحيحة",
-    "sessionExpired": "انتهت صلاحية جلستك. الرجاء تسجيل الدخول مرة أخرى."
+    "sessionExpired": "انتهت صلاحية جلستك. الرجاء تسجيل الدخول مرة أخرى.",
+    "signIn": "تسجيل الدخول"
   },
   "nav": {
     "dashboard": "لوحة المعلومات",
@@ -68,7 +69,8 @@
     "attackMap": "خريطة الهجمات",
     "countryIntel": "استخبارات الدول",
     "incidents": "الحوادث",
-    "socialSearch": "بحث وسائل التواصل"
+    "socialSearch": "بحث وسائل التواصل",
+    "submitReport": "إرسال تقرير"
   },
   "socialSearch": {
     "title": "بحث استخبارات وسائل التواصل الاجتماعي",
@@ -375,6 +377,25 @@
     "dark": "الوضع الداكن",
     "light": "الوضع الفاتح",
     "toggle": "تغيير السمة"
+  },
+  "submitReport": {
+    "title": "إرسال تقرير",
+    "subtitle": "إرسال أخبار طارئة أو تقارير استخبارية أو تنبيهات",
+    "reportType": "نوع التقرير",
+    "typeEmergency": "تنبيه طوارئ",
+    "typeIntelligence": "تقرير استخباري",
+    "typeNews": "خبر عاجل",
+    "reportTitle": "عنوان التقرير",
+    "reportContent": "الوصف التفصيلي",
+    "affectedCountry": "الدولة المتأثرة",
+    "urgencyLevel": "مستوى الإلحاح",
+    "urgencyLow": "منخفض",
+    "urgencyMedium": "متوسط",
+    "urgencyHigh": "عالي",
+    "urgencyCritical": "حرج",
+    "submit": "إرسال التقرير",
+    "success": "تم إرسال التقرير بنجاح. سيتم مراجعته من قبل المسؤولين.",
+    "error": "فشل في إرسال التقرير"
   },
   "cyber": {
     "threatIntel": {

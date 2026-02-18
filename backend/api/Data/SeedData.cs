@@ -367,5 +367,114 @@ public static class SeedData
         };
         db.Badges.AddRange(badges);
         await db.SaveChangesAsync();
+
+        // Seed sample analyst users for leaderboard
+        var sampleUsers = new[]
+        {
+            new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000010"), Username = "fatima.hassan", Email = "fatima@ausentinel.org", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Analyst1!"), FullName = "Fatima Hassan", CountryCode = "EG", PreferredLanguage = "ar", IsActive = true },
+            new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000011"), Username = "kwame.asante", Email = "kwame@ausentinel.org", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Analyst1!"), FullName = "Kwame Asante", CountryCode = "GH", PreferredLanguage = "en", IsActive = true },
+            new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000012"), Username = "amina.diallo", Email = "amina@ausentinel.org", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Analyst1!"), FullName = "Amina Diallo", CountryCode = "SN", PreferredLanguage = "fr", IsActive = true },
+            new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000013"), Username = "nelson.mwangi", Email = "nelson@ausentinel.org", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Analyst1!"), FullName = "Nelson Mwangi", CountryCode = "KE", PreferredLanguage = "en", IsActive = true },
+            new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000014"), Username = "zara.okafor", Email = "zara@ausentinel.org", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Analyst1!"), FullName = "Zara Okafor", CountryCode = "NG", PreferredLanguage = "en", IsActive = true },
+            new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000015"), Username = "moussa.traore", Email = "moussa@ausentinel.org", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Analyst1!"), FullName = "Moussa Traoré", CountryCode = "ML", PreferredLanguage = "fr", IsActive = true },
+            new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000016"), Username = "sofia.benali", Email = "sofia@ausentinel.org", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Analyst1!"), FullName = "Sofia Benali", CountryCode = "MA", PreferredLanguage = "ar", IsActive = true },
+            new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000017"), Username = "david.kimani", Email = "david@ausentinel.org", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Analyst1!"), FullName = "David Kimani", CountryCode = "TZ", PreferredLanguage = "en", IsActive = true },
+        };
+        db.Users.AddRange(sampleUsers);
+        await db.SaveChangesAsync();
+
+        // Assign Viewer role to sample users
+        foreach (var u in sampleUsers)
+            db.UserRoles.Add(new UserRole { UserId = u.Id, RoleId = 1 });
+        await db.SaveChangesAsync();
+
+        // Seed UserExperience for leaderboard
+        var xpData = new[]
+        {
+            (Guid.Parse("00000000-0000-0000-0000-000000000001"), 4200, 7, 700, 1000), // admin
+            (Guid.Parse("00000000-0000-0000-0000-000000000010"), 5800, 8, 300, 1200), // fatima - top
+            (Guid.Parse("00000000-0000-0000-0000-000000000011"), 3600, 6, 600, 800),  // kwame
+            (Guid.Parse("00000000-0000-0000-0000-000000000012"), 4900, 7, 400, 1000), // amina
+            (Guid.Parse("00000000-0000-0000-0000-000000000013"), 2800, 5, 300, 600),  // nelson
+            (Guid.Parse("00000000-0000-0000-0000-000000000014"), 3100, 5, 600, 600),  // zara
+            (Guid.Parse("00000000-0000-0000-0000-000000000015"), 1500, 3, 300, 400),  // moussa
+            (Guid.Parse("00000000-0000-0000-0000-000000000016"), 2200, 4, 200, 500),  // sofia
+            (Guid.Parse("00000000-0000-0000-0000-000000000017"), 1800, 4, 300, 500),  // david
+        };
+        foreach (var (userId, totalXp, level, currentXp, nextXp) in xpData)
+        {
+            db.UserExperiences.Add(new UserExperience
+            {
+                UserId = userId,
+                TotalXp = totalXp,
+                Level = level,
+                CurrentLevelXp = currentXp,
+                NextLevelXp = nextXp,
+                LastActivityAt = DateTime.UtcNow.AddHours(-Random.Shared.Next(1, 48)),
+                CreatedAt = DateTime.UtcNow.AddDays(-Random.Shared.Next(30, 90))
+            });
+        }
+        await db.SaveChangesAsync();
+
+        // Seed published bulletins
+        var adminId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var bulletins = new[]
+        {
+            new Bulletin
+            {
+                Title = "Security Advisory: Increased Cyber Threats Targeting Critical Infrastructure in East Africa",
+                Content = "AU CERT has observed a significant increase in cyber attacks targeting energy and telecommunications infrastructure across East African member states. Threat actors are using spear-phishing campaigns and exploiting unpatched VPN appliances. Member states are advised to immediately patch all internet-facing systems and enable multi-factor authentication on all administrative accounts. Indicators of compromise (IOCs) have been shared through the AU-CERT secure channel.",
+                CountryCode = "ET", Status = "published", Severity = 4, Category = "Security",
+                CreatedByUserId = adminId, PublishedByUserId = adminId,
+                CreatedAt = DateTime.UtcNow.AddDays(-2), PublishedAt = DateTime.UtcNow.AddDays(-2)
+            },
+            new Bulletin
+            {
+                Title = "Intelligence Report: Humanitarian Crisis Escalation in the Sahel Region",
+                Content = "Latest OSINT analysis indicates deteriorating humanitarian conditions across the Sahel belt, particularly in Niger, Mali, and Burkina Faso. Satellite imagery reveals increased displacement patterns, with an estimated 2.4 million people newly affected. Cross-border armed group activity has intensified near the tri-border area. The AU Peace and Security Council has been briefed and emergency response coordination is underway with ECOWAS partners.",
+                CountryCode = "NE", Status = "published", Severity = 5, Category = "Security",
+                CreatedByUserId = adminId, PublishedByUserId = adminId,
+                CreatedAt = DateTime.UtcNow.AddDays(-5), PublishedAt = DateTime.UtcNow.AddDays(-4)
+            },
+            new Bulletin
+            {
+                Title = "Disease Outbreak Alert: Cholera Cases Reported Across Southern Africa",
+                Content = "WHO and AU Health Division report a surge in cholera cases across Mozambique, Malawi, and Zimbabwe following recent flooding events. Over 3,200 cases confirmed with 47 fatalities. Water treatment facilities in affected areas have been compromised. Emergency medical supplies are being deployed through the African CDC rapid response mechanism. Member states are urged to activate cross-border health surveillance protocols.",
+                CountryCode = "MZ", Status = "published", Severity = 4, Category = "Health",
+                CreatedByUserId = adminId, PublishedByUserId = adminId,
+                CreatedAt = DateTime.UtcNow.AddDays(-3), PublishedAt = DateTime.UtcNow.AddDays(-3)
+            },
+            new Bulletin
+            {
+                Title = "Political Situation Analysis: Electoral Process Monitoring in West Africa",
+                Content = "The AU Election Observation Mission reports on ongoing electoral preparations in multiple West African states. Pre-election tensions have been noted in some regions, with opposition groups raising concerns about voter registration irregularities. Social media monitoring reveals coordinated disinformation campaigns targeting electoral institutions. The AU Commission has dispatched additional observer teams and is working with regional bodies to ensure credible electoral processes.",
+                CountryCode = "NG", Status = "published", Severity = 3, Category = "Politics",
+                CreatedByUserId = adminId, PublishedByUserId = adminId,
+                CreatedAt = DateTime.UtcNow.AddDays(-7), PublishedAt = DateTime.UtcNow.AddDays(-6)
+            },
+            new Bulletin
+            {
+                Title = "Environmental Alert: Desert Locust Swarms Detected in Horn of Africa",
+                Content = "FAO early warning systems and AU satellite monitoring detect new desert locust breeding grounds in the Horn of Africa. Swarms are projected to move across Ethiopia, Somalia, and Kenya within 2-3 weeks. Agricultural damage estimates could affect food security for 12 million people. Aerial spraying operations have commenced in coordination with national authorities. Member states in the projected path are advised to activate emergency pest control protocols.",
+                CountryCode = "ET", Status = "published", Severity = 3, Category = "Environment",
+                CreatedByUserId = adminId, PublishedByUserId = adminId,
+                CreatedAt = DateTime.UtcNow.AddDays(-1), PublishedAt = DateTime.UtcNow.AddDays(-1)
+            },
+        };
+        db.Bulletins.AddRange(bulletins);
+        await db.SaveChangesAsync();
+
+        // Seed additional alert rules
+        var alertRules = new[]
+        {
+            new AlertRule { Id = 1, Name = "High Threat Auto-Alert", CountryCode = "ET", MinThreatLevel = 4, IsActive = true, CreatedByUserId = adminId, CreatedAt = DateTime.UtcNow },
+            new AlertRule { Id = 2, Name = "Sahel Region Security Monitor", CountryCode = "NE", Category = "Security", MinThreatLevel = 3, Keywords = "armed group,terrorism,Boko Haram,JNIM,ISWAP", IsActive = true, CreatedByUserId = adminId, CreatedAt = DateTime.UtcNow },
+            new AlertRule { Id = 3, Name = "North Africa Political Instability", CountryCode = "LY", Category = "Politics", MinThreatLevel = 3, Keywords = "coup,protest,election,unrest,militia", IsActive = true, CreatedByUserId = adminId, CreatedAt = DateTime.UtcNow },
+            new AlertRule { Id = 4, Name = "Great Lakes Conflict Tracker", CountryCode = "CD", Category = "Security", MinThreatLevel = 4, Keywords = "M23,ADF,displacement,conflict,peacekeeping", IsActive = true, CreatedByUserId = adminId, CreatedAt = DateTime.UtcNow },
+            new AlertRule { Id = 5, Name = "Health Emergency - Disease Outbreak", CountryCode = "ET", Category = "Health", MinThreatLevel = 3, Keywords = "cholera,ebola,outbreak,epidemic,pandemic,WHO", IsActive = true, CreatedByUserId = adminId, CreatedAt = DateTime.UtcNow },
+            new AlertRule { Id = 6, Name = "West Africa Maritime Security", CountryCode = "NG", Category = "Security", MinThreatLevel = 3, Keywords = "piracy,maritime,Gulf of Guinea,smuggling,kidnapping", IsActive = false, CreatedByUserId = adminId, CreatedAt = DateTime.UtcNow },
+        };
+        db.AlertRules.AddRange(alertRules);
+        await db.SaveChangesAsync();
     }
 }

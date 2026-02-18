@@ -267,12 +267,12 @@ import { switchMap } from 'rxjs/operators';
     .empty-state h3 {
       margin: 0 0 8px 0;
       font-size: 24px;
-      color: #e0e6f0;
+      color: var(--text-primary);
     }
 
     .empty-state p {
       margin: 0;
-      color: #8892a4;
+      color: var(--text-secondary);
     }
 
     .jobs-table {
@@ -358,7 +358,7 @@ import { switchMap } from 'rxjs/operators';
 
     .detail-item strong {
       font-size: 12px;
-      color: #8892a4;
+      color: var(--text-secondary);
       text-transform: uppercase;
     }
 
@@ -381,7 +381,7 @@ import { switchMap } from 'rxjs/operators';
     }
 
     .error-details {
-      background: #1a1f2e;
+      background: var(--bg-card);
       padding: 16px;
       border-radius: 4px;
       overflow-x: auto;

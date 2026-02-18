@@ -362,7 +362,7 @@ interface BarItem {
     </div>
   `,
   styles: [`
-    :host { display: block; padding: 0 16px 32px; background: #0a0e17; min-height: 100vh; color: #e0e6f0; }
+    :host { display: block; padding: 0 16px 32px; background: var(--bg-page); min-height: 100vh; color: var(--text-primary); }
 
     .page-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -370,7 +370,7 @@ interface BarItem {
     }
     .page-title {
       display: flex; align-items: center; gap: 8px;
-      font-size: 24px; font-weight: 600; margin: 0; color: #ffffff;
+      font-size: 24px; font-weight: 600; margin: 0; color: var(--text-heading);
     }
     .header-stats { display: flex; gap: 10px; }
     .header-badge {
@@ -399,7 +399,7 @@ interface BarItem {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;
     }
     .kanban-column {
-      background: rgba(26, 31, 46, 0.5); border-radius: 12px;
+      background: var(--bg-card-glass); border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.04); overflow: hidden;
     }
     .column-header {
@@ -416,13 +416,13 @@ interface BarItem {
     }
     .column-cards { padding: 8px; max-height: 500px; overflow-y: auto; }
     .empty-col {
-      text-align: center; padding: 24px; font-size: 13px; color: #4a5568;
+      text-align: center; padding: 24px; font-size: 13px; color: var(--text-secondary);
     }
 
     /* Incident Card */
     .incident-card {
       padding: 12px; margin-bottom: 8px; border-radius: 10px;
-      background: rgba(26, 31, 46, 0.8); border: 1px solid rgba(255,255,255,0.04);
+      background: var(--bg-card-glass); border: 1px solid rgba(255,255,255,0.04);
       cursor: pointer; transition: all 0.2s;
       animation: fadeInCard 0.4s ease both;
     }
@@ -456,16 +456,16 @@ interface BarItem {
     .sev-badge-medium { background: rgba(255, 145, 0, 0.15); color: #ff9100; }
     .sev-badge-low { background: rgba(0, 230, 118, 0.15); color: #00e676; }
 
-    .inc-title { font-size: 13px; font-weight: 500; margin-bottom: 8px; line-height: 1.3; color: #e8edf3; }
+    .inc-title { font-size: 13px; font-weight: 500; margin-bottom: 8px; line-height: 1.3; color: var(--text-primary); }
     .inc-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-    .inc-country { font-size: 12px; color: #c8d6e5; }
+    .inc-country { font-size: 12px; color: var(--text-primary); }
     .inc-cat {
       font-size: 9px !important; height: 18px !important;
       padding: 0 6px !important; min-height: 18px !important;
     }
-    .inc-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #6b7a8d; }
-    .inc-analyst { display: flex; align-items: center; gap: 2px; color: #8892a4; }
-    .inc-time { color: #5a6b80; }
+    .inc-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-secondary); }
+    .inc-analyst { display: flex; align-items: center; gap: 2px; color: var(--text-secondary); }
+    .inc-time { color: var(--text-tertiary); }
     .small-icon { font-size: 14px; width: 14px; height: 14px; }
     .containment-bar { margin-top: 8px; border-radius: 4px; }
 
@@ -485,9 +485,9 @@ interface BarItem {
     .status-investigating { background: rgba(255, 145, 0, 0.15) !important; color: #ff9100 !important; }
     .status-contained { background: rgba(0, 212, 255, 0.15) !important; color: #00d4ff !important; }
     .status-resolved { background: rgba(0, 230, 118, 0.15) !important; color: #00e676 !important; }
-    .status-closed { background: rgba(136, 146, 164, 0.15) !important; color: #8892a4 !important; }
-    .detail-title { font-size: 18px; font-weight: 600; margin: 0 0 8px; color: #ffffff; }
-    .detail-desc { font-size: 13px; color: #8892a4; line-height: 1.5; margin-bottom: 16px; }
+    .status-closed { background: rgba(136, 146, 164, 0.15) !important; color: var(--text-secondary) !important; }
+    .detail-title { font-size: 18px; font-weight: 600; margin: 0 0 8px; color: var(--text-heading); }
+    .detail-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px; }
 
     .detail-grid {
       display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;
@@ -511,7 +511,7 @@ interface BarItem {
     .gauge-fill.cont-high { background: linear-gradient(90deg, #00e676, #69f0ae); }
     .gauge-fill.cont-medium { background: linear-gradient(90deg, #ff9100, #ffc107); }
     .gauge-fill.cont-low { background: linear-gradient(90deg, #ff1744, #f44336); }
-    .gauge-text { font-weight: 700; font-size: 16px; color: #ffffff; }
+    .gauge-text { font-weight: 700; font-size: 16px; color: var(--text-heading); }
     .ioc-list { display: flex; flex-direction: column; gap: 4px; }
     .ioc-value {
       font-family: 'Consolas', monospace; font-size: 11px;
@@ -526,11 +526,11 @@ interface BarItem {
     .tl-marker { display: flex; flex-direction: column; align-items: center; width: 20px; }
     .tl-dot {
       width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
-      border: 2px solid; background: #1a1f2e;
+      border: 2px solid; background: var(--bg-card);
     }
     .tl-completed .tl-dot { border-color: #00e676; background: #00e676; }
     .tl-in-progress .tl-dot { border-color: #ff9100; background: #ff9100; animation: pulse 2s infinite; }
-    .tl-pending .tl-dot { border-color: #8892a4; }
+    .tl-pending .tl-dot { border-color: var(--text-secondary); }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
@@ -539,7 +539,7 @@ interface BarItem {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .tl-line { width: 2px; flex: 1; background: rgba(255,255,255,0.06); min-height: 24px; }
+    .tl-line { width: 2px; flex: 1; background: var(--border-default); min-height: 24px; }
     .tl-content { flex: 1; padding-bottom: 16px; }
     .tl-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .tl-step { font-size: 11px; font-weight: 600; color: #667eea; }
@@ -549,15 +549,15 @@ interface BarItem {
     }
     .tls-completed { background: rgba(0, 230, 118, 0.1); color: #00e676; }
     .tls-in-progress { background: rgba(255, 145, 0, 0.1); color: #ff9100; }
-    .tls-pending { background: rgba(136, 146, 164, 0.1); color: #8892a4; }
+    .tls-pending { background: rgba(136, 146, 164, 0.1); color: var(--text-secondary); }
     .tl-time { font-size: 10px; opacity: 0.5; margin-left: auto; }
-    .tl-action { font-size: 13px; font-weight: 500; color: #e0e6f0; }
-    .tl-by { font-size: 11px; color: #6b7a8d; }
+    .tl-action { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+    .tl-by { font-size: 11px; color: var(--text-secondary); }
 
     /* Stats Section */
     .section-title {
       display: flex; align-items: center; gap: 8px;
-      font-size: 18px; font-weight: 600; margin: 0 0 16px; color: #ffffff;
+      font-size: 18px; font-weight: 600; margin: 0 0 16px; color: var(--text-heading);
     }
     .stats-grid {
       display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px;
@@ -566,26 +566,26 @@ interface BarItem {
     .metric-gauge { text-align: center; }
     .gauge-circle {
       width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 10px;
-      background: conic-gradient(#667eea var(--progress), rgba(255,255,255,0.06) 0deg);
+      background: conic-gradient(#667eea var(--progress), var(--border-default) 0deg);
       display: flex; align-items: center; justify-content: center;
     }
     .mttr-gauge {
-      background: conic-gradient(#ff9100 var(--progress), rgba(255,255,255,0.06) 0deg);
+      background: conic-gradient(#ff9100 var(--progress), var(--border-default) 0deg);
     }
     .gauge-inner {
-      width: 76px; height: 76px; border-radius: 50%; background: #1a1f2e;
+      width: 76px; height: 76px; border-radius: 50%; background: var(--bg-card);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .gauge-val { font-size: 22px; font-weight: 700; color: #ffffff; }
+    .gauge-val { font-size: 22px; font-weight: 700; color: var(--text-heading); }
     .gauge-unit { font-size: 10px; opacity: 0.5; }
-    .gauge-label { font-size: 12px; font-weight: 500; color: #8892a4; }
+    .gauge-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
 
     .chart-card { }
     .chart-title {
-      display: flex; align-items: center; gap: 6px; font-size: 14px; color: #e0e6f0;
+      display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text-primary);
     }
     .bar-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
-    .bar-label { min-width: 90px; font-size: 12px; font-weight: 500; color: #c8d6e5; }
+    .bar-label { min-width: 90px; font-size: 12px; font-weight: 500; color: var(--text-primary); }
     .bar-track {
       flex: 1; height: 22px; background: rgba(128,128,128,0.1);
       border-radius: 4px; overflow: hidden;
@@ -610,7 +610,7 @@ interface BarItem {
       background: linear-gradient(180deg, #667eea, #764ba2);
       transition: height 0.5s ease;
     }
-    .trend-label { font-size: 9px; margin-top: 4px; color: #5a6b80; }
+    .trend-label { font-size: 9px; margin-top: 4px; color: var(--text-tertiary); }
 
     @media (max-width: 1100px) {
       .kanban-board { grid-template-columns: 1fr; }

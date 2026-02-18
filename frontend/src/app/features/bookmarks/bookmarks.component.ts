@@ -94,7 +94,7 @@ import { ThreatBadgeComponent } from '@shared/components/threat-badge.component'
     }
 
     .dialog-wrapper {
-      background: #1a1f2e;
+      background: var(--bg-card);
       border-radius: 16px;
       padding: 28px;
       position: relative;
@@ -148,7 +148,7 @@ import { ThreatBadgeComponent } from '@shared/components/threat-badge.component'
       margin: 0;
       font-size: 20px;
       font-weight: 600;
-      color: #ffffff;
+      color: var(--text-heading);
       letter-spacing: 0.5px;
     }
 
@@ -187,7 +187,7 @@ import { ThreatBadgeComponent } from '@shared/components/threat-badge.component'
     }
 
     ::ng-deep .cyber-field .mat-mdc-text-field-wrapper {
-      background: rgba(10,14,23,0.6) !important;
+      background: var(--bg-input) !important;
       border-radius: 10px !important;
     }
 
@@ -244,7 +244,7 @@ import { ThreatBadgeComponent } from '@shared/components/threat-badge.component'
     mat-dialog-actions {
       padding: 16px 0 0 0 !important;
       margin: 0 !important;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid var(--border-default);
       gap: 12px;
     }
 
@@ -303,8 +303,8 @@ import { ThreatBadgeComponent } from '@shared/components/threat-badge.component'
     }
 
     ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
-      background: #1a1f2e !important;
-      border: 1px solid rgba(255,255,255,0.06);
+      background: var(--bg-card) !important;
+      border: 1px solid var(--border-default);
       border-radius: 16px !important;
       box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(102,126,234,0.1) !important;
     }
@@ -588,7 +588,7 @@ export class CollectionDialogComponent {
       position: relative;
       padding: 32px;
       min-height: 100vh;
-      background: #0a0e17;
+      background: var(--bg-page);
       overflow: hidden;
     }
 
@@ -638,7 +638,7 @@ export class CollectionDialogComponent {
       justify-content: space-between;
       margin-bottom: 32px;
       padding-bottom: 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid var(--border-default);
     }
 
     .header-left {
@@ -679,7 +679,7 @@ export class CollectionDialogComponent {
       margin: 0;
       font-size: 28px;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--text-heading);
       letter-spacing: 0.5px;
     }
 
@@ -699,8 +699,8 @@ export class CollectionDialogComponent {
       align-items: center;
       gap: 10px;
       padding: 10px 20px;
-      background: rgba(26,31,46,0.8);
-      border: 1px solid rgba(255,255,255,0.06);
+      background: var(--bg-card-glass);
+      border: 1px solid var(--border-default);
       border-radius: 12px;
       backdrop-filter: blur(10px);
     }
@@ -727,7 +727,7 @@ export class CollectionDialogComponent {
     .badge-count {
       font-size: 22px;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--text-heading);
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
     }
 
@@ -769,9 +769,9 @@ export class CollectionDialogComponent {
     .sidebar-glass {
       position: absolute;
       inset: 0;
-      background: rgba(26,31,46,0.6);
+      background: var(--bg-card-glass);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid var(--border-default);
       border-radius: 16px;
     }
 
@@ -787,7 +787,7 @@ export class CollectionDialogComponent {
       align-items: center;
       margin-bottom: 20px;
       padding-bottom: 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid var(--border-default);
     }
 
     .sidebar-title-row {
@@ -903,7 +903,7 @@ export class CollectionDialogComponent {
     }
 
     .collection-item.active .item-name {
-      color: #ffffff;
+      color: var(--text-heading);
     }
 
     .count {
@@ -1010,8 +1010,8 @@ export class CollectionDialogComponent {
     }
 
     .skeleton-card {
-      background: rgba(26,31,46,0.6);
-      border: 1px solid rgba(255,255,255,0.06);
+      background: var(--bg-card-glass);
+      border: 1px solid var(--border-default);
       border-radius: 14px;
       padding: 24px;
     }
@@ -1143,8 +1143,8 @@ export class CollectionDialogComponent {
        ============================================ */
     .bookmark-card {
       position: relative;
-      background: rgba(26,31,46,0.7) !important;
-      border: 1px solid rgba(255,255,255,0.06) !important;
+      background: var(--bg-card-glass) !important;
+      border: 1px solid var(--border-default) !important;
       border-radius: 14px !important;
       overflow: hidden;
       cursor: pointer;
@@ -1200,7 +1200,7 @@ export class CollectionDialogComponent {
     .card-title {
       font-size: 16px !important;
       font-weight: 600 !important;
-      color: #ffffff !important;
+      color: var(--text-heading) !important;
       line-height: 1.4 !important;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -1248,7 +1248,7 @@ export class CollectionDialogComponent {
       gap: 10px;
       margin-top: 14px;
       padding: 12px;
-      background: rgba(10,14,23,0.5);
+      background: var(--bg-input);
       border: 1px dashed rgba(255,255,255,0.08);
       border-radius: 10px;
       font-size: 13px;
