@@ -46,3 +46,10 @@ docker-compose.override.yml
 # Build outputs
 publish/
 out/
+
+# Dev artifacts
+backend-log.txt
+backend/api/uploads/
+test-login-data.json
+token.json
+nul
