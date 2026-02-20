@@ -62,6 +62,7 @@ public class Worker : BackgroundService
             }
         };
 
+        _channel.QueueDeclare("article.ingested", durable: true, exclusive: false, autoDelete: false);
         _channel.BasicConsume("article.ingested", false, consumer);
         _logger.LogInformation("Consuming from article.ingested queue");
 

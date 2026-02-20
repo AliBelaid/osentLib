@@ -1,0 +1,18 @@
+# Exclude frontend and its heavy dependencies from the root build context
+# (used by worker Dockerfiles that set context: .)
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Dev scripts and artifacts
+cdp-*.js
+*.txt
+*.ps1
+*.html
+infra/
+
+# Git and IDE
+.git/
+.vs/
+.vscode/
+*.md

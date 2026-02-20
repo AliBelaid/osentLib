@@ -204,7 +204,7 @@ services:
     container_name: ausentinel-frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8088:80"
     depends_on:
       - api
     networks:
