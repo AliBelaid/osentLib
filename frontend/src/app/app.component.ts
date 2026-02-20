@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -353,19 +353,22 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
 })
 export class AppComponent implements OnDestroy {
   myExperience = this.experienceService.myExperience;
-  private _signalrSub?: Subscription;
+  private _reportSub?: Subscription;
+  private _incidentSub?: Subscription;
 
   constructor(
     public auth: AuthService,
     public i18n: I18nService,
     private experienceService: ExperienceService,
     private signalR: IntelSignalRService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
     if (this.auth.isLoggedIn()) {
       this.experienceService.getMyExperience().subscribe();
       this.signalR.connect();
-      this._signalrSub = this.signalR.reportSubmitted$.subscribe(evt => {
+
+      this._reportSub = this.signalR.reportSubmitted$.subscribe(evt => {
         const urgencyLabel = evt.urgency >= 4 ? '🚨 EMERGENCY' : evt.urgency >= 3 ? '⚠️ HIGH' : '📋 REPORT';
         this.snackBar.open(
           `${urgencyLabel}: ${evt.title} — ${evt.submittedBy}`,
@@ -373,11 +376,33 @@ export class AppComponent implements OnDestroy {
           { duration: 8000, panelClass: 'report-snackbar' }
         );
       });
+
+      this._incidentSub = this.signalR.incidentEvents$.subscribe(evt => {
+        const statusLabel = this.incidentStatusLabel(evt.type, evt.status);
+        const ref = this.snackBar.open(
+          `${statusLabel}: ${evt.title}`,
+          'View',
+          { duration: 10000, panelClass: 'incident-snackbar' }
+        );
+        ref.onAction().subscribe(() => this.router.navigate(['/cyber/incidents']));
+      });
+    }
+  }
+
+  private incidentStatusLabel(type: string, status?: string): string {
+    if (type === 'IncidentCreated') return '🔴 NEW INCIDENT';
+    switch (status) {
+      case 'investigating': return '🟠 INVESTIGATING';
+      case 'contained':    return '🟡 CONTAINED';
+      case 'resolved':
+      case 'closed':       return '✅ RESOLVED';
+      default:             return '⚡ INCIDENT UPDATED';
     }
   }
 
   ngOnDestroy(): void {
-    this._signalrSub?.unsubscribe();
+    this._reportSub?.unsubscribe();
+    this._incidentSub?.unsubscribe();
     this.signalR.disconnect();
   }
 }

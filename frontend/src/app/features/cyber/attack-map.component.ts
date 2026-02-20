@@ -204,19 +204,21 @@ interface GeoCoord {
     </div>
   `,
   styles: [`
-    /* ---- host ---- */
+    /* ---- host: fills full viewport height minus the app shell top bar ---- */
     :host {
-      display: block; padding: 0 16px 32px;
-      background: var(--bg-page); min-height: 100vh;
+      display: flex; flex-direction: column;
+      padding: 8px 12px; box-sizing: border-box;
+      height: calc(100vh - 64px); overflow: hidden;
+      background: var(--bg-page);
     }
 
     /* ---- header ---- */
-    .page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
-    .page-title { display: flex; align-items: center; gap: 8px; font-size: 24px; font-weight: 600; margin: 0; }
-    .header-right { display: flex; align-items: center; gap: 16px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; flex-shrink: 0; }
+    .page-title { display: flex; align-items: center; gap: 8px; font-size: 22px; font-weight: 600; margin: 0; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
     .live-badge {
       display: flex; align-items: center; gap: 6px;
-      padding: 6px 14px; border-radius: 20px;
+      padding: 5px 12px; border-radius: 20px;
       background: rgba(255,23,68,0.1); border: 1px solid rgba(255,23,68,0.3);
     }
     .live-dot-red {
@@ -227,31 +229,32 @@ interface GeoCoord {
     .live-text { font-size: 12px; font-weight: 700; color: #ff1744; letter-spacing: 2px; }
     .attack-counter {
       display: flex; flex-direction: column; align-items: flex-end;
-      padding: 6px 14px; border-radius: 10px;
+      padding: 5px 12px; border-radius: 10px;
       background: rgba(102,126,234,0.08); border: 1px solid rgba(102,126,234,0.2);
     }
-    .counter-value { font-size: 20px; font-weight: 700; color: #667eea; }
+    .counter-value { font-size: 18px; font-weight: 700; color: #667eea; }
     .counter-label { font-size: 10px; opacity: 0.6; }
     .apm-counter {
       display: flex; flex-direction: column; align-items: center;
-      padding: 6px 14px; border-radius: 10px;
+      padding: 5px 12px; border-radius: 10px;
       background: rgba(255,145,0,0.08); border: 1px solid rgba(255,145,0,0.25);
     }
-    .apm-value { font-size: 20px; font-weight: 700; color: #ff9100; }
+    .apm-value { font-size: 18px; font-weight: 700; color: #ff9100; }
     .apm-label { font-size: 10px; opacity: 0.6; color: #ff9100; }
 
-    /* ---- main layout: map 65 % + sidebar 35 % ---- */
-    .main-row { display: flex; gap: 16px; }
-    .map-col  { flex: 0 0 65%; min-width: 0; }
+    /* ---- main layout: fills remaining height ---- */
+    .main-row { display: flex; gap: 12px; flex: 1; min-height: 0; overflow: hidden; }
+    .map-col  { flex: 0 0 65%; min-width: 0; display: flex; flex-direction: column; }
     .sidebar-col {
-      flex: 0 0 calc(35% - 16px); min-width: 0;
-      display: flex; flex-direction: column; gap: 16px;
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column; gap: 10px;
+      overflow-y: auto;
     }
 
-    /* ---- map card ---- */
-    .map-card { padding: 0 !important; overflow: hidden; margin-bottom: 0; }
-    .map-wrapper { position: relative; }
-    .leaflet-host { width: 100%; height: 620px; background: var(--bg-page); }
+    /* ---- map card: stretches to fill map-col ---- */
+    .map-card { padding: 0 !important; overflow: hidden; margin-bottom: 0; flex: 1; display: flex; flex-direction: column; }
+    .map-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; }
+    .leaflet-host { width: 100%; flex: 1; min-height: 0; background: var(--bg-page); }
 
     /* ---- overlays on top of map ---- */
     .map-overlay {
@@ -360,9 +363,15 @@ interface GeoCoord {
       opacity: 0 !important;
     }
 
+    /* mat-card needs to pass height through to its content */
+    :host ::ng-deep .map-card.mat-mdc-card { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    :host ::ng-deep .map-card .mat-mdc-card-content { flex: 1; min-height: 0; padding: 0; }
+
     @media (max-width: 1100px) {
-      .main-row { flex-direction: column; }
+      :host { height: auto; overflow: auto; }
+      .main-row { flex-direction: column; overflow: visible; }
       .map-col, .sidebar-col { flex: 1 1 100%; }
+      .leaflet-host { flex: none; height: 500px; }
     }
     @media (max-width: 600px) {
       .page-header { flex-direction: column; align-items: flex-start; }

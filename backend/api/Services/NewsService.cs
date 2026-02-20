@@ -183,24 +183,28 @@ public class NewsService : INewsService
                 : query.OrderByDescending(a => a.PublishedAt)
         };
 
-        var items = await query
+        var rawItems = await query
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
-            .Select(a => MapToDto(a))
             .ToListAsync();
+        var items = rawItems.Select(a => MapToDto(a)).ToList();
 
-        // Compute facets from all matching articles
+        // Compute facets from all matching articles — project to anon types so EF can translate
         var allArticles = _db.Articles.Include(a => a.Classification).Include(a => a.CountryTags).Where(a => a.Classification != null);
         var facets = new Dictionary<string, List<FacetBucket>>
         {
-            ["categories"] = await allArticles.GroupBy(a => a.Classification!.Category)
-                .Select(g => new FacetBucket(g.Key, g.Count())).OrderByDescending(f => f.Count).Take(20).ToListAsync(),
-            ["countries"] = await allArticles.SelectMany(a => a.CountryTags).GroupBy(ct => ct.CountryCode)
-                .Select(g => new FacetBucket(g.Key, g.Count())).OrderByDescending(f => f.Count).Take(20).ToListAsync(),
-            ["threatLevels"] = await allArticles.GroupBy(a => a.Classification!.ThreatLevel)
-                .Select(g => new FacetBucket(g.Key.ToString(), g.Count())).OrderBy(f => f.Key).ToListAsync(),
-            ["threatTypes"] = await allArticles.Where(a => a.Classification!.ThreatType != "none").GroupBy(a => a.Classification!.ThreatType)
-                .Select(g => new FacetBucket(g.Key, g.Count())).OrderByDescending(f => f.Count).Take(20).ToListAsync()
+            ["categories"] = (await allArticles.GroupBy(a => a.Classification!.Category)
+                .Select(g => new { Key = g.Key, Count = g.Count() }).OrderByDescending(g => g.Count).Take(20).ToListAsync())
+                .Select(g => new FacetBucket(g.Key, g.Count)).ToList(),
+            ["countries"] = (await allArticles.SelectMany(a => a.CountryTags).GroupBy(ct => ct.CountryCode)
+                .Select(g => new { Key = g.Key, Count = g.Count() }).OrderByDescending(g => g.Count).Take(20).ToListAsync())
+                .Select(g => new FacetBucket(g.Key, g.Count)).ToList(),
+            ["threatLevels"] = (await allArticles.GroupBy(a => a.Classification!.ThreatLevel)
+                .Select(g => new { Key = g.Key.ToString(), Count = g.Count() }).OrderBy(g => g.Key).ToListAsync())
+                .Select(g => new FacetBucket(g.Key, g.Count)).ToList(),
+            ["threatTypes"] = (await allArticles.Where(a => a.Classification!.ThreatType != "none").GroupBy(a => a.Classification!.ThreatType)
+                .Select(g => new { Key = g.Key, Count = g.Count() }).OrderByDescending(g => g.Count).Take(20).ToListAsync())
+                .Select(g => new FacetBucket(g.Key, g.Count)).ToList()
         };
 
         return new NewsSearchResult { Items = items, Total = total, Facets = facets };

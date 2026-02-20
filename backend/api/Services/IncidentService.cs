@@ -190,20 +190,23 @@ public class IncidentService : IIncidentService
         var contained = await query.CountAsync(i => i.Status == "contained");
         var resolved = await query.CountAsync(i => i.Status == "resolved" || i.Status == "closed");
 
-        var bySector = await query.GroupBy(i => i.Sector)
-            .Select(g => new SectorCount(g.Key, g.Count()))
+        var bySector = (await query.GroupBy(i => i.Sector)
+            .Select(g => new { Key = g.Key, Count = g.Count() })
             .OrderByDescending(x => x.Count)
-            .ToListAsync();
+            .ToListAsync())
+            .Select(x => new SectorCount(x.Key, x.Count)).ToList();
 
-        var bySeverity = await query.GroupBy(i => i.Severity)
-            .Select(g => new SectorCount(g.Key, g.Count()))
+        var bySeverity = (await query.GroupBy(i => i.Severity)
+            .Select(g => new { Key = g.Key, Count = g.Count() })
             .OrderByDescending(x => x.Count)
-            .ToListAsync();
+            .ToListAsync())
+            .Select(x => new SectorCount(x.Key, x.Count)).ToList();
 
-        var byType = await query.GroupBy(i => i.IncidentType)
-            .Select(g => new SectorCount(g.Key, g.Count()))
+        var byType = (await query.GroupBy(i => i.IncidentType)
+            .Select(g => new { Key = g.Key, Count = g.Count() })
             .OrderByDescending(x => x.Count)
-            .ToListAsync();
+            .ToListAsync())
+            .Select(x => new SectorCount(x.Key, x.Count)).ToList();
 
         return new IncidentStatsDto(total, open, investigating, contained, resolved, bySector, bySeverity, byType);
     }

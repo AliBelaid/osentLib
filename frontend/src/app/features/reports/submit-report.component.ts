@@ -11,6 +11,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 import { BulletinService } from '../../core/services/bulletin.service';
 import { UserService } from '../../core/services/user.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -274,7 +275,8 @@ export class SubmitReportComponent implements OnInit {
     private userService: UserService,
     private auth: AuthService,
     private snackBar: MatSnackBar,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -325,6 +327,7 @@ export class SubmitReportComponent implements OnInit {
         this.submitting.set(false);
         this.snackBar.open(this.translate.instant('submitReport.success'), 'OK', { duration: 5000 });
         this.resetForm();
+        this.router.navigate(['/cyber/incidents']);
       },
       error: () => {
         this.submitting.set(false);

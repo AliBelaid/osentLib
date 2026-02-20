@@ -465,6 +465,68 @@ public static class SeedData
         db.Bulletins.AddRange(bulletins);
         await db.SaveChangesAsync();
 
+        // Seed sample incidents
+        var incidents = new[]
+        {
+            new Incident
+            {
+                Title = "Ransomware Attack on Nigerian Federal Ministry Servers",
+                Description = "A sophisticated ransomware variant encrypted critical servers at the Federal Ministry of Communications. Attack vector was a spearphishing email targeting senior officials. Recovery operations are underway with assistance from CERT-NG.",
+                Severity = "critical", Sector = "government", IncidentType = "ransomware",
+                CountryCode = "NG", Source = "CERT-NG", Status = "investigating",
+                AffectedSystems = "[\"Mail Server (Exchange)\",\"File Server (NAS)\",\"Active Directory\"]",
+                Iocs = "[\"185.220.101.34\",\"au-commission-portal.click\"]",
+                ReportedByUserId = adminId, ContainmentPercent = 35,
+                CreatedAt = DateTime.UtcNow.AddDays(-2)
+            },
+            new Incident
+            {
+                Title = "DDoS Attack Against Kenyan Banking Infrastructure",
+                Description = "Volumetric DDoS attack targeting multiple Kenyan banking portals, peaking at 800Gbps. Multiple financial institutions affected. Mitigation measures engaged with upstream providers.",
+                Severity = "high", Sector = "banking", IncidentType = "ddos",
+                CountryCode = "KE", Source = "KE-CIRT", Status = "open",
+                AffectedSystems = "[\"Online Banking Portal\",\"Mobile Banking API\",\"ATM Gateway\"]",
+                Iocs = "[\"91.234.56.78\",\"203.0.113.42\"]",
+                ReportedByUserId = adminId, ContainmentPercent = 0,
+                CreatedAt = DateTime.UtcNow.AddDays(-1)
+            },
+            new Incident
+            {
+                Title = "Phishing Campaign Targeting Egyptian Government Officials",
+                Description = "Widespread phishing campaign using fake AU Commission emails to harvest credentials from senior Egyptian government officials. Over 200 targeted accounts identified.",
+                Severity = "high", Sector = "government", IncidentType = "phishing",
+                CountryCode = "EG", Source = "EG-CERT", Status = "open",
+                AffectedSystems = "[\"Email Gateway\",\"Web Proxy\"]",
+                Iocs = "[\"au-commission-portal.click\",\"login-au.org\"]",
+                ReportedByUserId = adminId, ContainmentPercent = 0,
+                CreatedAt = DateTime.UtcNow.AddHours(-18)
+            },
+            new Incident
+            {
+                Title = "Backdoor Malware in Ethiopian Telecom Core Infrastructure",
+                Description = "Backdoor malware discovered on core routing infrastructure of major Ethiopian telecom provider. Suspected state-sponsored intrusion. Forensic analysis ongoing.",
+                Severity = "critical", Sector = "telecom", IncidentType = "malware",
+                CountryCode = "ET", Source = "EthioTelecom Security", Status = "investigating",
+                AffectedSystems = "[\"Core Router Cluster\",\"DNS Infrastructure\"]",
+                Iocs = "[\"c4d5e6f7a8b9c0d1\",\"45.33.32.156\"]",
+                ReportedByUserId = adminId, ContainmentPercent = 60,
+                CreatedAt = DateTime.UtcNow.AddDays(-3)
+            },
+            new Incident
+            {
+                Title = "Data Exfiltration at South African Energy Company",
+                Description = "Anomalous data transfers detected from internal databases of a major South African energy company. Approximately 2.3TB transferred over 72 hours to overseas endpoints.",
+                Severity = "critical", Sector = "energy", IncidentType = "data_breach",
+                CountryCode = "ZA", Source = "Internal SOC", Status = "contained",
+                AffectedSystems = "[\"Customer Database\",\"SCADA Control System\"]",
+                Iocs = "[\"swift-africa.net\",\"e7d8f9a0b1c2d3e4\"]",
+                ReportedByUserId = adminId, ContainmentPercent = 80,
+                CreatedAt = DateTime.UtcNow.AddDays(-5), ResolvedAt = null
+            },
+        };
+        db.Incidents.AddRange(incidents);
+        await db.SaveChangesAsync();
+
         // Seed additional alert rules
         var alertRules = new[]
         {
