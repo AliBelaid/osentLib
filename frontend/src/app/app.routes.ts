@@ -13,6 +13,7 @@ export const routes: Routes = [
   },
   {
     path: '',
+    canActivate: [authGuard],
     children: [
       {
         path: '',
