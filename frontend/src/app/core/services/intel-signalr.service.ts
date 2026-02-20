@@ -8,13 +8,40 @@ export interface IntelChangeEvent {
   reportId: string;
 }
 
+export interface ReportSubmittedEvent {
+  reportId: string;
+  title: string;
+  country: string;
+  urgency: number;
+  reportType: string;
+  submittedBy: string;
+}
+
+export interface IncidentEvent {
+  type: 'IncidentCreated' | 'IncidentUpdated';
+  incidentId: string;
+  title: string;
+  severity?: string;
+  sector?: string;
+  countryCode?: string;
+  status?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class IntelSignalRService implements OnDestroy {
   private connection?: HubConnection;
   private readonly _changes = new Subject<IntelChangeEvent>();
+  private readonly _reportSubmitted = new Subject<ReportSubmittedEvent>();
+  private readonly _incidentEvents = new Subject<IncidentEvent>();
 
-  /** Subscribe to create/update/delete events. No event fires on interim state changes. */
+  /** Subscribe to intel create/update/delete events */
   changes$ = this._changes.asObservable();
+
+  /** Subscribe to report submission notifications (all users) */
+  reportSubmitted$ = this._reportSubmitted.asObservable();
+
+  /** Subscribe to incident create/update events */
+  incidentEvents$ = this._incidentEvents.asObservable();
 
   constructor(private auth: AuthService) {}
 
@@ -38,6 +65,18 @@ export class IntelSignalRService implements OnDestroy {
       this.connection!.on(evt, (payload: { reportId: string }) => {
         this._changes.next({ type: evt, reportId: payload.reportId });
       });
+    });
+
+    this.connection!.on('ReportSubmitted', (payload: ReportSubmittedEvent) => {
+      this._reportSubmitted.next(payload);
+    });
+
+    this.connection!.on('IncidentCreated', (payload: any) => {
+      this._incidentEvents.next({ type: 'IncidentCreated', ...payload });
+    });
+
+    this.connection!.on('IncidentUpdated', (payload: any) => {
+      this._incidentEvents.next({ type: 'IncidentUpdated', ...payload });
     });
 
     this.connection.start().catch(err => console.warn('[IntelSignalR] connect failed:', err));

@@ -36,6 +36,13 @@ export class BulletinService {
   }
 
   submitReport(request: SubmitReportRequest) {
-    return this.http.post<BulletinDto>(`${environment.apiUrl}/bulletin/report`, request);
+    const fd = new FormData();
+    fd.append('title', request.title);
+    fd.append('content', request.content);
+    fd.append('reportType', request.reportType);
+    fd.append('urgency', String(request.urgency));
+    if (request.affectedCountry) fd.append('affectedCountry', request.affectedCountry);
+    if (request.attachment) fd.append('attachment', request.attachment, request.attachment.name);
+    return this.http.post<BulletinDto>(`${environment.apiUrl}/bulletin/report`, fd);
   }
 }

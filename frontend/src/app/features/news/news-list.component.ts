@@ -264,8 +264,6 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     .hero-content {
       position: relative;
       z-index: 1;
-      max-width: 1200px;
-      margin: 0 auto;
     }
 
     .hero-title-row {
@@ -408,8 +406,6 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     }
 
     .filter-bar-inner {
-      max-width: 1200px;
-      margin: 0 auto;
       display: flex;
       align-items: flex-end;
       gap: 16px;
@@ -551,8 +547,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     /* ---- ARTICLES GRID ---- */
 
     .articles-grid {
-      max-width: 1200px;
-      margin: 24px auto 0;
+      margin: 24px 0 0;
       padding: 0 32px;
       display: flex;
       flex-direction: column;
@@ -774,8 +769,6 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     .empty-state {
       text-align: center;
       padding: 80px 32px;
-      max-width: 1200px;
-      margin: 0 auto;
     }
 
     .empty-icon {
@@ -802,8 +795,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     /* ---- PAGINATION ---- */
 
     .pagination-wrapper {
-      max-width: 1200px;
-      margin: 32px auto 0;
+      margin: 32px 0 0;
       padding: 0 32px;
     }
 

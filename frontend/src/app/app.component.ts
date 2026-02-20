@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -7,10 +7,13 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { AuthService } from './core/services/auth.service';
 import { I18nService } from './core/services/i18n.service';
 import { ExperienceService } from './core/services/experience.service';
+import { IntelSignalRService } from './core/services/intel-signalr.service';
 import { LevelBadgeComponent } from './shared/components/level-badge.component';
 import { DarkModeToggleComponent } from './shared/components/dark-mode-toggle.component';
 import { LanguageSelectorComponent } from './shared/components/language-selector.component';
@@ -20,7 +23,7 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
   standalone: true,
   imports: [
     CommonModule, RouterModule, MatToolbarModule, MatSidenavModule,
-    MatListModule, MatIconModule, MatButtonModule, MatMenuModule,
+    MatListModule, MatIconModule, MatButtonModule, MatMenuModule, MatSnackBarModule,
     TranslateModule, LevelBadgeComponent, DarkModeToggleComponent, LanguageSelectorComponent
   ],
   template: `
@@ -348,14 +351,33 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
     }
   `]
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   myExperience = this.experienceService.myExperience;
+  private _signalrSub?: Subscription;
 
   constructor(
     public auth: AuthService,
     public i18n: I18nService,
-    private experienceService: ExperienceService
+    private experienceService: ExperienceService,
+    private signalR: IntelSignalRService,
+    private snackBar: MatSnackBar
   ) {
-    this.experienceService.getMyExperience().subscribe();
+    if (this.auth.isLoggedIn()) {
+      this.experienceService.getMyExperience().subscribe();
+      this.signalR.connect();
+      this._signalrSub = this.signalR.reportSubmitted$.subscribe(evt => {
+        const urgencyLabel = evt.urgency >= 4 ? '🚨 EMERGENCY' : evt.urgency >= 3 ? '⚠️ HIGH' : '📋 REPORT';
+        this.snackBar.open(
+          `${urgencyLabel}: ${evt.title} — ${evt.submittedBy}`,
+          'View',
+          { duration: 8000, panelClass: 'report-snackbar' }
+        );
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this._signalrSub?.unsubscribe();
+    this.signalR.disconnect();
   }
 }

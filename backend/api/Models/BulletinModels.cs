@@ -15,6 +15,17 @@ public record SubmitReportRequest(
     string? AffectedCountry
 );
 
+// Form-data version that supports file attachment
+public class SubmitReportFormRequest
+{
+    public string Title { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public string ReportType { get; set; } = string.Empty;
+    public int Urgency { get; set; } = 2;
+    public string? AffectedCountry { get; set; }
+    public IFormFile? Attachment { get; set; }
+}
+
 public record UpdateBulletinRequest(
     string? Title,
     string? Content,
@@ -30,8 +41,19 @@ public record BulletinDto(
     string Status,
     int Severity,
     string? Category,
+    Guid CreatedByUserId,
     string CreatedByName,
     string? PublishedByName,
     DateTime CreatedAt,
-    DateTime? PublishedAt
+    DateTime? PublishedAt,
+    List<BulletinAttachmentDto>? Attachments = null
+);
+
+public record BulletinAttachmentDto(
+    int Id,
+    string FileName,
+    string StoragePath,
+    string ContentType,
+    long FileSize,
+    DateTime UploadedAt
 );

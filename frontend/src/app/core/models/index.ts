@@ -122,6 +122,15 @@ export interface UpdateBulletinRequest {
   category?: string;
 }
 
+export interface BulletinAttachmentDto {
+  id: number;
+  fileName: string;
+  storagePath: string;
+  contentType: string;
+  fileSize: number;
+  uploadedAt: string;
+}
+
 export interface BulletinDto {
   id: string;
   title: string;
@@ -130,10 +139,12 @@ export interface BulletinDto {
   status: string;
   severity: number;
   category?: string;
+  createdByUserId: string;
   createdByName: string;
   publishedByName?: string;
   createdAt: string;
   publishedAt?: string;
+  attachments?: BulletinAttachmentDto[];
 }
 
 export interface SubmitReportRequest {
@@ -142,6 +153,57 @@ export interface SubmitReportRequest {
   reportType: string;
   urgency: number;
   affectedCountry?: string;
+  attachment?: File;
+}
+
+// Incident models
+export interface IncidentDto {
+  id: string;
+  title: string;
+  description: string;
+  severity: string;
+  status: string;
+  sector: string;
+  incidentType: string;
+  countryCode: string;
+  countryName: string;
+  source?: string;
+  affectedSystems: string[];
+  iocs: string[];
+  attachmentName?: string;
+  attachmentPath?: string;
+  containmentPercent: number;
+  reportedByUserId: string;
+  reportedByName: string;
+  assignedToUserId?: string;
+  assignedToName?: string;
+  createdAt: string;
+  updatedAt?: string;
+  resolvedAt?: string;
+}
+
+export interface IncidentListResult {
+  items: IncidentDto[];
+  total: number;
+  openCount: number;
+  investigatingCount: number;
+  resolvedCount: number;
+}
+
+export interface IncidentStatsDto {
+  total: number;
+  open: number;
+  investigating: number;
+  contained: number;
+  resolved: number;
+  bySector: SectorCount[];
+  bySeverity: SectorCount[];
+  byType: SectorCount[];
+}
+
+export interface SectorCount {
+  label: string;
+  count: number;
 }
 
 export interface CreateAlertRuleRequest {

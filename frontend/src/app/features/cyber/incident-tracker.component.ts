@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -10,42 +10,45 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatBadgeModule } from '@angular/material/badge';
-import { TranslateModule } from '@ngx-translate/core';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { IncidentService } from '../../core/services/incident.service';
+import { UserService } from '../../core/services/user.service';
+import { AuthService } from '../../core/services/auth.service';
+import { IntelSignalRService } from '../../core/services/intel-signalr.service';
+import { IncidentDto, IncidentStatsDto, CountryDto } from '../../core/models';
 
-interface ResponseAction {
-  step: number;
-  action: string;
-  performedBy: string;
-  timestamp: string;
-  status: 'completed' | 'in-progress' | 'pending';
-}
+const SECTOR_OPTIONS = [
+  { value: 'government',   labelKey: 'cyber.incidents.sectorGovt' },
+  { value: 'banking',      labelKey: 'cyber.incidents.sectorBank' },
+  { value: 'telecom',      labelKey: 'cyber.incidents.sectorTelecom' },
+  { value: 'oil',          labelKey: 'cyber.incidents.sectorOil' },
+  { value: 'military',     labelKey: 'cyber.incidents.sectorMilitary' },
+  { value: 'health',       labelKey: 'cyber.incidents.sectorHealth' },
+  { value: 'education',    labelKey: 'cyber.incidents.sectorEducation' },
+  { value: 'transport',    labelKey: 'cyber.incidents.sectorTransport' },
+  { value: 'energy',       labelKey: 'cyber.incidents.sectorEnergy' },
+  { value: 'media',        labelKey: 'cyber.incidents.sectorMedia' },
+  { value: 'other',        labelKey: 'cyber.incidents.sectorOther' },
+];
 
-interface SecurityIncident {
-  id: string;
-  title: string;
-  description: string;
-  severity: 'critical' | 'high' | 'medium' | 'low';
-  status: 'open' | 'investigating' | 'contained' | 'resolved' | 'closed';
-  category: string;
-  countryCode: string;
-  countryName: string;
-  countryFlag: string;
-  assignedAnalyst: string;
-  createdAt: Date;
-  updatedAt: Date;
-  resolvedAt?: Date;
-  affectedSystems: string[];
-  iocs: string[];
-  containmentPercent: number;
-  responseActions: ResponseAction[];
-}
-
-interface BarItem {
-  label: string;
-  count: number;
-}
+const TYPE_OPTIONS = [
+  { value: 'ransomware',    labelKey: 'cyber.incidents.typeRansomware' },
+  { value: 'ddos',          labelKey: 'cyber.incidents.typeDdos' },
+  { value: 'data_breach',   labelKey: 'cyber.incidents.typeDataBreach' },
+  { value: 'phishing',      labelKey: 'cyber.incidents.typePhishing' },
+  { value: 'malware',       labelKey: 'cyber.incidents.typeMalware' },
+  { value: 'insider_threat',labelKey: 'cyber.incidents.typeInsiderThreat' },
+  { value: 'supply_chain',  labelKey: 'cyber.incidents.typeSupplyChain' },
+  { value: 'bec',           labelKey: 'cyber.incidents.typeBec' },
+  { value: 'apt',           labelKey: 'cyber.incidents.typeApt' },
+  { value: 'cryptojacking', labelKey: 'cyber.incidents.typeCryptojacking' },
+  { value: 'web_defacement',labelKey: 'cyber.incidents.typeWebDefacement' },
+  { value: 'other',         labelKey: 'cyber.incidents.typeOther' },
+];
 
 @Component({
   selector: 'app-incident-tracker',
@@ -53,317 +56,618 @@ interface BarItem {
   imports: [
     CommonModule, FormsModule, MatCardModule, MatIconModule, MatChipsModule,
     MatButtonModule, MatButtonToggleModule, MatSelectModule, MatFormFieldModule,
-    MatInputModule, MatProgressBarModule, MatTooltipModule, MatBadgeModule,
-    TranslateModule
+    MatInputModule, MatProgressBarModule, MatProgressSpinnerModule,
+    MatTooltipModule, MatSnackBarModule, TranslateModule
   ],
   template: `
-    <!-- Header -->
-    <div class="page-header">
-      <h2 class="page-title">
-        <mat-icon>local_fire_department</mat-icon>
-        {{ 'cyber.incidents.title' | translate }}
-      </h2>
-      <div class="header-stats">
-        <div class="header-badge badge-open">
-          <span class="badge-count">{{ openCount }}</span>
-          <span class="badge-label">{{ 'cyber.incidents.open' | translate }}</span>
-        </div>
-        <div class="header-badge badge-investigating">
-          <span class="badge-count">{{ investigatingCount }}</span>
-          <span class="badge-label">{{ 'cyber.incidents.investigating' | translate }}</span>
-        </div>
-        <div class="header-badge badge-resolved">
-          <span class="badge-count">{{ resolvedCount }}</span>
-          <span class="badge-label">{{ 'cyber.incidents.resolved' | translate }}</span>
-        </div>
-        <div class="header-badge badge-total">
-          <span class="badge-count">{{ allIncidents.length }}</span>
-          <span class="badge-label">{{ 'cyber.incidents.total' | translate }}</span>
-        </div>
-      </div>
-    </div>
+    <!-- ══════════════════════════ LIST MODE ══════════════════════════ -->
+    @if (mode === 'list') {
 
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-      <mat-button-toggle-group [(ngModel)]="statusFilter" (change)="applyFilters()" class="status-toggle">
-        <mat-button-toggle value="all">All</mat-button-toggle>
-        <mat-button-toggle value="open">{{ 'cyber.incidents.open' | translate }}</mat-button-toggle>
-        <mat-button-toggle value="investigating">{{ 'cyber.incidents.investigating' | translate }}</mat-button-toggle>
-        <mat-button-toggle value="resolved">{{ 'cyber.incidents.resolved' | translate }}</mat-button-toggle>
-      </mat-button-toggle-group>
-
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>{{ 'cyber.incidents.severity' | translate }}</mat-label>
-        <mat-select [(ngModel)]="severityFilter" (selectionChange)="applyFilters()">
-          <mat-option value="all">All</mat-option>
-          <mat-option value="critical">Critical</mat-option>
-          <mat-option value="high">High</mat-option>
-          <mat-option value="medium">Medium</mat-option>
-          <mat-option value="low">Low</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>{{ 'cyber.incidents.searchPlaceholder' | translate }}</mat-label>
-        <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()">
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-    </div>
-
-    <!-- Kanban Board -->
-    <div class="kanban-board">
-      <!-- Open Column -->
-      <div class="kanban-column">
-        <div class="column-header col-open">
-          <mat-icon>error_outline</mat-icon>
-          <span>{{ 'cyber.incidents.open' | translate }}</span>
-          <span class="col-count">{{ openIncidents.length }}</span>
-        </div>
-        <div class="column-cards">
-          @for (inc of openIncidents; track inc.id) {
-            <div class="incident-card" [class]="'sev-' + inc.severity"
-                 (click)="toggleDetail(inc)" [class.selected]="selectedIncident?.id === inc.id">
-              <div class="inc-header">
-                <span class="inc-id">{{ inc.id }}</span>
-                <span class="sev-badge" [class]="'sev-badge-' + inc.severity">{{ inc.severity }}</span>
-              </div>
-              <div class="inc-title">{{ inc.title }}</div>
-              <div class="inc-meta">
-                <span class="inc-country">{{ inc.countryFlag }} {{ inc.countryName }}</span>
-                <mat-chip class="inc-cat">{{ inc.category }}</mat-chip>
-              </div>
-              <div class="inc-footer">
-                <span class="inc-analyst"><mat-icon class="small-icon">person</mat-icon> {{ inc.assignedAnalyst }}</span>
-                <span class="inc-time">{{ getRelativeTime(inc.createdAt) }}</span>
-              </div>
+      <!-- Header -->
+      <div class="page-header">
+        <h2 class="page-title">
+          <mat-icon>local_fire_department</mat-icon>
+          {{ 'cyber.incidents.title' | translate }}
+        </h2>
+        <div class="header-right">
+          <div class="header-stats">
+            <div class="header-badge badge-open">
+              <span class="badge-count">{{ openCount }}</span>
+              <span class="badge-label">{{ 'cyber.incidents.open' | translate }}</span>
             </div>
-          }
-          @if (openIncidents.length === 0) {
-            <div class="empty-col">No open incidents</div>
-          }
+            <div class="header-badge badge-investigating">
+              <span class="badge-count">{{ investigatingCount }}</span>
+              <span class="badge-label">{{ 'cyber.incidents.investigating' | translate }}</span>
+            </div>
+            <div class="header-badge badge-resolved">
+              <span class="badge-count">{{ resolvedCount }}</span>
+              <span class="badge-label">{{ 'cyber.incidents.resolved' | translate }}</span>
+            </div>
+            <div class="header-badge badge-total">
+              <span class="badge-count">{{ totalCount }}</span>
+              <span class="badge-label">{{ 'cyber.incidents.total' | translate }}</span>
+            </div>
+          </div>
+          <button mat-raised-button class="new-btn" (click)="startCreate()">
+            <mat-icon>add_circle</mat-icon>
+            {{ 'cyber.incidents.newIncident' | translate }}
+          </button>
         </div>
       </div>
 
-      <!-- Investigating Column -->
-      <div class="kanban-column">
-        <div class="column-header col-investigating">
-          <mat-icon>manage_search</mat-icon>
-          <span>{{ 'cyber.incidents.investigating' | translate }}</span>
-          <span class="col-count">{{ investigatingIncidents.length }}</span>
-        </div>
-        <div class="column-cards">
-          @for (inc of investigatingIncidents; track inc.id) {
-            <div class="incident-card" [class]="'sev-' + inc.severity"
-                 (click)="toggleDetail(inc)" [class.selected]="selectedIncident?.id === inc.id">
-              <div class="inc-header">
-                <span class="inc-id">{{ inc.id }}</span>
-                <span class="sev-badge" [class]="'sev-badge-' + inc.severity">{{ inc.severity }}</span>
-              </div>
-              <div class="inc-title">{{ inc.title }}</div>
-              <div class="inc-meta">
-                <span class="inc-country">{{ inc.countryFlag }} {{ inc.countryName }}</span>
-                <mat-chip class="inc-cat">{{ inc.category }}</mat-chip>
-              </div>
-              <div class="inc-footer">
-                <span class="inc-analyst"><mat-icon class="small-icon">person</mat-icon> {{ inc.assignedAnalyst }}</span>
-                <span class="inc-time">{{ getRelativeTime(inc.createdAt) }}</span>
-              </div>
-              <mat-progress-bar mode="determinate" [value]="inc.containmentPercent" class="containment-bar"></mat-progress-bar>
-            </div>
-          }
-          @if (investigatingIncidents.length === 0) {
-            <div class="empty-col">No incidents under investigation</div>
-          }
-        </div>
-      </div>
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <mat-button-toggle-group [(ngModel)]="statusFilter" (change)="loadIncidents()" class="status-toggle">
+          <mat-button-toggle value="all">{{ 'common.all' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="open">{{ 'cyber.incidents.open' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="investigating">{{ 'cyber.incidents.investigating' | translate }}</mat-button-toggle>
+          <mat-button-toggle value="resolved">{{ 'cyber.incidents.resolved' | translate }}</mat-button-toggle>
+        </mat-button-toggle-group>
 
-      <!-- Resolved Column -->
-      <div class="kanban-column">
-        <div class="column-header col-resolved">
-          <mat-icon>check_circle</mat-icon>
-          <span>{{ 'cyber.incidents.resolved' | translate }}</span>
-          <span class="col-count">{{ resolvedIncidents.length }}</span>
-        </div>
-        <div class="column-cards">
-          @for (inc of resolvedIncidents; track inc.id) {
-            <div class="incident-card resolved-card" [class]="'sev-' + inc.severity"
-                 (click)="toggleDetail(inc)" [class.selected]="selectedIncident?.id === inc.id">
-              <div class="inc-header">
-                <span class="inc-id">{{ inc.id }}</span>
-                <span class="sev-badge" [class]="'sev-badge-' + inc.severity">{{ inc.severity }}</span>
-              </div>
-              <div class="inc-title">{{ inc.title }}</div>
-              <div class="inc-meta">
-                <span class="inc-country">{{ inc.countryFlag }} {{ inc.countryName }}</span>
-                <mat-chip class="inc-cat">{{ inc.category }}</mat-chip>
-              </div>
-              <div class="inc-footer">
-                <span class="inc-analyst"><mat-icon class="small-icon">person</mat-icon> {{ inc.assignedAnalyst }}</span>
-                <span class="inc-time">{{ getRelativeTime(inc.resolvedAt || inc.updatedAt) }}</span>
-              </div>
-            </div>
-          }
-          @if (resolvedIncidents.length === 0) {
-            <div class="empty-col">No resolved incidents</div>
-          }
-        </div>
-      </div>
-    </div>
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'cyber.incidents.severity' | translate }}</mat-label>
+          <mat-select [(ngModel)]="severityFilter" (selectionChange)="loadIncidents()">
+            <mat-option value="all">{{ 'common.all' | translate }}</mat-option>
+            <mat-option value="critical">{{ 'bulletins.severityCritical' | translate }}</mat-option>
+            <mat-option value="high">{{ 'bulletins.severityHigh' | translate }}</mat-option>
+            <mat-option value="medium">{{ 'bulletins.severityMedium' | translate }}</mat-option>
+            <mat-option value="low">{{ 'bulletins.severityLow' | translate }}</mat-option>
+          </mat-select>
+        </mat-form-field>
 
-    <!-- Expanded Detail Panel -->
-    @if (selectedIncident) {
-      <mat-card class="detail-panel">
-        <div class="detail-header">
-          <div>
-            <span class="detail-id">{{ selectedIncident.id }}</span>
-            <span class="sev-badge" [class]="'sev-badge-' + selectedIncident.severity">{{ selectedIncident.severity }}</span>
-            <mat-chip class="detail-status" [class]="'status-' + selectedIncident.status">{{ selectedIncident.status }}</mat-chip>
-          </div>
-          <button mat-icon-button (click)="selectedIncident = null"><mat-icon>close</mat-icon></button>
-        </div>
-        <h3 class="detail-title">{{ selectedIncident.title }}</h3>
-        <p class="detail-desc">{{ selectedIncident.description }}</p>
-
-        <div class="detail-grid">
-          <!-- Affected Systems -->
-          <div class="detail-section">
-            <h4><mat-icon>dns</mat-icon> {{ 'cyber.incidents.affectedSystems' | translate }}</h4>
-            <div class="system-list">
-              @for (sys of selectedIncident.affectedSystems; track sys) {
-                <div class="system-item"><mat-icon class="small-icon">storage</mat-icon> {{ sys }}</div>
-              }
-            </div>
-          </div>
-
-          <!-- Containment -->
-          <div class="detail-section">
-            <h4><mat-icon>shield</mat-icon> {{ 'cyber.incidents.containment' | translate }}</h4>
-            <div class="containment-gauge">
-              <div class="gauge-track">
-                <div class="gauge-fill" [style.width.%]="selectedIncident.containmentPercent"
-                     [class]="getContainmentClass(selectedIncident.containmentPercent)"></div>
-              </div>
-              <span class="gauge-text">{{ selectedIncident.containmentPercent }}%</span>
-            </div>
-          </div>
-
-          <!-- IOCs -->
-          <div class="detail-section">
-            <h4><mat-icon>fingerprint</mat-icon> {{ 'cyber.incidents.relatedIocs' | translate }}</h4>
-            <div class="ioc-list">
-              @for (ioc of selectedIncident.iocs; track ioc) {
-                <code class="ioc-value">{{ ioc }}</code>
-              }
-            </div>
-          </div>
-        </div>
-
-        <!-- Response Timeline -->
-        <div class="detail-section">
-          <h4><mat-icon>timeline</mat-icon> {{ 'cyber.incidents.responseTimeline' | translate }}</h4>
-          <div class="response-timeline">
-            @for (action of selectedIncident.responseActions; track action.step) {
-              <div class="timeline-item" [class]="'tl-' + action.status">
-                <div class="tl-marker">
-                  <div class="tl-dot"></div>
-                  @if (!$last) { <div class="tl-line"></div> }
-                </div>
-                <div class="tl-content">
-                  <div class="tl-header">
-                    <span class="tl-step">Step {{ action.step }}</span>
-                    <span class="tl-status-badge" [class]="'tls-' + action.status">{{ action.status }}</span>
-                    <span class="tl-time">{{ action.timestamp }}</span>
-                  </div>
-                  <div class="tl-action">{{ action.action }}</div>
-                  <div class="tl-by">{{ action.performedBy }}</div>
-                </div>
-              </div>
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'cyber.incidents.sector' | translate }}</mat-label>
+          <mat-select [(ngModel)]="sectorFilter" (selectionChange)="loadIncidents()">
+            <mat-option value="all">{{ 'common.all' | translate }}</mat-option>
+            @for (s of sectorOptions; track s.value) {
+              <mat-option [value]="s.value">{{ s.labelKey | translate }}</mat-option>
             }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>{{ 'cyber.incidents.searchPlaceholder' | translate }}</mat-label>
+          <input matInput [(ngModel)]="searchTerm" (input)="onSearch()">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <button mat-icon-button (click)="loadIncidents()" [matTooltip]="'common.refresh' | translate">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+
+      <!-- Loading -->
+      @if (loading()) {
+        <div class="loading-wrap">
+          <mat-spinner diameter="40" />
+          <span>{{ 'common.loading' | translate }}</span>
+        </div>
+      }
+
+      <!-- Kanban Board -->
+      @if (!loading()) {
+        <div class="kanban-board">
+          <!-- Open Column -->
+          <div class="kanban-column">
+            <div class="column-header col-open">
+              <mat-icon>error_outline</mat-icon>
+              <span>{{ 'cyber.incidents.open' | translate }}</span>
+              <span class="col-count">{{ openIncidents.length }}</span>
+            </div>
+            <div class="column-cards">
+              @for (inc of openIncidents; track inc.id) {
+                <div class="incident-card sev-{{ inc.severity }}"
+                     [class.selected]="selectedIncident?.id === inc.id"
+                     (click)="toggleDetail(inc)">
+                  <div class="inc-header">
+                    <span class="inc-type">{{ getTypeLabel(inc.incidentType) }}</span>
+                    <span class="sev-badge sev-badge-{{ inc.severity }}">{{ inc.severity }}</span>
+                  </div>
+                  <div class="inc-title">{{ inc.title }}</div>
+                  <div class="inc-meta">
+                    <span class="inc-sector">{{ getSectorLabel(inc.sector) }}</span>
+                    <span class="inc-country">🌍 {{ inc.countryName }}</span>
+                  </div>
+                  <div class="inc-footer">
+                    <span class="inc-analyst"><mat-icon class="small-icon">person</mat-icon> {{ inc.reportedByName }}</span>
+                    <span class="inc-time">{{ getRelativeTime(inc.createdAt) }}</span>
+                  </div>
+                </div>
+              }
+              @if (openIncidents.length === 0 && !loading()) {
+                <div class="empty-col">{{ 'cyber.incidents.noIncidents' | translate }}</div>
+              }
+            </div>
+          </div>
+
+          <!-- Investigating Column -->
+          <div class="kanban-column">
+            <div class="column-header col-investigating">
+              <mat-icon>manage_search</mat-icon>
+              <span>{{ 'cyber.incidents.investigating' | translate }}</span>
+              <span class="col-count">{{ investigatingIncidents.length }}</span>
+            </div>
+            <div class="column-cards">
+              @for (inc of investigatingIncidents; track inc.id) {
+                <div class="incident-card sev-{{ inc.severity }}"
+                     [class.selected]="selectedIncident?.id === inc.id"
+                     (click)="toggleDetail(inc)">
+                  <div class="inc-header">
+                    <span class="inc-type">{{ getTypeLabel(inc.incidentType) }}</span>
+                    <span class="sev-badge sev-badge-{{ inc.severity }}">{{ inc.severity }}</span>
+                  </div>
+                  <div class="inc-title">{{ inc.title }}</div>
+                  <div class="inc-meta">
+                    <span class="inc-sector">{{ getSectorLabel(inc.sector) }}</span>
+                    <span class="inc-country">🌍 {{ inc.countryName }}</span>
+                  </div>
+                  <div class="inc-footer">
+                    <span class="inc-analyst"><mat-icon class="small-icon">person</mat-icon> {{ inc.reportedByName }}</span>
+                    <span class="inc-time">{{ getRelativeTime(inc.createdAt) }}</span>
+                  </div>
+                  <mat-progress-bar mode="determinate" [value]="inc.containmentPercent" class="containment-bar"></mat-progress-bar>
+                </div>
+              }
+              @if (investigatingIncidents.length === 0 && !loading()) {
+                <div class="empty-col">{{ 'cyber.incidents.noIncidents' | translate }}</div>
+              }
+            </div>
+          </div>
+
+          <!-- Resolved Column -->
+          <div class="kanban-column">
+            <div class="column-header col-resolved">
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'cyber.incidents.resolved' | translate }}</span>
+              <span class="col-count">{{ resolvedIncidents.length }}</span>
+            </div>
+            <div class="column-cards">
+              @for (inc of resolvedIncidents; track inc.id) {
+                <div class="incident-card resolved-card sev-{{ inc.severity }}"
+                     [class.selected]="selectedIncident?.id === inc.id"
+                     (click)="toggleDetail(inc)">
+                  <div class="inc-header">
+                    <span class="inc-type">{{ getTypeLabel(inc.incidentType) }}</span>
+                    <span class="sev-badge sev-badge-{{ inc.severity }}">{{ inc.severity }}</span>
+                  </div>
+                  <div class="inc-title">{{ inc.title }}</div>
+                  <div class="inc-meta">
+                    <span class="inc-sector">{{ getSectorLabel(inc.sector) }}</span>
+                    <span class="inc-country">🌍 {{ inc.countryName }}</span>
+                  </div>
+                  <div class="inc-footer">
+                    <span class="inc-analyst"><mat-icon class="small-icon">person</mat-icon> {{ inc.reportedByName }}</span>
+                    <span class="inc-time">{{ getRelativeTime(inc.resolvedAt || inc.updatedAt || inc.createdAt) }}</span>
+                  </div>
+                </div>
+              }
+              @if (resolvedIncidents.length === 0 && !loading()) {
+                <div class="empty-col">{{ 'cyber.incidents.noIncidents' | translate }}</div>
+              }
+            </div>
           </div>
         </div>
-      </mat-card>
+      }
+
+      <!-- Detail Panel -->
+      @if (selectedIncident) {
+        <mat-card class="detail-panel">
+          <div class="detail-header">
+            <div class="detail-header-left">
+              <span class="sev-badge sev-badge-{{ selectedIncident.severity }}">{{ selectedIncident.severity }}</span>
+              <span class="detail-status status-{{ selectedIncident.status }}">{{ selectedIncident.status }}</span>
+              <span class="detail-sector">{{ getSectorLabel(selectedIncident.sector) }}</span>
+            </div>
+            <div class="detail-header-actions">
+              <button mat-stroked-button class="edit-btn" (click)="startEdit(selectedIncident)">
+                <mat-icon>edit</mat-icon>
+                {{ 'common.edit' | translate }}
+              </button>
+              <button mat-icon-button (click)="selectedIncident = null"><mat-icon>close</mat-icon></button>
+            </div>
+          </div>
+          <h3 class="detail-title">{{ selectedIncident.title }}</h3>
+          <p class="detail-meta-line">
+            <mat-icon class="meta-icon">public</mat-icon> {{ selectedIncident.countryName }}
+            &nbsp;·&nbsp;
+            <mat-icon class="meta-icon">local_fire_department</mat-icon> {{ getTypeLabel(selectedIncident.incidentType) }}
+            &nbsp;·&nbsp;
+            <mat-icon class="meta-icon">person</mat-icon> {{ selectedIncident.reportedByName }}
+            &nbsp;·&nbsp;
+            <mat-icon class="meta-icon">schedule</mat-icon> {{ getRelativeTime(selectedIncident.createdAt) }}
+            @if (selectedIncident.source) {
+              &nbsp;·&nbsp;
+              <mat-icon class="meta-icon">source</mat-icon> {{ selectedIncident.source }}
+            }
+          </p>
+          <p class="detail-desc">{{ selectedIncident.description }}</p>
+
+          <div class="detail-grid">
+            <!-- Affected Systems -->
+            <div class="detail-section">
+              <h4><mat-icon>dns</mat-icon> {{ 'cyber.incidents.affectedSystemsLabel' | translate }}</h4>
+              @if (selectedIncident.affectedSystems.length > 0) {
+                <div class="system-list">
+                  @for (sys of selectedIncident.affectedSystems; track sys) {
+                    <div class="system-item"><mat-icon class="small-icon">storage</mat-icon> {{ sys }}</div>
+                  }
+                </div>
+              } @else {
+                <div class="empty-field">—</div>
+              }
+            </div>
+
+            <!-- Containment -->
+            <div class="detail-section">
+              <h4><mat-icon>shield</mat-icon> {{ 'cyber.incidents.containment' | translate }}</h4>
+              <div class="containment-gauge">
+                <div class="gauge-track">
+                  <div class="gauge-fill {{ getContainmentClass(selectedIncident.containmentPercent) }}"
+                       [style.width.%]="selectedIncident.containmentPercent"></div>
+                </div>
+                <span class="gauge-text">{{ selectedIncident.containmentPercent }}%</span>
+              </div>
+            </div>
+
+            <!-- IOCs -->
+            <div class="detail-section">
+              <h4><mat-icon>fingerprint</mat-icon> {{ 'cyber.incidents.iocsLabel' | translate }}</h4>
+              @if (selectedIncident.iocs.length > 0) {
+                <div class="ioc-list">
+                  @for (ioc of selectedIncident.iocs; track ioc) {
+                    <code class="ioc-value">{{ ioc }}</code>
+                  }
+                </div>
+              } @else {
+                <div class="empty-field">—</div>
+              }
+            </div>
+          </div>
+
+          <!-- Attachment -->
+          @if (selectedIncident.attachmentName) {
+            <div class="detail-attachment">
+              <mat-icon>attach_file</mat-icon>
+              <span>{{ selectedIncident.attachmentName }}</span>
+            </div>
+          }
+        </mat-card>
+      }
+
+      <!-- Stats Section -->
+      @if (stats) {
+        <div class="stats-section">
+          <h3 class="section-title">
+            <mat-icon>analytics</mat-icon>
+            {{ 'cyber.incidents.statsSection' | translate }}
+          </h3>
+          <div class="stats-grid">
+            <!-- By Sector -->
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title class="chart-title">
+                  <mat-icon>category</mat-icon>
+                  {{ 'cyber.incidents.bySector' | translate }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                @if (stats.bySector.length === 0) {
+                  <div class="empty-stats">{{ 'common.noData' | translate }}</div>
+                }
+                @for (item of stats.bySector; track item.label) {
+                  <div class="bar-row">
+                    <span class="bar-label">{{ getSectorLabel(item.label) }}</span>
+                    <div class="bar-track">
+                      <div class="bar-fill cat-bar" [style.width.%]="getBarWidth(item.count, maxSectorCount)">
+                        <span class="bar-value">{{ item.count }}</span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </mat-card-content>
+            </mat-card>
+
+            <!-- By Type -->
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title class="chart-title">
+                  <mat-icon>local_fire_department</mat-icon>
+                  {{ 'cyber.incidents.byType' | translate }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                @if (stats.byType.length === 0) {
+                  <div class="empty-stats">{{ 'common.noData' | translate }}</div>
+                }
+                @for (item of stats.byType; track item.label) {
+                  <div class="bar-row">
+                    <span class="bar-label">{{ getTypeLabel(item.label) }}</span>
+                    <div class="bar-track">
+                      <div class="bar-fill type-bar" [style.width.%]="getBarWidth(item.count, maxTypeCount)">
+                        <span class="bar-value">{{ item.count }}</span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </mat-card-content>
+            </mat-card>
+
+            <!-- By Severity -->
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title class="chart-title">
+                  <mat-icon>warning</mat-icon>
+                  {{ 'cyber.incidents.bySeverity' | translate }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                @if (stats.bySeverity.length === 0) {
+                  <div class="empty-stats">{{ 'common.noData' | translate }}</div>
+                }
+                @for (item of stats.bySeverity; track item.label) {
+                  <div class="bar-row">
+                    <span class="bar-label sev-{{ item.label }}-text">{{ item.label }}</span>
+                    <div class="bar-track">
+                      <div class="bar-fill sev-bar-{{ item.label }}" [style.width.%]="getBarWidth(item.count, maxSeverityCount)">
+                        <span class="bar-value">{{ item.count }}</span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Status Summary -->
+            <mat-card class="chart-card">
+              <mat-card-header>
+                <mat-card-title class="chart-title">
+                  <mat-icon>donut_small</mat-icon>
+                  {{ 'cyber.incidents.status' | translate }}
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="status-summary">
+                  <div class="status-row">
+                    <span class="status-dot open-dot"></span>
+                    <span class="status-label">{{ 'cyber.incidents.open' | translate }}</span>
+                    <span class="status-count">{{ stats.open }}</span>
+                  </div>
+                  <div class="status-row">
+                    <span class="status-dot invest-dot"></span>
+                    <span class="status-label">{{ 'cyber.incidents.investigating' | translate }}</span>
+                    <span class="status-count">{{ stats.investigating }}</span>
+                  </div>
+                  <div class="status-row">
+                    <span class="status-dot contain-dot"></span>
+                    <span class="status-label">{{ 'cyber.incidents.contained' | translate }}</span>
+                    <span class="status-count">{{ stats.contained }}</span>
+                  </div>
+                  <div class="status-row">
+                    <span class="status-dot resolved-dot"></span>
+                    <span class="status-label">{{ 'cyber.incidents.resolved' | translate }}</span>
+                    <span class="status-count">{{ stats.resolved }}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      }
+
     }
 
-    <!-- Stats Section -->
-    <div class="stats-section">
-      <h3 class="section-title">
-        <mat-icon>analytics</mat-icon>
-        Statistics
-      </h3>
-      <div class="stats-grid">
-        <!-- MTTD Gauge -->
-        <mat-card class="gauge-card">
-          <div class="metric-gauge">
-            <div class="gauge-circle" [style]="'--progress: ' + (mttd / 48 * 360) + 'deg'">
-              <div class="gauge-inner">
-                <span class="gauge-val">{{ mttd }}</span>
-                <span class="gauge-unit">{{ 'cyber.incidents.hours' | translate }}</span>
-              </div>
-            </div>
-            <div class="gauge-label">{{ 'cyber.incidents.mttd' | translate }}</div>
-          </div>
-        </mat-card>
+    <!-- ══════════════════════════ CREATE / EDIT FORM ══════════════════════════ -->
+    @if (mode === 'create' || mode === 'edit') {
+      <div class="form-page">
+        <!-- Form Header -->
+        <div class="form-header">
+          <button mat-icon-button (click)="cancelForm()" class="back-btn">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <h2 class="form-title">
+            <mat-icon>{{ mode === 'create' ? 'add_circle' : 'edit' }}</mat-icon>
+            {{ (mode === 'create' ? 'cyber.incidents.create' : 'cyber.incidents.edit') | translate }}
+          </h2>
+        </div>
 
-        <!-- MTTR Gauge -->
-        <mat-card class="gauge-card">
-          <div class="metric-gauge">
-            <div class="gauge-circle mttr-gauge" [style]="'--progress: ' + (mttr / 72 * 360) + 'deg'">
-              <div class="gauge-inner">
-                <span class="gauge-val">{{ mttr }}</span>
-                <span class="gauge-unit">{{ 'cyber.incidents.hours' | translate }}</span>
-              </div>
-            </div>
-            <div class="gauge-label">{{ 'cyber.incidents.mttr' | translate }}</div>
-          </div>
-        </mat-card>
-
-        <!-- Incidents by Category -->
-        <mat-card class="chart-card">
-          <mat-card-header>
-            <mat-card-title class="chart-title">
-              <mat-icon>category</mat-icon>
-              {{ 'cyber.incidents.byCategory' | translate }}
-            </mat-card-title>
-          </mat-card-header>
+        <mat-card class="form-card">
           <mat-card-content>
-            @for (item of byCategory; track item.label) {
-              <div class="bar-row">
-                <span class="bar-label">{{ item.label }}</span>
-                <div class="bar-track">
-                  <div class="bar-fill cat-bar" [style.width.%]="getBarWidth(item.count, maxCatCount)">
-                    <span class="bar-value">{{ item.count }}</span>
-                  </div>
-                </div>
-              </div>
-            }
-          </mat-card-content>
-        </mat-card>
+            <div class="form-grid">
 
-        <!-- Monthly Trend -->
-        <mat-card class="chart-card">
-          <mat-card-header>
-            <mat-card-title class="chart-title">
-              <mat-icon>trending_up</mat-icon>
-              {{ 'cyber.incidents.monthlyTrend' | translate }}
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="trend-chart">
-              @for (item of monthlyTrend; track item.label) {
-                <div class="trend-bar-wrapper" [matTooltip]="item.label + ': ' + item.count">
-                  <div class="trend-bar" [style.height.%]="getBarWidth(item.count, maxMonthCount)"></div>
-                  <span class="trend-label">{{ item.label }}</span>
+              <!-- Title -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>{{ 'cyber.incidents.incidentTitle' | translate }}</mat-label>
+                <input matInput [(ngModel)]="formTitle" required maxlength="300">
+              </mat-form-field>
+
+              <!-- Description -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>{{ 'cyber.incidents.description' | translate }}</mat-label>
+                <textarea matInput [(ngModel)]="formDescription" required rows="5" maxlength="5000"></textarea>
+                <mat-hint align="end">{{ formDescription.length }}/5000</mat-hint>
+              </mat-form-field>
+
+              <!-- Row: Severity + Incident Type + Sector -->
+              <div class="form-row-3">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'cyber.incidents.severity' | translate }}</mat-label>
+                  <mat-select [(ngModel)]="formSeverity" required>
+                    <mat-option value="critical">🔴 {{ 'bulletins.severityCritical' | translate }}</mat-option>
+                    <mat-option value="high">🟠 {{ 'bulletins.severityHigh' | translate }}</mat-option>
+                    <mat-option value="medium">🟡 {{ 'bulletins.severityMedium' | translate }}</mat-option>
+                    <mat-option value="low">🟢 {{ 'bulletins.severityLow' | translate }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'cyber.incidents.incidentType' | translate }}</mat-label>
+                  <mat-select [(ngModel)]="formIncidentType" required>
+                    @for (t of typeOptions; track t.value) {
+                      <mat-option [value]="t.value">{{ t.labelKey | translate }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'cyber.incidents.sector' | translate }}</mat-label>
+                  <mat-select [(ngModel)]="formSector" required>
+                    @for (s of sectorOptions; track s.value) {
+                      <mat-option [value]="s.value">{{ s.labelKey | translate }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <!-- Row: Country + Source -->
+              <div class="form-row-2">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'cyber.incidents.affectedCountry' | translate }}</mat-label>
+                  <mat-select [(ngModel)]="formCountryCode" required>
+                    @for (c of countries(); track c.code) {
+                      <mat-option [value]="c.code">{{ c.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'cyber.incidents.source' | translate }}</mat-label>
+                  <input matInput [(ngModel)]="formSource" maxlength="200">
+                </mat-form-field>
+              </div>
+
+              <!-- Edit-only: Status + Containment -->
+              @if (mode === 'edit') {
+                <div class="form-row-2">
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ 'cyber.incidents.status' | translate }}</mat-label>
+                    <mat-select [(ngModel)]="formStatus">
+                      <mat-option value="open">{{ 'cyber.incidents.open' | translate }}</mat-option>
+                      <mat-option value="investigating">{{ 'cyber.incidents.investigating' | translate }}</mat-option>
+                      <mat-option value="contained">{{ 'cyber.incidents.contained' | translate }}</mat-option>
+                      <mat-option value="resolved">{{ 'cyber.incidents.resolved' | translate }}</mat-option>
+                      <mat-option value="closed">{{ 'cyber.incidents.closed' | translate }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>{{ 'cyber.incidents.containmentPct' | translate }}</mat-label>
+                    <input matInput type="number" [(ngModel)]="formContainmentPercent" min="0" max="100">
+                    <span matSuffix>%</span>
+                  </mat-form-field>
                 </div>
               }
+
+              <!-- Affected Systems -->
+              <div class="chips-section">
+                <div class="chips-label">
+                  <mat-icon>dns</mat-icon>
+                  {{ 'cyber.incidents.affectedSystemsLabel' | translate }}
+                </div>
+                <div class="chips-input-row">
+                  <input class="chips-input" placeholder="{{ 'cyber.incidents.addSystem' | translate }}"
+                         [(ngModel)]="newSystem"
+                         (keydown.enter)="addSystem(); $event.preventDefault()">
+                  <button mat-icon-button type="button" (click)="addSystem()" [disabled]="!newSystem.trim()">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+                <div class="chips-list">
+                  @for (sys of formAffectedSystems; track sys) {
+                    <div class="chip-item">
+                      <mat-icon class="chip-icon">storage</mat-icon>
+                      <span>{{ sys }}</span>
+                      <button mat-icon-button type="button" class="chip-remove" (click)="removeSystem(sys)">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- IOCs -->
+              <div class="chips-section">
+                <div class="chips-label">
+                  <mat-icon>fingerprint</mat-icon>
+                  {{ 'cyber.incidents.iocsLabel' | translate }}
+                </div>
+                <div class="chips-input-row">
+                  <input class="chips-input" placeholder="{{ 'cyber.incidents.addIoc' | translate }}"
+                         [(ngModel)]="newIoc"
+                         (keydown.enter)="addIoc(); $event.preventDefault()">
+                  <button mat-icon-button type="button" (click)="addIoc()" [disabled]="!newIoc.trim()">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+                <div class="chips-list">
+                  @for (ioc of formIocs; track ioc) {
+                    <div class="chip-item ioc-chip">
+                      <mat-icon class="chip-icon">radio_button_checked</mat-icon>
+                      <code>{{ ioc }}</code>
+                      <button mat-icon-button type="button" class="chip-remove" (click)="removeIoc(ioc)">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- File Attachment -->
+              <div class="attachment-section">
+                <div class="chips-label">
+                  <mat-icon>attach_file</mat-icon>
+                  {{ 'cyber.incidents.attachment' | translate }}
+                  <span class="optional-tag">{{ 'submitReport.optional' | translate }}</span>
+                </div>
+                @if (!formAttachment) {
+                  <label class="drop-zone" (click)="fileInput.click()"
+                         (dragover)="$event.preventDefault()" (drop)="onDrop($event)">
+                    <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                    <p>{{ 'submitReport.dropFile' | translate }}</p>
+                    <p class="file-hint">PDF, DOC, DOCX, JPG, PNG — max 10MB</p>
+                    <input #fileInput type="file" hidden accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
+                           (change)="onFileSelect($event)">
+                  </label>
+                } @else {
+                  <div class="file-preview">
+                    <mat-icon class="file-icon">insert_drive_file</mat-icon>
+                    <div class="file-info">
+                      <span class="file-name">{{ formAttachment.name }}</span>
+                      <span class="file-size">{{ formatSize(formAttachment.size) }}</span>
+                    </div>
+                    <button mat-icon-button type="button" (click)="formAttachment = null">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <!-- Actions -->
+              <div class="form-actions">
+                <button mat-stroked-button type="button" (click)="cancelForm()">
+                  {{ 'common.cancel' | translate }}
+                </button>
+                <button mat-raised-button class="submit-btn" type="button"
+                        [disabled]="!canSubmit() || submitting()"
+                        (click)="submitForm()">
+                  @if (submitting()) {
+                    <mat-spinner diameter="18" />
+                  } @else {
+                    <mat-icon>{{ mode === 'create' ? 'send' : 'save' }}</mat-icon>
+                  }
+                  {{ (mode === 'create' ? 'cyber.incidents.submitCreate' : 'cyber.incidents.submitEdit') | translate }}
+                </button>
+              </div>
+
             </div>
           </mat-card-content>
         </mat-card>
       </div>
-    </div>
+    }
   `,
   styles: [`
     :host { display: block; padding: 0 16px 32px; background: var(--bg-page); min-height: 100vh; color: var(--text-primary); }
 
+    /* ─── LIST HEADER ─── */
     .page-header {
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 12px; margin-bottom: 16px;
@@ -372,6 +676,7 @@ interface BarItem {
       display: flex; align-items: center; gap: 8px;
       font-size: 24px; font-weight: 600; margin: 0; color: var(--text-heading);
     }
+    .header-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .header-stats { display: flex; gap: 10px; }
     .header-badge {
       display: flex; flex-direction: column; align-items: center;
@@ -379,22 +684,33 @@ interface BarItem {
     }
     .badge-count { font-size: 22px; font-weight: 700; line-height: 1.2; }
     .badge-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
-    .badge-open { background: rgba(255, 23, 68, 0.1); color: #ff1744; border: 1px solid rgba(255, 23, 68, 0.2); }
-    .badge-investigating { background: rgba(255, 145, 0, 0.1); color: #ff9100; border: 1px solid rgba(255, 145, 0, 0.2); }
-    .badge-resolved { background: rgba(0, 230, 118, 0.1); color: #00e676; border: 1px solid rgba(0, 230, 118, 0.2); }
-    .badge-total { background: rgba(102, 126, 234, 0.1); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.2); }
+    .badge-open { background: rgba(255,23,68,0.1); color: #ff1744; border: 1px solid rgba(255,23,68,0.2); }
+    .badge-investigating { background: rgba(255,145,0,0.1); color: #ff9100; border: 1px solid rgba(255,145,0,0.2); }
+    .badge-resolved { background: rgba(0,230,118,0.1); color: #00e676; border: 1px solid rgba(0,230,118,0.2); }
+    .badge-total { background: rgba(102,126,234,0.1); color: #667eea; border: 1px solid rgba(102,126,234,0.2); }
 
-    /* Filter Bar */
+    .new-btn {
+      background: linear-gradient(135deg, #667eea, #5a67d8) !important;
+      color: #fff !important; font-weight: 600 !important; border-radius: 8px !important;
+    }
+
+    /* ─── FILTER BAR ─── */
     .filter-bar {
       display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
     }
     .status-toggle { height: 38px; }
-    .filter-field { width: 140px; }
+    .filter-field { width: 150px; }
     .filter-field ::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; }
     .search-field { flex: 1; min-width: 200px; }
     .search-field ::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; }
 
-    /* Kanban Board */
+    /* ─── LOADING ─── */
+    .loading-wrap {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      padding: 40px; color: var(--text-secondary);
+    }
+
+    /* ─── KANBAN ─── */
     .kanban-board {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;
     }
@@ -414,88 +730,83 @@ interface BarItem {
       margin-left: auto; font-size: 12px;
       background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 10px;
     }
-    .column-cards { padding: 8px; max-height: 500px; overflow-y: auto; }
-    .empty-col {
-      text-align: center; padding: 24px; font-size: 13px; color: var(--text-secondary);
-    }
+    .column-cards { padding: 8px; max-height: 520px; overflow-y: auto; }
+    .empty-col { text-align: center; padding: 24px; font-size: 13px; color: var(--text-secondary); }
 
-    /* Incident Card */
+    /* ─── INCIDENT CARD ─── */
     .incident-card {
       padding: 12px; margin-bottom: 8px; border-radius: 10px;
       background: var(--bg-card-glass); border: 1px solid rgba(255,255,255,0.04);
-      cursor: pointer; transition: all 0.2s;
-      animation: fadeInCard 0.4s ease both;
+      cursor: pointer; transition: all 0.2s; animation: fadeInCard 0.4s ease both;
     }
-    .incident-card:nth-child(1) { animation-delay: 0s; }
-    .incident-card:nth-child(2) { animation-delay: 0.05s; }
-    .incident-card:nth-child(3) { animation-delay: 0.1s; }
-    .incident-card:nth-child(4) { animation-delay: 0.15s; }
-    .incident-card:nth-child(5) { animation-delay: 0.2s; }
-    .incident-card:nth-child(6) { animation-delay: 0.25s; }
-    .incident-card:nth-child(7) { animation-delay: 0.3s; }
-    .incident-card:nth-child(8) { animation-delay: 0.35s; }
-    .incident-card:nth-child(9) { animation-delay: 0.4s; }
-    .incident-card:nth-child(10) { animation-delay: 0.45s; }
-    .incident-card:hover { border-color: rgba(102, 126, 234, 0.3); transform: translateY(-1px); }
-    .incident-card.selected { border-color: #667eea; box-shadow: 0 0 12px rgba(102, 126, 234, 0.15); }
+    .incident-card:hover { border-color: rgba(102,126,234,0.3); transform: translateY(-1px); }
+    .incident-card.selected { border-color: #667eea; box-shadow: 0 0 12px rgba(102,126,234,0.2); }
     .sev-critical { border-left: 3px solid #ff1744; }
     .sev-high { border-left: 3px solid #f44336; }
     .sev-medium { border-left: 3px solid #ff9100; }
     .sev-low { border-left: 3px solid #00e676; }
-    .resolved-card { opacity: 0.7; }
+    .resolved-card { opacity: 0.72; }
     .resolved-card:hover { opacity: 1; }
+    @keyframes fadeInCard { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
     .inc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .inc-id { font-family: 'Consolas', monospace; font-size: 11px; color: #667eea; font-weight: 600; }
+    .inc-type { font-size: 10px; color: #667eea; font-weight: 600; letter-spacing: 0.3px; }
     .sev-badge {
       font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
       padding: 2px 8px; border-radius: 4px;
     }
-    .sev-badge-critical { background: rgba(255, 23, 68, 0.15); color: #ff1744; }
-    .sev-badge-high { background: rgba(244, 67, 54, 0.15); color: #f44336; }
-    .sev-badge-medium { background: rgba(255, 145, 0, 0.15); color: #ff9100; }
-    .sev-badge-low { background: rgba(0, 230, 118, 0.15); color: #00e676; }
+    .sev-badge-critical { background: rgba(255,23,68,0.15); color: #ff1744; }
+    .sev-badge-high { background: rgba(244,67,54,0.15); color: #f44336; }
+    .sev-badge-medium { background: rgba(255,145,0,0.15); color: #ff9100; }
+    .sev-badge-low { background: rgba(0,230,118,0.15); color: #00e676; }
 
     .inc-title { font-size: 13px; font-weight: 500; margin-bottom: 8px; line-height: 1.3; color: var(--text-primary); }
-    .inc-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-    .inc-country { font-size: 12px; color: var(--text-primary); }
-    .inc-cat {
-      font-size: 9px !important; height: 18px !important;
-      padding: 0 6px !important; min-height: 18px !important;
-    }
+    .inc-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .inc-sector { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(102,126,234,0.1); color: #667eea; }
+    .inc-country { font-size: 11px; color: var(--text-secondary); }
     .inc-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-secondary); }
-    .inc-analyst { display: flex; align-items: center; gap: 2px; color: var(--text-secondary); }
+    .inc-analyst { display: flex; align-items: center; gap: 2px; }
     .inc-time { color: var(--text-tertiary); }
     .small-icon { font-size: 14px; width: 14px; height: 14px; }
     .containment-bar { margin-top: 8px; border-radius: 4px; }
 
-    /* Detail Panel */
+    /* ─── DETAIL PANEL ─── */
     .detail-panel {
-      padding: 24px !important; margin-bottom: 24px;
-      border: 1px solid rgba(102, 126, 234, 0.2) !important;
+      padding: 20px !important; margin-bottom: 24px;
+      border: 1px solid rgba(102,126,234,0.2) !important;
+      border-radius: 12px !important;
     }
-    .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .detail-header > div { display: flex; align-items: center; gap: 8px; }
-    .detail-id { font-family: 'Consolas', monospace; font-size: 14px; color: #667eea; font-weight: 700; }
+    .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .detail-header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .detail-header-actions { display: flex; align-items: center; gap: 8px; }
     .detail-status {
-      font-size: 10px !important; height: 22px !important; min-height: 22px !important;
-      text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 3px 10px; border-radius: 4px;
     }
-    .status-open { background: rgba(255, 23, 68, 0.15) !important; color: #ff1744 !important; }
-    .status-investigating { background: rgba(255, 145, 0, 0.15) !important; color: #ff9100 !important; }
-    .status-contained { background: rgba(0, 212, 255, 0.15) !important; color: #00d4ff !important; }
-    .status-resolved { background: rgba(0, 230, 118, 0.15) !important; color: #00e676 !important; }
-    .status-closed { background: rgba(136, 146, 164, 0.15) !important; color: var(--text-secondary) !important; }
-    .detail-title { font-size: 18px; font-weight: 600; margin: 0 0 8px; color: var(--text-heading); }
-    .detail-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px; }
+    .status-open { background: rgba(255,23,68,0.12); color: #ff1744; }
+    .status-investigating { background: rgba(255,145,0,0.12); color: #ff9100; }
+    .status-contained { background: rgba(0,212,255,0.12); color: #00d4ff; }
+    .status-resolved { background: rgba(0,230,118,0.12); color: #00e676; }
+    .status-closed { background: rgba(128,128,128,0.12); color: var(--text-secondary); }
+    .detail-sector {
+      font-size: 11px; padding: 3px 8px; border-radius: 4px;
+      background: rgba(102,126,234,0.1); color: #667eea;
+    }
+    .edit-btn { font-size: 12px; color: #667eea; border-color: rgba(102,126,234,0.3) !important; }
+    .detail-title { font-size: 18px; font-weight: 600; margin: 0 0 6px; color: var(--text-heading); }
+    .detail-meta-line {
+      font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;
+      display: flex; align-items: center; flex-wrap: wrap; gap: 2px;
+    }
+    .meta-icon { font-size: 14px; width: 14px; height: 14px; vertical-align: middle; }
+    .detail-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
 
-    .detail-grid {
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;
-    }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
     .detail-section h4 {
       display: flex; align-items: center; gap: 6px;
       font-size: 13px; font-weight: 600; margin: 0 0 10px; color: #667eea;
     }
+    .empty-field { font-size: 13px; color: var(--text-tertiary); }
     .system-list { display: flex; flex-direction: column; gap: 4px; }
     .system-item {
       display: flex; align-items: center; gap: 4px;
@@ -508,362 +819,474 @@ interface BarItem {
       border-radius: 5px; overflow: hidden;
     }
     .gauge-fill { height: 100%; border-radius: 5px; transition: width 0.5s; }
-    .gauge-fill.cont-high { background: linear-gradient(90deg, #00e676, #69f0ae); }
-    .gauge-fill.cont-medium { background: linear-gradient(90deg, #ff9100, #ffc107); }
-    .gauge-fill.cont-low { background: linear-gradient(90deg, #ff1744, #f44336); }
+    .cont-high { background: linear-gradient(90deg, #00e676, #69f0ae); }
+    .cont-medium { background: linear-gradient(90deg, #ff9100, #ffc107); }
+    .cont-low { background: linear-gradient(90deg, #ff1744, #f44336); }
     .gauge-text { font-weight: 700; font-size: 16px; color: var(--text-heading); }
     .ioc-list { display: flex; flex-direction: column; gap: 4px; }
     .ioc-value {
       font-family: 'Consolas', monospace; font-size: 11px;
-      color: #00d4ff; background: rgba(0, 212, 255, 0.06);
-      padding: 4px 8px; border-radius: 4px;
-      border: 1px solid rgba(0, 212, 255, 0.12);
+      color: #00d4ff; background: rgba(0,212,255,0.06);
+      padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(0,212,255,0.12);
+    }
+    .detail-attachment {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: #667eea; padding: 8px 12px;
+      background: rgba(102,126,234,0.06); border-radius: 6px;
     }
 
-    /* Response Timeline */
-    .response-timeline { padding-left: 4px; }
-    .timeline-item { display: flex; gap: 12px; }
-    .tl-marker { display: flex; flex-direction: column; align-items: center; width: 20px; }
-    .tl-dot {
-      width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
-      border: 2px solid; background: var(--bg-card);
-    }
-    .tl-completed .tl-dot { border-color: #00e676; background: #00e676; }
-    .tl-in-progress .tl-dot { border-color: #ff9100; background: #ff9100; animation: pulse 2s infinite; }
-    .tl-pending .tl-dot { border-color: var(--text-secondary); }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    @keyframes fadeInCard {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .tl-line { width: 2px; flex: 1; background: var(--border-default); min-height: 24px; }
-    .tl-content { flex: 1; padding-bottom: 16px; }
-    .tl-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-    .tl-step { font-size: 11px; font-weight: 600; color: #667eea; }
-    .tl-status-badge {
-      font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
-      padding: 1px 6px; border-radius: 3px;
-    }
-    .tls-completed { background: rgba(0, 230, 118, 0.1); color: #00e676; }
-    .tls-in-progress { background: rgba(255, 145, 0, 0.1); color: #ff9100; }
-    .tls-pending { background: rgba(136, 146, 164, 0.1); color: var(--text-secondary); }
-    .tl-time { font-size: 10px; opacity: 0.5; margin-left: auto; }
-    .tl-action { font-size: 13px; font-weight: 500; color: var(--text-primary); }
-    .tl-by { font-size: 11px; color: var(--text-secondary); }
-
-    /* Stats Section */
+    /* ─── STATS SECTION ─── */
+    .stats-section { margin-top: 8px; }
     .section-title {
       display: flex; align-items: center; gap: 8px;
       font-size: 18px; font-weight: 600; margin: 0 0 16px; color: var(--text-heading);
     }
-    .stats-grid {
-      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px;
-    }
-    .gauge-card { display: flex; align-items: center; justify-content: center; padding: 20px !important; }
-    .metric-gauge { text-align: center; }
-    .gauge-circle {
-      width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 10px;
-      background: conic-gradient(#667eea var(--progress), var(--border-default) 0deg);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .mttr-gauge {
-      background: conic-gradient(#ff9100 var(--progress), var(--border-default) 0deg);
-    }
-    .gauge-inner {
-      width: 76px; height: 76px; border-radius: 50%; background: var(--bg-card);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-    }
-    .gauge-val { font-size: 22px; font-weight: 700; color: var(--text-heading); }
-    .gauge-unit { font-size: 10px; opacity: 0.5; }
-    .gauge-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
-
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     .chart-card { }
-    .chart-title {
-      display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text-primary);
-    }
+    .chart-title { display: flex; align-items: center; gap: 6px; font-size: 14px !important; color: var(--text-primary) !important; }
     .bar-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
-    .bar-label { min-width: 90px; font-size: 12px; font-weight: 500; color: var(--text-primary); }
-    .bar-track {
-      flex: 1; height: 22px; background: rgba(128,128,128,0.1);
-      border-radius: 4px; overflow: hidden;
-    }
+    .bar-label { min-width: 80px; font-size: 11px; font-weight: 500; color: var(--text-primary); text-overflow: ellipsis; overflow: hidden; }
+    .bar-track { flex: 1; height: 22px; background: rgba(128,128,128,0.1); border-radius: 4px; overflow: hidden; }
     .bar-fill {
       height: 100%; border-radius: 4px; min-width: 24px;
       display: flex; align-items: center; justify-content: flex-end;
       padding-right: 6px; transition: width 0.5s ease;
     }
     .bar-value { font-size: 10px; font-weight: 600; color: #fff; }
-    .cat-bar { background: linear-gradient(90deg, #f5576c, #ff6b6b); }
+    .cat-bar { background: linear-gradient(90deg, #667eea, #764ba2); }
+    .type-bar { background: linear-gradient(90deg, #f5576c, #f093fb); }
+    .sev-bar-critical { background: linear-gradient(90deg, #ff1744, #f44336); }
+    .sev-bar-high { background: linear-gradient(90deg, #ff6b35, #ff9100); }
+    .sev-bar-medium { background: linear-gradient(90deg, #ff9100, #ffc107); }
+    .sev-bar-low { background: linear-gradient(90deg, #00c853, #00e676); }
+    .sev-critical-text { color: #ff1744; }
+    .sev-high-text { color: #ff9100; }
+    .sev-medium-text { color: #ffc107; }
+    .sev-low-text { color: #00e676; }
+    .empty-stats { font-size: 12px; color: var(--text-tertiary); padding: 12px 0; }
 
-    .trend-chart {
-      display: flex; align-items: flex-end; gap: 8px; height: 100px; padding: 8px 0;
-    }
-    .trend-bar-wrapper {
-      flex: 1; display: flex; flex-direction: column; align-items: center;
-      height: 100%; justify-content: flex-end;
-    }
-    .trend-bar {
-      width: 100%; min-height: 4px; border-radius: 4px 4px 0 0;
-      background: linear-gradient(180deg, #667eea, #764ba2);
-      transition: height 0.5s ease;
-    }
-    .trend-label { font-size: 9px; margin-top: 4px; color: var(--text-tertiary); }
+    .status-summary { display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
+    .status-row { display: flex; align-items: center; gap: 8px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .open-dot { background: #ff1744; }
+    .invest-dot { background: #ff9100; }
+    .contain-dot { background: #00d4ff; }
+    .resolved-dot { background: #00e676; }
+    .status-label { flex: 1; font-size: 12px; color: var(--text-secondary); }
+    .status-count { font-size: 14px; font-weight: 700; color: var(--text-heading); }
 
-    @media (max-width: 1100px) {
-      .kanban-board { grid-template-columns: 1fr; }
+    /* ─── CREATE / EDIT FORM ─── */
+    .form-page { }
+    .form-header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .back-btn { color: var(--text-secondary); }
+    .form-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 22px; font-weight: 700; margin: 0; color: var(--text-heading);
+    }
+    .form-card {
+      background: var(--bg-card) !important;
+      border: 1px solid var(--border-default) !important;
+      border-radius: 12px !important;
+    }
+    .form-grid { display: flex; flex-direction: column; gap: 12px; padding: 8px 0; }
+    .full-width { width: 100%; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .form-row-2 mat-form-field, .form-row-3 mat-form-field { width: 100%; }
+    ::ng-deep .form-card .mat-mdc-form-field-subscript-wrapper { min-height: 0 !important; }
+
+    /* Chips/Tags input */
+    .chips-section { margin: 4px 0 8px; }
+    .chips-label {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600; color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .chips-label mat-icon { font-size: 18px; width: 18px; height: 18px; color: #667eea; }
+    .optional-tag {
+      font-size: 11px; color: var(--text-tertiary); font-weight: 400;
+      background: rgba(102,126,234,0.1); padding: 2px 6px; border-radius: 4px;
+    }
+    .chips-input-row { display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+    .chips-input {
+      flex: 1; padding: 8px 12px; border-radius: 8px;
+      background: var(--bg-input, rgba(255,255,255,0.05));
+      border: 1px solid var(--border-default); color: var(--text-primary);
+      font-size: 13px; outline: none;
+    }
+    .chips-input:focus { border-color: #667eea; }
+    .chips-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip-item {
+      display: flex; align-items: center; gap: 4px;
+      padding: 4px 4px 4px 10px; border-radius: 20px;
+      background: rgba(102,126,234,0.1); border: 1px solid rgba(102,126,234,0.2);
+      font-size: 12px; color: var(--text-primary);
+    }
+    .chip-icon { font-size: 14px; width: 14px; height: 14px; color: #667eea; }
+    .chip-remove { width: 24px !important; height: 24px !important; line-height: 24px !important; }
+    .chip-remove mat-icon { font-size: 14px; width: 14px; height: 14px; }
+    .ioc-chip { background: rgba(0,212,255,0.06); border-color: rgba(0,212,255,0.15); }
+    .ioc-chip .chip-icon { color: #00d4ff; }
+    .ioc-chip code { font-family: 'Consolas', monospace; font-size: 11px; color: #00d4ff; }
+
+    /* File attachment */
+    .attachment-section { margin: 4px 0 8px; }
+    .drop-zone {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 24px 32px; border: 2px dashed rgba(102,126,234,0.3); border-radius: 12px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .drop-zone:hover { border-color: #667eea; background: rgba(102,126,234,0.04); }
+    .upload-icon { font-size: 32px; width: 32px; height: 32px; color: #667eea; margin-bottom: 6px; }
+    .drop-zone p { margin: 2px 0; font-size: 13px; color: var(--text-secondary); }
+    .file-hint { font-size: 11px !important; color: var(--text-tertiary) !important; }
+    .file-preview {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px;
+      background: rgba(102,126,234,0.06); border: 1px solid rgba(102,126,234,0.2);
+    }
+    .file-icon { font-size: 24px; width: 24px; height: 24px; color: #667eea; }
+    .file-info { flex: 1; display: flex; flex-direction: column; }
+    .file-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+    .file-size { font-size: 11px; color: var(--text-tertiary); }
+
+    /* Form actions */
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+    .submit-btn {
+      background: linear-gradient(135deg, #667eea, #5a67d8) !important;
+      color: #fff !important; font-weight: 600 !important;
+      padding: 0 28px !important; height: 42px !important;
+      border-radius: 8px !important; display: flex; align-items: center; gap: 8px;
+    }
+    .submit-btn:disabled { opacity: 0.6; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1200px) {
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .detail-grid { grid-template-columns: 1fr; }
     }
-    @media (max-width: 900px) {
+    @media (max-width: 1000px) {
+      .kanban-board { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
+      .form-row-3 { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
       .page-header { flex-direction: column; align-items: flex-start; }
-      .header-stats { flex-wrap: wrap; }
+      .header-right { flex-direction: column; align-items: flex-start; width: 100%; }
       .filter-bar { flex-direction: column; align-items: stretch; }
-    }
-    @media (max-width: 600px) {
       .stats-grid { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
     }
   `]
 })
-export class IncidentTrackerComponent implements OnInit {
-  allIncidents: SecurityIncident[] = [];
-  filteredIncidents: SecurityIncident[] = [];
-  selectedIncident: SecurityIncident | null = null;
+export class IncidentTrackerComponent implements OnInit, OnDestroy {
+  // Options
+  readonly sectorOptions = SECTOR_OPTIONS;
+  readonly typeOptions = TYPE_OPTIONS;
 
+  // Data
+  allIncidents: IncidentDto[] = [];
+  filteredIncidents: IncidentDto[] = [];
+  selectedIncident: IncidentDto | null = null;
+  stats: IncidentStatsDto | null = null;
+  countries = signal<CountryDto[]>([]);
+
+  // Mode
+  mode: 'list' | 'create' | 'edit' = 'list';
+  editingId: string | null = null;
+
+  // Form fields
+  formTitle = '';
+  formDescription = '';
+  formSeverity = 'medium';
+  formSector = '';
+  formIncidentType = '';
+  formCountryCode = '';
+  formSource = '';
+  formAffectedSystems: string[] = [];
+  formIocs: string[] = [];
+  formAttachment: File | null = null;
+  formStatus = 'open';
+  formContainmentPercent = 0;
+  newSystem = '';
+  newIoc = '';
+
+  // State
+  loading = signal(false);
+  submitting = signal(false);
+
+  // Filters
   statusFilter = 'all';
   severityFilter = 'all';
+  sectorFilter = 'all';
   searchTerm = '';
+  private _searchTimer: ReturnType<typeof setTimeout> | null = null;
 
+  // Counts (from API)
   openCount = 0;
   investigatingCount = 0;
   resolvedCount = 0;
+  totalCount = 0;
 
-  mttd = 4.2;
-  mttr = 18.7;
-  byCategory: BarItem[] = [];
-  monthlyTrend: BarItem[] = [];
-  maxCatCount = 1;
-  maxMonthCount = 1;
+  // Stats derived
+  maxSectorCount = 1;
+  maxTypeCount = 1;
+  maxSeverityCount = 1;
+
+  private _incidentSub?: Subscription;
 
   get openIncidents() { return this.filteredIncidents.filter(i => i.status === 'open'); }
   get investigatingIncidents() { return this.filteredIncidents.filter(i => i.status === 'investigating' || i.status === 'contained'); }
   get resolvedIncidents() { return this.filteredIncidents.filter(i => i.status === 'resolved' || i.status === 'closed'); }
 
+  constructor(
+    private incidentService: IncidentService,
+    private userService: UserService,
+    private auth: AuthService,
+    private signalR: IntelSignalRService,
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
+  ) {}
+
   ngOnInit() {
-    this.allIncidents = this.generateIncidents();
-    this.byCategory = [
-      { label: 'Ransomware', count: 23 },
-      { label: 'Data Breach', count: 18 },
-      { label: 'DDoS', count: 15 },
-      { label: 'Phishing', count: 31 },
-      { label: 'Insider Threat', count: 8 },
-      { label: 'Malware', count: 21 }
-    ];
-    this.monthlyTrend = [
-      { label: 'Sep', count: 12 },
-      { label: 'Oct', count: 18 },
-      { label: 'Nov', count: 15 },
-      { label: 'Dec', count: 24 },
-      { label: 'Jan', count: 21 },
-      { label: 'Feb', count: 17 }
-    ];
-    this.maxCatCount = Math.max(1, ...this.byCategory.map(c => c.count));
-    this.maxMonthCount = Math.max(1, ...this.monthlyTrend.map(m => m.count));
-    this.updateCounts();
-    this.applyFilters();
-  }
+    this.userService.listCountries().subscribe(c => this.countries.set(c));
+    this.formCountryCode = this.auth.user()?.countryCode ?? '';
+    this.loadIncidents();
+    this.loadStats();
 
-  private generateIncidents(): SecurityIncident[] {
-    const incidents: SecurityIncident[] = [
-      {
-        id: 'INC-2024-001', title: 'Ransomware attack on Nigerian Federal Ministry servers',
-        description: 'A sophisticated ransomware variant encrypted critical servers at the Federal Ministry of Communications. The attack vector was a spearphishing email targeting senior officials. Initial analysis indicates the ransomware is a new variant of LockBit with African-specific targeting.',
-        severity: 'critical', status: 'investigating', category: 'Ransomware',
-        countryCode: 'NG', countryName: 'Nigeria', countryFlag: '\u{1F1F3}\u{1F1EC}',
-        assignedAnalyst: 'A. Okonkwo', createdAt: new Date(Date.now() - 7200000), updatedAt: new Date(Date.now() - 3600000),
-        affectedSystems: ['Mail Server (Exchange)', 'File Server (NAS)', 'Active Directory', 'Web Portal'],
-        iocs: ['185.220.101.34', 'au-commission-portal.click', 'a3f2b8c9d4e5f6a7b8c9d0e1f2a3b4c5'],
-        containmentPercent: 45,
-        responseActions: [
-          { step: 1, action: 'Isolated affected network segments', performedBy: 'SOC Team', timestamp: '14:23 UTC', status: 'completed' },
-          { step: 2, action: 'Initiated forensic imaging of affected servers', performedBy: 'A. Okonkwo', timestamp: '14:45 UTC', status: 'completed' },
-          { step: 3, action: 'Deploying EDR to all endpoints for threat hunting', performedBy: 'Incident Response Team', timestamp: '15:10 UTC', status: 'in-progress' },
-          { step: 4, action: 'Restore from clean backups once containment confirmed', performedBy: 'Infrastructure Team', timestamp: 'Pending', status: 'pending' }
-        ]
-      },
-      {
-        id: 'INC-2024-002', title: 'DDoS attack against Kenyan banking infrastructure',
-        description: 'Volumetric DDoS attack targeting multiple Kenyan banking portals, peaking at 800Gbps. The attack appears coordinated, with multiple attack vectors including SYN flood, UDP amplification, and HTTP slowloris.',
-        severity: 'high', status: 'contained', category: 'DDoS',
-        countryCode: 'KE', countryName: 'Kenya', countryFlag: '\u{1F1F0}\u{1F1EA}',
-        assignedAnalyst: 'J. Kamau', createdAt: new Date(Date.now() - 14400000), updatedAt: new Date(Date.now() - 7200000),
-        affectedSystems: ['Online Banking Portal', 'Mobile Banking API', 'ATM Network Gateway'],
-        iocs: ['91.234.56.78', '203.0.113.42'],
-        containmentPercent: 82,
-        responseActions: [
-          { step: 1, action: 'Activated DDoS mitigation service (cloud scrubbing)', performedBy: 'NOC Team', timestamp: '10:15 UTC', status: 'completed' },
-          { step: 2, action: 'Implemented rate limiting and geo-blocking', performedBy: 'J. Kamau', timestamp: '10:30 UTC', status: 'completed' },
-          { step: 3, action: 'Monitoring for attack pattern changes', performedBy: 'SOC Analysts', timestamp: '11:00 UTC', status: 'in-progress' },
-          { step: 4, action: 'Post-incident review and hardening', performedBy: 'Security Architecture', timestamp: 'Pending', status: 'pending' }
-        ]
-      },
-      {
-        id: 'INC-2024-003', title: 'Data exfiltration detected at South African energy company',
-        description: 'Anomalous data transfers detected from internal databases to external servers. Approximately 2.3TB of data was transferred over a 72-hour period. Investigation suggests compromised service account credentials.',
-        severity: 'critical', status: 'open', category: 'Data Breach',
-        countryCode: 'ZA', countryName: 'South Africa', countryFlag: '\u{1F1FF}\u{1F1E6}',
-        assignedAnalyst: 'S. van der Merwe', createdAt: new Date(Date.now() - 1800000), updatedAt: new Date(Date.now() - 900000),
-        affectedSystems: ['Customer Database', 'SCADA Control System', 'HR Portal'],
-        iocs: ['hxxps://swift-africa.net/update.exe', 'e7d8f9a0b1c2d3e4f5a6b7c8d9e0f1a2'],
-        containmentPercent: 10,
-        responseActions: [
-          { step: 1, action: 'Revoke compromised service account credentials', performedBy: 'Identity Team', timestamp: '16:00 UTC', status: 'in-progress' },
-          { step: 2, action: 'Block C2 IP addresses at firewall', performedBy: 'SOC Team', timestamp: 'Pending', status: 'pending' },
-          { step: 3, action: 'Full forensic analysis of affected systems', performedBy: 'DFIR Team', timestamp: 'Pending', status: 'pending' }
-        ]
-      },
-      {
-        id: 'INC-2024-004', title: 'Phishing campaign targeting Egyptian government officials',
-        description: 'Widespread phishing campaign using fake AU Commission emails to harvest credentials of Egyptian government officials. Over 500 emails detected with malicious links.',
-        severity: 'high', status: 'investigating', category: 'Phishing',
-        countryCode: 'EG', countryName: 'Egypt', countryFlag: '\u{1F1EA}\u{1F1EC}',
-        assignedAnalyst: 'M. Hassan', createdAt: new Date(Date.now() - 28800000), updatedAt: new Date(Date.now() - 14400000),
-        affectedSystems: ['Email Gateway', 'Web Proxy'],
-        iocs: ['au-commission-portal.click', 'hxxps://login-au.org/verify'],
-        containmentPercent: 65,
-        responseActions: [
-          { step: 1, action: 'Blocked phishing domains at DNS and proxy', performedBy: 'SOC Team', timestamp: '08:30 UTC', status: 'completed' },
-          { step: 2, action: 'Sent advisory to all government email users', performedBy: 'M. Hassan', timestamp: '09:15 UTC', status: 'completed' },
-          { step: 3, action: 'Password reset for affected accounts', performedBy: 'Identity Team', timestamp: '10:00 UTC', status: 'in-progress' },
-          { step: 4, action: 'Deploy additional email filtering rules', performedBy: 'Email Security', timestamp: 'Pending', status: 'pending' }
-        ]
-      },
-      {
-        id: 'INC-2024-005', title: 'Malware infection in Ethiopian telecom network',
-        description: 'Backdoor malware discovered on core routing infrastructure of major Ethiopian telecom provider. The malware allows remote access and traffic interception.',
-        severity: 'critical', status: 'open', category: 'Malware',
-        countryCode: 'ET', countryName: 'Ethiopia', countryFlag: '\u{1F1EA}\u{1F1F9}',
-        assignedAnalyst: 'T. Bekele', createdAt: new Date(Date.now() - 3600000), updatedAt: new Date(Date.now() - 1800000),
-        affectedSystems: ['Core Router Cluster', 'DNS Infrastructure', 'Monitoring Systems'],
-        iocs: ['c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9', '45.33.32.156'],
-        containmentPercent: 15,
-        responseActions: [
-          { step: 1, action: 'Emergency threat assessment initiated', performedBy: 'T. Bekele', timestamp: '15:30 UTC', status: 'in-progress' },
-          { step: 2, action: 'Engage vendor for firmware integrity check', performedBy: 'Network Engineering', timestamp: 'Pending', status: 'pending' }
-        ]
-      },
-      {
-        id: 'INC-2024-006', title: 'Insider threat at Moroccan financial institution',
-        description: 'Suspicious data access patterns detected from privileged user account. The user accessed customer records outside normal working hours and attempted to copy data to USB device.',
-        severity: 'medium', status: 'resolved', category: 'Insider Threat',
-        countryCode: 'MA', countryName: 'Morocco', countryFlag: '\u{1F1F2}\u{1F1E6}',
-        assignedAnalyst: 'K. Benani', createdAt: new Date(Date.now() - 172800000), updatedAt: new Date(Date.now() - 86400000),
-        resolvedAt: new Date(Date.now() - 86400000),
-        affectedSystems: ['Customer Database', 'DLP System'],
-        iocs: [],
-        containmentPercent: 100,
-        responseActions: [
-          { step: 1, action: 'Suspended user account and revoked access', performedBy: 'HR & Security', timestamp: 'Day 1, 09:00 UTC', status: 'completed' },
-          { step: 2, action: 'Forensic analysis of user workstation', performedBy: 'DFIR Team', timestamp: 'Day 1, 11:00 UTC', status: 'completed' },
-          { step: 3, action: 'Confirmed no data left the organization', performedBy: 'K. Benani', timestamp: 'Day 2, 14:00 UTC', status: 'completed' }
-        ]
-      },
-      {
-        id: 'INC-2024-007', title: 'Supply chain attack on West African logistics platform',
-        description: 'Malicious code injected into software update for logistics management platform used across West Africa. The compromised update was distributed to approximately 200 organizations.',
-        severity: 'high', status: 'open', category: 'Supply Chain',
-        countryCode: 'GH', countryName: 'Ghana', countryFlag: '\u{1F1EC}\u{1F1ED}',
-        assignedAnalyst: 'E. Mensah', createdAt: new Date(Date.now() - 5400000), updatedAt: new Date(Date.now() - 2700000),
-        affectedSystems: ['Logistics Platform (SaaS)', 'API Gateway', 'Partner Integration Layer'],
-        iocs: ['afdb-secure-update.info'],
-        containmentPercent: 20,
-        responseActions: [
-          { step: 1, action: 'Notified vendor and all affected organizations', performedBy: 'E. Mensah', timestamp: '13:00 UTC', status: 'completed' },
-          { step: 2, action: 'Rolled back to previous software version', performedBy: 'Vendor', timestamp: '14:30 UTC', status: 'in-progress' },
-          { step: 3, action: 'Scan all systems for compromise indicators', performedBy: 'SOC Team', timestamp: 'Pending', status: 'pending' }
-        ]
-      },
-      {
-        id: 'INC-2024-008', title: 'Credential stuffing attack on Tanzanian government portal',
-        description: 'Automated credential stuffing attack detected against the Tanzanian e-government portal. Attackers using credentials from previous data breaches.',
-        severity: 'medium', status: 'resolved', category: 'Credential Theft',
-        countryCode: 'TZ', countryName: 'Tanzania', countryFlag: '\u{1F1F9}\u{1F1FF}',
-        assignedAnalyst: 'D. Mushi', createdAt: new Date(Date.now() - 259200000), updatedAt: new Date(Date.now() - 172800000),
-        resolvedAt: new Date(Date.now() - 172800000),
-        affectedSystems: ['e-Government Portal', 'Authentication Service'],
-        iocs: [],
-        containmentPercent: 100,
-        responseActions: [
-          { step: 1, action: 'Implemented CAPTCHA and rate limiting', performedBy: 'Web Team', timestamp: 'Day 1, 10:00 UTC', status: 'completed' },
-          { step: 2, action: 'Forced password reset for compromised accounts', performedBy: 'D. Mushi', timestamp: 'Day 1, 14:00 UTC', status: 'completed' },
-          { step: 3, action: 'Deployed MFA for all government accounts', performedBy: 'Identity Team', timestamp: 'Day 2, 09:00 UTC', status: 'completed' }
-        ]
-      },
-      {
-        id: 'INC-2024-009', title: 'Cryptojacking on Rwandan university computing cluster',
-        description: 'Cryptocurrency mining malware discovered on university high-performance computing cluster. Resources diverted for mining operations over 2-week period.',
-        severity: 'low', status: 'closed', category: 'Malware',
-        countryCode: 'RW', countryName: 'Rwanda', countryFlag: '\u{1F1F7}\u{1F1FC}',
-        assignedAnalyst: 'P. Uwimana', createdAt: new Date(Date.now() - 604800000), updatedAt: new Date(Date.now() - 432000000),
-        resolvedAt: new Date(Date.now() - 432000000),
-        affectedSystems: ['HPC Cluster', 'Research Network'],
-        iocs: [],
-        containmentPercent: 100,
-        responseActions: [
-          { step: 1, action: 'Terminated mining processes and isolated nodes', performedBy: 'IT Support', timestamp: 'Day 1', status: 'completed' },
-          { step: 2, action: 'Patched vulnerable SSH configuration', performedBy: 'P. Uwimana', timestamp: 'Day 2', status: 'completed' }
-        ]
-      },
-      {
-        id: 'INC-2024-010', title: 'BEC attack targeting Senegalese trade organization',
-        description: 'Business email compromise targeting wire transfers at a major Senegalese trade organization. Attackers impersonated the CFO to authorize a fraudulent payment of $450,000.',
-        severity: 'high', status: 'resolved', category: 'BEC',
-        countryCode: 'SN', countryName: 'Senegal', countryFlag: '\u{1F1F8}\u{1F1F3}',
-        assignedAnalyst: 'A. Diallo', createdAt: new Date(Date.now() - 345600000), updatedAt: new Date(Date.now() - 259200000),
-        resolvedAt: new Date(Date.now() - 259200000),
-        affectedSystems: ['Email System', 'Financial ERP'],
-        iocs: ['ecobank-verification.xyz'],
-        containmentPercent: 100,
-        responseActions: [
-          { step: 1, action: 'Contacted bank to freeze fraudulent transfer', performedBy: 'CFO Office', timestamp: 'Day 1, 11:00 UTC', status: 'completed' },
-          { step: 2, action: 'Secured compromised email account', performedBy: 'A. Diallo', timestamp: 'Day 1, 13:00 UTC', status: 'completed' },
-          { step: 3, action: 'Implemented DMARC/DKIM/SPF for email domain', performedBy: 'Email Security', timestamp: 'Day 3', status: 'completed' },
-          { step: 4, action: 'Conducted BEC awareness training for finance team', performedBy: 'Security Awareness', timestamp: 'Day 5', status: 'completed' }
-        ]
-      }
-    ];
-    return incidents;
-  }
-
-  updateCounts() {
-    this.openCount = this.allIncidents.filter(i => i.status === 'open').length;
-    this.investigatingCount = this.allIncidents.filter(i => i.status === 'investigating' || i.status === 'contained').length;
-    this.resolvedCount = this.allIncidents.filter(i => i.status === 'resolved' || i.status === 'closed').length;
-  }
-
-  applyFilters() {
-    this.filteredIncidents = this.allIncidents.filter(i => {
-      if (this.statusFilter !== 'all') {
-        if (this.statusFilter === 'open' && i.status !== 'open') return false;
-        if (this.statusFilter === 'investigating' && i.status !== 'investigating' && i.status !== 'contained') return false;
-        if (this.statusFilter === 'resolved' && i.status !== 'resolved' && i.status !== 'closed') return false;
-      }
-      if (this.severityFilter !== 'all' && i.severity !== this.severityFilter) return false;
-      if (this.searchTerm) {
-        const term = this.searchTerm.toLowerCase();
-        return i.title.toLowerCase().includes(term) || i.id.toLowerCase().includes(term) || i.countryName.toLowerCase().includes(term);
-      }
-      return true;
+    this._incidentSub = this.signalR.incidentEvents$.subscribe(() => {
+      this.loadIncidents();
+      this.loadStats();
     });
   }
 
-  toggleDetail(inc: SecurityIncident) {
+  ngOnDestroy() {
+    this._incidentSub?.unsubscribe();
+    if (this._searchTimer) clearTimeout(this._searchTimer);
+  }
+
+  loadIncidents() {
+    this.loading.set(true);
+    this.incidentService.list({
+      status: this.statusFilter !== 'all' ? this.statusFilter : undefined,
+      severity: this.severityFilter !== 'all' ? this.severityFilter : undefined,
+      sector: this.sectorFilter !== 'all' ? this.sectorFilter : undefined,
+      query: this.searchTerm || undefined,
+      page: 1,
+      pageSize: 100
+    }).subscribe({
+      next: result => {
+        this.allIncidents = result.items;
+        this.filteredIncidents = result.items;
+        this.openCount = result.openCount;
+        this.investigatingCount = result.investigatingCount;
+        this.resolvedCount = result.resolvedCount;
+        this.totalCount = result.total;
+        this.loading.set(false);
+      },
+      error: () => {
+        this.snackBar.open(this.translate.instant('cyber.incidents.loadError'), 'OK', { duration: 4000 });
+        this.loading.set(false);
+      }
+    });
+  }
+
+  loadStats() {
+    this.incidentService.getStats().subscribe({
+      next: stats => {
+        this.stats = stats;
+        this.maxSectorCount = Math.max(1, ...stats.bySector.map(x => x.count));
+        this.maxTypeCount = Math.max(1, ...stats.byType.map(x => x.count));
+        this.maxSeverityCount = Math.max(1, ...stats.bySeverity.map(x => x.count));
+      },
+      error: () => {}
+    });
+  }
+
+  onSearch() {
+    if (this._searchTimer) clearTimeout(this._searchTimer);
+    this._searchTimer = setTimeout(() => this.loadIncidents(), 400);
+  }
+
+  toggleDetail(inc: IncidentDto) {
     this.selectedIncident = this.selectedIncident?.id === inc.id ? null : inc;
   }
 
-  getRelativeTime(date: Date): string {
+  // ── FORM MANAGEMENT ──
+
+  startCreate() {
+    this.resetForm();
+    this.formCountryCode = this.auth.user()?.countryCode ?? '';
+    this.mode = 'create';
+    this.selectedIncident = null;
+  }
+
+  startEdit(inc: IncidentDto) {
+    this.editingId = inc.id;
+    this.formTitle = inc.title;
+    this.formDescription = inc.description;
+    this.formSeverity = inc.severity;
+    this.formSector = inc.sector;
+    this.formIncidentType = inc.incidentType;
+    this.formCountryCode = inc.countryCode;
+    this.formSource = inc.source ?? '';
+    this.formAffectedSystems = [...inc.affectedSystems];
+    this.formIocs = [...inc.iocs];
+    this.formAttachment = null;
+    this.formStatus = inc.status;
+    this.formContainmentPercent = inc.containmentPercent;
+    this.newSystem = '';
+    this.newIoc = '';
+    this.mode = 'edit';
+  }
+
+  cancelForm() {
+    this.mode = 'list';
+    this.resetForm();
+  }
+
+  private resetForm() {
+    this.editingId = null;
+    this.formTitle = '';
+    this.formDescription = '';
+    this.formSeverity = 'medium';
+    this.formSector = '';
+    this.formIncidentType = '';
+    this.formCountryCode = '';
+    this.formSource = '';
+    this.formAffectedSystems = [];
+    this.formIocs = [];
+    this.formAttachment = null;
+    this.formStatus = 'open';
+    this.formContainmentPercent = 0;
+    this.newSystem = '';
+    this.newIoc = '';
+  }
+
+  canSubmit(): boolean {
+    return !!(this.formTitle.trim() && this.formDescription.trim() &&
+              this.formSeverity && this.formSector && this.formIncidentType && this.formCountryCode);
+  }
+
+  submitForm() {
+    if (!this.canSubmit() || this.submitting()) return;
+    this.submitting.set(true);
+
+    if (this.mode === 'create') {
+      this.incidentService.create({
+        title: this.formTitle,
+        description: this.formDescription,
+        severity: this.formSeverity,
+        sector: this.formSector,
+        incidentType: this.formIncidentType,
+        countryCode: this.formCountryCode,
+        source: this.formSource || undefined,
+        affectedSystems: this.formAffectedSystems,
+        iocs: this.formIocs,
+        attachment: this.formAttachment ?? undefined
+      }).subscribe({
+        next: () => {
+          this.submitting.set(false);
+          this.snackBar.open(this.translate.instant('cyber.incidents.createSuccess'), 'OK', { duration: 4000 });
+          this.mode = 'list';
+          this.resetForm();
+          this.loadIncidents();
+          this.loadStats();
+        },
+        error: () => {
+          this.submitting.set(false);
+          this.snackBar.open(this.translate.instant('common.error'), 'OK', { duration: 4000 });
+        }
+      });
+    } else if (this.mode === 'edit' && this.editingId) {
+      this.incidentService.update(this.editingId, {
+        title: this.formTitle,
+        description: this.formDescription,
+        severity: this.formSeverity,
+        status: this.formStatus,
+        sector: this.formSector,
+        incidentType: this.formIncidentType,
+        source: this.formSource || undefined,
+        affectedSystems: this.formAffectedSystems,
+        iocs: this.formIocs,
+        containmentPercent: this.formContainmentPercent,
+        attachment: this.formAttachment ?? undefined
+      }).subscribe({
+        next: updated => {
+          this.submitting.set(false);
+          this.snackBar.open(this.translate.instant('cyber.incidents.updateSuccess'), 'OK', { duration: 4000 });
+          this.mode = 'list';
+          this.resetForm();
+          this.loadIncidents();
+          this.loadStats();
+          this.selectedIncident = updated;
+        },
+        error: () => {
+          this.submitting.set(false);
+          this.snackBar.open(this.translate.instant('common.error'), 'OK', { duration: 4000 });
+        }
+      });
+    }
+  }
+
+  // ── CHIP INPUT ──
+
+  addSystem() {
+    const val = this.newSystem.trim();
+    if (val && !this.formAffectedSystems.includes(val)) {
+      this.formAffectedSystems = [...this.formAffectedSystems, val];
+    }
+    this.newSystem = '';
+  }
+
+  removeSystem(sys: string) {
+    this.formAffectedSystems = this.formAffectedSystems.filter(s => s !== sys);
+  }
+
+  addIoc() {
+    const val = this.newIoc.trim();
+    if (val && !this.formIocs.includes(val)) {
+      this.formIocs = [...this.formIocs, val];
+    }
+    this.newIoc = '';
+  }
+
+  removeIoc(ioc: string) {
+    this.formIocs = this.formIocs.filter(i => i !== ioc);
+  }
+
+  // ── FILE UPLOAD ──
+
+  onFileSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.[0]) this.setFile(input.files[0]);
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    const file = event.dataTransfer?.files?.[0];
+    if (file) this.setFile(file);
+  }
+
+  private setFile(file: File) {
+    if (file.size > 10 * 1024 * 1024) {
+      this.snackBar.open(this.translate.instant('submitReport.fileTooLarge'), 'OK', { duration: 4000 });
+      return;
+    }
+    this.formAttachment = file;
+  }
+
+  formatSize(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  // ── HELPERS ──
+
+  getRelativeTime(dateStr: string): string {
+    const date = new Date(dateStr);
     const diff = Math.floor((Date.now() - date.getTime()) / 1000);
     if (diff < 60) return `${diff}s ago`;
     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
@@ -879,5 +1302,15 @@ export class IncidentTrackerComponent implements OnInit {
     if (percent >= 75) return 'cont-high';
     if (percent >= 40) return 'cont-medium';
     return 'cont-low';
+  }
+
+  getSectorLabel(value: string): string {
+    const opt = SECTOR_OPTIONS.find(s => s.value === value);
+    return opt ? this.translate.instant(opt.labelKey) : value;
+  }
+
+  getTypeLabel(value: string): string {
+    const opt = TYPE_OPTIONS.find(t => t.value === value);
+    return opt ? this.translate.instant(opt.labelKey) : value;
   }
 }

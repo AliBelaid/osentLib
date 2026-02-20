@@ -1,8 +1,12 @@
+using AUSentinel.Api.Data;
+using AUSentinel.Api.Data.Entities;
+using AUSentinel.Api.Hubs;
 using AUSentinel.Api.Middleware;
 using AUSentinel.Api.Models;
 using AUSentinel.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AUSentinel.Api.Controllers;
 
@@ -12,8 +16,17 @@ namespace AUSentinel.Api.Controllers;
 public class BulletinController : ControllerBase
 {
     private readonly IBulletinService _bulletinService;
+    private readonly AppDbContext _db;
+    private readonly IHubContext<IntelHub> _hub;
+    private readonly IWebHostEnvironment _env;
 
-    public BulletinController(IBulletinService bulletinService) => _bulletinService = bulletinService;
+    public BulletinController(IBulletinService bulletinService, AppDbContext db, IHubContext<IntelHub> hub, IWebHostEnvironment env)
+    {
+        _bulletinService = bulletinService;
+        _db = db;
+        _hub = hub;
+        _env = env;
+    }
 
     /// <summary>List bulletins (country-scoped)</summary>
     [HttpGet]
@@ -33,9 +46,10 @@ public class BulletinController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>Submit a report (any authenticated user)</summary>
+    /// <summary>Submit a report (any authenticated user) — accepts multipart/form-data for optional file attachment</summary>
     [HttpPost("report")]
-    public async Task<ActionResult<BulletinDto>> SubmitReport([FromBody] SubmitReportRequest request)
+    [Consumes("multipart/form-data", "application/json")]
+    public async Task<ActionResult<BulletinDto>> SubmitReport([FromForm] SubmitReportFormRequest request)
     {
         var userId = HttpContext.GetUserId();
         var country = HttpContext.GetUserCountryCode() ?? "";
@@ -46,9 +60,45 @@ public class BulletinController : ControllerBase
             request.ReportType
         );
         var result = await _bulletinService.CreateAsync(userId, country, bulletinRequest);
+
+        // Save optional file attachment
+        if (request.Attachment != null && request.Attachment.Length > 0)
+        {
+            var uploadsDir = Path.Combine(_env.ContentRootPath, "uploads", "reports");
+            Directory.CreateDirectory(uploadsDir);
+            var ext = Path.GetExtension(request.Attachment.FileName);
+            var fileName = $"{result.Id}{ext}";
+            var filePath = Path.Combine(uploadsDir, fileName);
+            await using var stream = System.IO.File.Create(filePath);
+            await request.Attachment.CopyToAsync(stream);
+
+            var attachment = new BulletinAttachment
+            {
+                BulletinId = result.Id,
+                FileName = request.Attachment.FileName,
+                StoragePath = $"/uploads/reports/{fileName}",
+                ContentType = request.Attachment.ContentType,
+                SizeBytes = request.Attachment.Length
+            };
+            _db.BulletinAttachments.Add(attachment);
+            await _db.SaveChangesAsync();
+        }
+
         // Auto-submit for review
         await _bulletinService.SubmitForReviewAsync(result.Id, userId);
         var updated = await _bulletinService.GetAsync(result.Id);
+
+        // Notify ALL connected users in real time
+        await _hub.Clients.All.SendAsync("ReportSubmitted", new
+        {
+            reportId = updated.Id,
+            title = updated.Title,
+            country = updated.CountryCode,
+            urgency = request.Urgency,
+            reportType = request.ReportType,
+            submittedBy = updated.CreatedByName
+        });
+
         return CreatedAtAction(nameof(Get), new { id = updated.Id }, updated);
     }
 

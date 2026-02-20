@@ -42,6 +42,7 @@ public class AppDbContext : DbContext
     public DbSet<IntelTimelineEntry> IntelTimelineEntries => Set<IntelTimelineEntry>();
     public DbSet<IntelTimelineAttachment> IntelTimelineAttachments => Set<IntelTimelineAttachment>();
     public DbSet<IntelReportLink> IntelReportLinks => Set<IntelReportLink>();
+    public DbSet<Incident> Incidents => Set<Incident>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -363,6 +364,17 @@ public class AppDbContext : DbContext
             e.Property(esq => esq.Filters).HasColumnType("jsonb");
             e.Property(esq => esq.Results).HasColumnType("jsonb");
             e.HasOne(esq => esq.User).WithMany().HasForeignKey(esq => esq.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Incident
+        modelBuilder.Entity<Incident>(e =>
+        {
+            e.HasIndex(i => i.CountryCode);
+            e.HasIndex(i => i.Status);
+            e.HasIndex(i => i.CreatedAt);
+            e.HasOne(i => i.Country).WithMany().HasForeignKey(i => i.CountryCode);
+            e.HasOne(i => i.ReportedByUser).WithMany().HasForeignKey(i => i.ReportedByUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(i => i.AssignedToUser).WithMany().HasForeignKey(i => i.AssignedToUserId).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

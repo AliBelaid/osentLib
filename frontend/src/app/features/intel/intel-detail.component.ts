@@ -263,7 +263,7 @@ import {
   styles: [`
     :host { display: block; min-height: 100vh; background: var(--bg-page); padding: 32px 40px; color: var(--text-secondary); }
 
-    .detail-container { max-width: 960px; margin: 0 auto; }
+    .detail-container { max-width: 1400px; margin: 0 auto; }
 
     .detail-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border-default); }
     .back-btn { color: var(--text-secondary); margin-top: 4px; }

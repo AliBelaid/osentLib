@@ -118,7 +118,7 @@ import { CountryDto, CreateIntelReportRequest } from '@core/models';
   styles: [`
     :host { display: block; min-height: 100vh; background: var(--bg-page); padding: 32px 40px; color: var(--text-secondary); }
 
-    .form-container { max-width: 800px; margin: 0 auto; }
+    .form-container { max-width: 1400px; margin: 0 auto; }
     .form-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
     .back-btn { color: var(--text-secondary); }
     .form-title { margin: 0; font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #667eea, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }

@@ -32,6 +32,7 @@ public class BulletinService : IBulletinService
         var query = _db.Bulletins
             .Include(b => b.CreatedByUser)
             .Include(b => b.PublishedByUser)
+            .Include(b => b.Attachments)
             .AsQueryable();
 
         if (!isAUAdmin && !string.IsNullOrEmpty(countryCode))
@@ -47,6 +48,7 @@ public class BulletinService : IBulletinService
         var b = await _db.Bulletins
             .Include(b => b.CreatedByUser)
             .Include(b => b.PublishedByUser)
+            .Include(b => b.Attachments)
             .FirstOrDefaultAsync(b => b.Id == id)
             ?? throw new KeyNotFoundException("Bulletin not found.");
 
@@ -151,7 +153,12 @@ public class BulletinService : IBulletinService
 
     private static BulletinDto MapToDto(Bulletin b) => new(
         b.Id, b.Title, b.Content, b.CountryCode, b.Status,
-        b.Severity, b.Category, b.CreatedByUser?.FullName ?? "",
-        b.PublishedByUser?.FullName, b.CreatedAt, b.PublishedAt
+        b.Severity, b.Category,
+        b.CreatedByUserId,
+        b.CreatedByUser?.FullName ?? "",
+        b.PublishedByUser?.FullName, b.CreatedAt, b.PublishedAt,
+        b.Attachments?.Select(a => new BulletinAttachmentDto(
+            a.Id, a.FileName, a.StoragePath, a.ContentType, a.SizeBytes, a.UploadedAt
+        )).ToList()
     );
 }

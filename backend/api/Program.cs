@@ -119,6 +119,7 @@ builder.Services.AddScoped<IDnsService, DnsService>();
 builder.Services.AddScoped<IDomainWatchlistService, DomainWatchlistService>();
 builder.Services.AddScoped<IStatsService, StatsService>();
 builder.Services.AddScoped<IIntelReportService, IntelReportService>();
+builder.Services.AddScoped<IIncidentService, IncidentService>();
 builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.TwitterSearchProvider>();
 builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.RedditSearchProvider>();
 builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.NewsApiProvider>();
@@ -190,6 +191,38 @@ try
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
+    // Create new tables that EnsureCreated won't add to existing DBs
+    await db.Database.ExecuteSqlRawAsync(@"
+        CREATE TABLE IF NOT EXISTS ""Incidents"" (
+            ""Id"" uuid NOT NULL DEFAULT gen_random_uuid(),
+            ""Title"" varchar(300) NOT NULL DEFAULT '',
+            ""Description"" text NOT NULL DEFAULT '',
+            ""Severity"" varchar(20) NOT NULL DEFAULT 'medium',
+            ""Status"" varchar(30) NOT NULL DEFAULT 'open',
+            ""Sector"" varchar(50) NOT NULL DEFAULT '',
+            ""IncidentType"" varchar(50) NOT NULL DEFAULT '',
+            ""CountryCode"" char(2) NOT NULL DEFAULT '',
+            ""Source"" varchar(200),
+            ""AffectedSystems"" text NOT NULL DEFAULT '[]',
+            ""Iocs"" text NOT NULL DEFAULT '[]',
+            ""AttachmentPath"" varchar(500),
+            ""AttachmentName"" varchar(256),
+            ""AttachmentContentType"" varchar(100),
+            ""ContainmentPercent"" int NOT NULL DEFAULT 0,
+            ""ReportedByUserId"" uuid NOT NULL,
+            ""AssignedToUserId"" uuid,
+            ""CreatedAt"" timestamptz NOT NULL DEFAULT now(),
+            ""UpdatedAt"" timestamptz,
+            ""ResolvedAt"" timestamptz,
+            CONSTRAINT ""PK_Incidents"" PRIMARY KEY (""Id""),
+            CONSTRAINT ""FK_Incidents_Countries"" FOREIGN KEY (""CountryCode"") REFERENCES ""Countries"" (""Code""),
+            CONSTRAINT ""FK_Incidents_Users_Reported"" FOREIGN KEY (""ReportedByUserId"") REFERENCES ""Users"" (""Id"") ON DELETE RESTRICT,
+            CONSTRAINT ""FK_Incidents_Users_Assigned"" FOREIGN KEY (""AssignedToUserId"") REFERENCES ""Users"" (""Id"") ON DELETE RESTRICT
+        );
+        CREATE INDEX IF NOT EXISTS ""IX_Incidents_CountryCode"" ON ""Incidents"" (""CountryCode"");
+        CREATE INDEX IF NOT EXISTS ""IX_Incidents_Status"" ON ""Incidents"" (""Status"");
+        CREATE INDEX IF NOT EXISTS ""IX_Incidents_CreatedAt"" ON ""Incidents"" (""CreatedAt"");
+    ");
     await SeedData.Initialize(db);
 }
 catch (Exception ex)

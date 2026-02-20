@@ -24,6 +24,7 @@ public class AppDbContext : DbContext
     public DbSet<Alert> Alerts => Set<Alert>();
     public DbSet<AlertDelivery> AlertDeliveries => Set<AlertDelivery>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<Incident> Incidents => Set<Incident>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -132,6 +133,16 @@ public class AppDbContext : DbContext
         {
             e.HasIndex(al => al.Timestamp);
             e.HasIndex(al => al.UserId);
+        });
+
+        modelBuilder.Entity<Incident>(e =>
+        {
+            e.HasIndex(i => i.CountryCode);
+            e.HasIndex(i => i.Status);
+            e.HasIndex(i => i.CreatedAt);
+            e.HasOne(i => i.Country).WithMany().HasForeignKey(i => i.CountryCode);
+            e.HasOne(i => i.ReportedByUser).WithMany().HasForeignKey(i => i.ReportedByUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(i => i.AssignedToUser).WithMany().HasForeignKey(i => i.AssignedToUserId).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
