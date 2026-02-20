@@ -1,0 +1,222 @@
+services:
+
+  # ─── Infrastructure ───────────────────────────────────────────────────────────
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: ausentinel-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ausentinel}
+      POSTGRES_USER: ${POSTGRES_USER:-ausentinel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ausentinel_secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ausentinel}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - ausentinel
+
+  redis:
+    image: redis:7-alpine
+    container_name: ausentinel-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - ausentinel
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: ausentinel-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-ausentinel}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-ausentinel_secret}
+    ports:
+      - "5672:5672"
+      - "15672:15672"   # management UI
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - ausentinel
+
+  opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    container_name: ausentinel-opensearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - DISABLE_SECURITY_PLUGIN=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearchdata:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'"]
+      interval: 15s
+      timeout: 10s
+      retries: 15
+    networks:
+      - ausentinel
+
+  opensearch-init:
+    image: curlimages/curl:latest
+    container_name: ausentinel-opensearch-init
+    restart: "no"
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    volumes:
+      - ./infra/opensearch:/opt/opensearch-init:ro
+    entrypoint: ["/bin/sh", "/opt/opensearch-init/init-indices.sh"]
+    networks:
+      - ausentinel
+
+  # ─── Backend ──────────────────────────────────────────────────────────────────
+
+  api:
+    build:
+      context: ./backend/api
+      dockerfile: Dockerfile
+    container_name: ausentinel-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-ausentinel};Username=${POSTGRES_USER:-ausentinel};Password=${POSTGRES_PASSWORD:-ausentinel_secret}"
+      ConnectionStrings__Redis: "redis:6379"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: ${RABBITMQ_USER:-ausentinel}
+      RabbitMQ__Password: ${RABBITMQ_PASSWORD:-ausentinel_secret}
+      OpenSearch__Url: "http://opensearch:9200"
+      Jwt__Key: ${JWT_KEY:-AU_Sentinel_Production_Secret_Key_Change_Me!}
+      Jwt__Issuer: AUSentinel
+      Jwt__Audience: AUSentinel
+    ports:
+      - "8000:5000"
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+    networks:
+      - ausentinel
+
+  ingestion-worker:
+    build:
+      context: .
+      dockerfile: backend/workers/ingestion-worker/Dockerfile
+    container_name: ausentinel-ingestion-worker
+    restart: unless-stopped
+    environment:
+      DOTNET_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-ausentinel};Username=${POSTGRES_USER:-ausentinel};Password=${POSTGRES_PASSWORD:-ausentinel_secret}"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: ${RABBITMQ_USER:-ausentinel}
+      RabbitMQ__Password: ${RABBITMQ_PASSWORD:-ausentinel_secret}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - ausentinel
+
+  ai-worker:
+    build:
+      context: .
+      dockerfile: backend/workers/ai-worker/Dockerfile
+    container_name: ausentinel-ai-worker
+    restart: unless-stopped
+    environment:
+      DOTNET_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-ausentinel};Username=${POSTGRES_USER:-ausentinel};Password=${POSTGRES_PASSWORD:-ausentinel_secret}"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: ${RABBITMQ_USER:-ausentinel}
+      RabbitMQ__Password: ${RABBITMQ_PASSWORD:-ausentinel_secret}
+      LLM__Endpoint: ${LLM_ENDPOINT:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - ausentinel
+
+  indexer-worker:
+    build:
+      context: .
+      dockerfile: backend/workers/indexer-worker/Dockerfile
+    container_name: ausentinel-indexer-worker
+    restart: unless-stopped
+    environment:
+      DOTNET_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-ausentinel};Username=${POSTGRES_USER:-ausentinel};Password=${POSTGRES_PASSWORD:-ausentinel_secret}"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: ${RABBITMQ_USER:-ausentinel}
+      RabbitMQ__Password: ${RABBITMQ_PASSWORD:-ausentinel_secret}
+      OpenSearch__Url: "http://opensearch:9200"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+    networks:
+      - ausentinel
+
+  # ─── Frontend ─────────────────────────────────────────────────────────────────
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ausentinel-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - ausentinel
+
+volumes:
+  pgdata:
+  redisdata:
+  rabbitmqdata:
+  opensearchdata:
+  uploads:
+
+networks:
+  ausentinel:
+    driver: bridge
