@@ -1,5 +1,6 @@
 using System.Text;
 using AUSentinel.Api.Data;
+using AUSentinel.Api.Hubs;
 using AUSentinel.Api.Middleware;
 using AUSentinel.Api.Services;
 using AUSentinel.Api.Validators;
@@ -77,6 +78,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"] ?? "AUSentinel",
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
+        // SignalR passes the token via query string on WebSocket upgrade
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -121,6 +136,9 @@ builder.Services.AddSingleton<AllAfricaFetcherService>();
 builder.Services.AddSingleton<WhoOutbreakFetcherService>();
 builder.Services.AddSingleton<UNNewsFetcherService>();
 builder.Services.AddHttpClient(); // For DNS geolocation API and external search providers
+
+// SignalR
+builder.Services.AddSignalR();
 
 // Controllers
 builder.Services.AddControllers();
@@ -262,30 +280,43 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AU Sentinel
 app.UseAuthentication();
 
 // Dev auto-login: if no valid token, inject admin identity so [Authorize] passes
-app.Use(async (context, next) =>
+if (app.Environment.IsDevelopment())
 {
-    if (context.User.Identity?.IsAuthenticated != true)
+    app.Use(async (context, next) =>
     {
-        var claims = new[]
+        if (context.User.Identity?.IsAuthenticated != true)
         {
-            new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, "00000000-0000-0000-0000-000000000001"),
-            new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, "admin"),
-            new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, "AUAdmin"),
-            new System.Security.Claims.Claim("country", "ET"),
-        };
-        context.User = new System.Security.Claims.ClaimsPrincipal(
-            new System.Security.Claims.ClaimsIdentity(claims, "DevAutoLogin"));
-    }
-    await next();
-});
+            var claims = new[]
+            {
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, "00000000-0000-0000-0000-000000000001"),
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, "admin"),
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, "AUAdmin"),
+                new System.Security.Claims.Claim("country", "ET"),
+            };
+            context.User = new System.Security.Claims.ClaimsPrincipal(
+                new System.Security.Claims.ClaimsIdentity(claims, "DevAutoLogin"));
+        }
+        await next();
+    });
+}
 
 app.UseAuthorization();
 app.UseMiddleware<CountryScopingMiddleware>();
 app.UseMiddleware<AuditLogMiddleware>();
 
 app.MapControllers();
+app.MapHub<IntelHub>("/hubs/intel");
 
-Log.Information("AU Sentinel API starting on port 9099");
-app.Run("http://0.0.0.0:9099");
+var urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+if (string.IsNullOrEmpty(urls))
+{
+    Log.Information("AU Sentinel API starting on port 9099 (default)");
+    app.Run("http://0.0.0.0:9099");
+}
+else
+{
+    Log.Information("AU Sentinel API starting on {Urls}", urls);
+    app.Run();
+}
 
 public partial class Program { }

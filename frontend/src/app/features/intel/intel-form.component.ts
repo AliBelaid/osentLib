@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@env';
 import { IntelReportService } from '@core/services/intel-report.service';
+import { AuthService } from '@core/services/auth.service';
 import { CountryDto, CreateIntelReportRequest } from '@core/models';
 
 @Component({
@@ -166,6 +167,7 @@ export class IntelFormComponent implements OnInit {
 
   constructor(
     private intelService: IntelReportService,
+    private auth: AuthService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
@@ -189,6 +191,12 @@ export class IntelFormComponent implements OnInit {
         this.form.sourceInfo = r.sourceInfo || '';
         this.form.affectedCountryCodes = r.affectedCountryCodes || [];
       });
+    } else {
+      // New report: pre-select the user's profile country as an affected country
+      const userCountry = this.auth.user()?.countryCode;
+      if (userCountry) {
+        this.form.affectedCountryCodes = [userCountry];
+      }
     }
 
     // Pre-populate from query params

@@ -1,6 +1,8 @@
 using AUSentinel.Api.Data;
 using AUSentinel.Api.Data.Entities;
+using AUSentinel.Api.Hubs;
 using AUSentinel.Api.Models;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace AUSentinel.Api.Services;
@@ -32,11 +34,13 @@ public class IntelReportService : IIntelReportService
 {
     private readonly AppDbContext _db;
     private readonly IExperienceService _experienceService;
+    private readonly IHubContext<IntelHub> _hub;
 
-    public IntelReportService(AppDbContext db, IExperienceService experienceService)
+    public IntelReportService(AppDbContext db, IExperienceService experienceService, IHubContext<IntelHub> hub)
     {
         _db = db;
         _experienceService = experienceService;
+        _hub = hub;
     }
 
     public async Task<IntelReportListResult> ListAsync(int page, int pageSize, string? status, string? type, string? countryCode, bool isAUAdmin)
@@ -163,7 +167,13 @@ public class IntelReportService : IIntelReportService
             report.Id
         );
 
-        return await GetAsync(report.Id);
+        var result = await GetAsync(report.Id);
+
+        // Notify all connected clients — only once, after all saves are complete
+        await NotifyIntelChange("IntelReportCreated", report.Id, report.CountryCode,
+            report.AffectedCountries.Select(ac => ac.CountryCode).ToList());
+
+        return result;
     }
 
     public async Task<IntelReportDto> UpdateAsync(Guid id, Guid userId, UpdateIntelReportRequest request)
@@ -195,6 +205,10 @@ public class IntelReportService : IIntelReportService
         }
 
         await _db.SaveChangesAsync();
+
+        var updatedCountryCodes = r.AffectedCountries.Select(ac => ac.CountryCode).ToList();
+        await NotifyIntelChange("IntelReportUpdated", id, r.CountryCode, updatedCountryCodes);
+
         return await GetAsync(id);
     }
 
@@ -223,6 +237,7 @@ public class IntelReportService : IIntelReportService
         });
 
         await _db.SaveChangesAsync();
+        await NotifyIntelChange("IntelReportUpdated", id, r.CountryCode, []);
         return await GetAsync(id);
     }
 
@@ -245,8 +260,13 @@ public class IntelReportService : IIntelReportService
         _db.IntelReportCountries.RemoveRange(r.AffectedCountries);
         _db.IntelReportLinks.RemoveRange(r.SourceLinks);
         _db.IntelReportLinks.RemoveRange(r.TargetLinks);
+        var countryCode = r.CountryCode;
+        var affectedCodes = r.AffectedCountries.Select(ac => ac.CountryCode).ToList();
+
         _db.IntelReports.Remove(r);
         await _db.SaveChangesAsync();
+
+        await NotifyIntelChange("IntelReportDeleted", id, countryCode, affectedCodes);
     }
 
     // --- Attachments ---
@@ -455,6 +475,32 @@ public class IntelReportService : IIntelReportService
 
         _db.IntelReportLinks.Remove(link);
         await _db.SaveChangesAsync();
+    }
+
+    // --- SignalR Notifications ---
+
+    /// <summary>
+    /// Sends a change notification to the relevant country groups and AUAdmin.
+    /// Called only after a final SaveChangesAsync (create / update / delete).
+    /// Never called for interim saves (e.g. affected-countries sub-save during create).
+    /// </summary>
+    private async Task NotifyIntelChange(string eventName, Guid reportId, string creatorCountry, List<string> affectedCountries)
+    {
+        var payload = new { reportId };
+
+        // Notify AUAdmin group (sees everything)
+        await _hub.Clients.Group("AUAdmin").SendAsync(eventName, payload);
+
+        // Notify creator's country group
+        if (!string.IsNullOrEmpty(creatorCountry))
+            await _hub.Clients.Group($"country:{creatorCountry}").SendAsync(eventName, payload);
+
+        // Notify each affected country group
+        foreach (var cc in affectedCountries.Distinct())
+        {
+            if (cc != creatorCountry)
+                await _hub.Clients.Group($"country:{cc}").SendAsync(eventName, payload);
+        }
     }
 
     // --- Mappers ---

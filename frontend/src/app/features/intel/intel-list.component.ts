@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -8,8 +8,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { IntelReportService } from '@core/services/intel-report.service';
+import { IntelSignalRService } from '@core/services/intel-signalr.service';
 import { IntelReportSummaryDto } from '@core/models';
 
 @Component({
@@ -248,7 +250,7 @@ import { IntelReportSummaryDto } from '@core/models';
     }
   `]
 })
-export class IntelListComponent implements OnInit {
+export class IntelListComponent implements OnInit, OnDestroy {
   reports: IntelReportSummaryDto[] = [];
   total = 0;
   page = 1;
@@ -258,15 +260,29 @@ export class IntelListComponent implements OnInit {
   activeCount = 0;
   closedCount = 0;
 
+  private signalRSub?: Subscription;
+
   get canCreate(): boolean {
     return this.auth.hasRole('DataEntry') || this.auth.hasRole('Editor') ||
            this.auth.hasRole('CountryAdmin') || this.auth.hasRole('AUAdmin');
   }
 
-  constructor(public auth: AuthService, private intelService: IntelReportService) {}
+  constructor(
+    public auth: AuthService,
+    private intelService: IntelReportService,
+    private signalR: IntelSignalRService
+  ) {}
 
   ngOnInit() {
     this.load();
+    this.signalR.connect();
+    // Refresh list only when a report is fully created, updated or deleted — not on every field change
+    this.signalRSub = this.signalR.changes$.subscribe(() => this.load());
+  }
+
+  ngOnDestroy() {
+    this.signalRSub?.unsubscribe();
+    this.signalR.disconnect();
   }
 
   load() {
