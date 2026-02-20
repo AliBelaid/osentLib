@@ -6,11 +6,11 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class I18nService {
   private readonly STORAGE_KEY = 'preferredLanguage';
-  private readonly DEFAULT_LANGUAGE = 'en';
+  private readonly DEFAULT_LANGUAGE = 'ar';
   private readonly RTL_LANGUAGES = ['ar'];
 
   currentLanguage = signal<string>(this.DEFAULT_LANGUAGE);
-  currentDirection = signal<'ltr' | 'rtl'>('ltr');
+  currentDirection = signal<'ltr' | 'rtl'>('rtl');
 
   constructor(private translateService: TranslateService) {
     this.initializeLanguage();
