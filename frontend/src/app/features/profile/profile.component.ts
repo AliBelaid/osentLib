@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,7 +16,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '@core/services/auth.service';
 import { UserService } from '@core/services/user.service';
 import { ExperienceService } from '@core/services/experience.service';
-import { UserProfileDto, UserExperienceDto, UserBadgeDto } from '@core/models';
+import { UserProfileDto, UserExperienceDto, UserBadgeDto, IntelReportSummaryDto } from '@core/models';
+import { IntelReportService } from '@core/services/intel-report.service';
 import { LevelBadgeComponent } from '@shared/components/level-badge.component';
 
 @Component({
@@ -23,6 +25,7 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
@@ -271,6 +274,34 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
                 <div class="empty-badges">
                   <mat-icon>emoji_events</mat-icon>
                   <p>{{ 'leaderboard.noBadges' | translate }}</p>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+
+          <!-- My Intelligence Reports -->
+          <mat-card class="intel-card">
+            <mat-card-header>
+              <mat-card-title>{{ 'intel.myReports' | translate }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              @if (myIntelReports.length > 0) {
+                @for (r of myIntelReports; track r.id) {
+                  <div class="intel-report-item" [routerLink]="['/intelligence', r.id]" style="cursor: pointer;">
+                    <div class="intel-report-row">
+                      <span class="intel-type" [style.color]="r.status === 'active' ? '#00e676' : '#78909c'">{{ r.status | uppercase }}</span>
+                      <span class="intel-title">{{ r.title }}</span>
+                      <span class="intel-date">{{ r.createdAt | date:'dd MMM' }}</span>
+                    </div>
+                  </div>
+                }
+                <a routerLink="/intelligence" class="view-all-link">
+                  <mat-icon>arrow_forward</mat-icon> {{ 'common.view' | translate }} {{ 'common.all' | translate }}
+                </a>
+              } @else {
+                <div class="empty-badges">
+                  <mat-icon>shield</mat-icon>
+                  <p>{{ 'intel.noReports' | translate }}</p>
                 </div>
               }
             </mat-card-content>
@@ -587,6 +618,17 @@ import { LevelBadgeComponent } from '@shared/components/level-badge.component';
       height: 48px;
       margin-bottom: 8px;
     }
+
+    .intel-card { margin-bottom: 24px; }
+    .intel-report-item { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-default); margin-bottom: 6px; transition: background 0.2s; }
+    .intel-report-item:hover { background: rgba(102,126,234,0.08); }
+    .intel-report-row { display: flex; align-items: center; gap: 10px; }
+    .intel-type { font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; }
+    .intel-title { flex: 1; font-size: 0.85rem; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .intel-date { font-size: 0.72rem; color: var(--text-tertiary); font-family: 'JetBrains Mono', monospace; }
+    .view-all-link { display: flex; align-items: center; gap: 4px; font-size: 0.82rem; color: #667eea; text-decoration: none; margin-top: 8px; }
+    .view-all-link:hover { text-decoration: underline; }
+    .view-all-link mat-icon { font-size: 16px; width: 16px; height: 16px; }
   `]
 })
 export class ProfileComponent implements OnInit {
@@ -596,12 +638,14 @@ export class ProfileComponent implements OnInit {
   profile = signal<UserProfileDto | null>(null);
   experience = signal<UserExperienceDto | null>(null);
   badges = signal<UserBadgeDto[]>([]);
+  myIntelReports: IntelReportSummaryDto[] = [];
   profileForm: FormGroup;
 
   constructor(
     public auth: AuthService,
     private userService: UserService,
     private experienceService: ExperienceService,
+    private intelReportService: IntelReportService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar
   ) {
@@ -619,6 +663,7 @@ export class ProfileComponent implements OnInit {
     this.loadProfile();
     this.loadExperience();
     this.loadBadges();
+    this.loadMyIntelReports();
   }
 
   loadExperience(): void {
@@ -640,6 +685,13 @@ export class ProfileComponent implements OnInit {
       error: () => {
         // No badges yet
       }
+    });
+  }
+
+  loadMyIntelReports(): void {
+    this.intelReportService.listMy(1, 5).subscribe({
+      next: (result) => this.myIntelReports = result.items,
+      error: () => {}
     });
   }
 

@@ -36,6 +36,12 @@ public class AppDbContext : DbContext
     public DbSet<Alert> Alerts => Set<Alert>();
     public DbSet<AlertDelivery> AlertDeliveries => Set<AlertDelivery>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<IntelReport> IntelReports => Set<IntelReport>();
+    public DbSet<IntelReportCountry> IntelReportCountries => Set<IntelReportCountry>();
+    public DbSet<IntelReportAttachment> IntelReportAttachments => Set<IntelReportAttachment>();
+    public DbSet<IntelTimelineEntry> IntelTimelineEntries => Set<IntelTimelineEntry>();
+    public DbSet<IntelTimelineAttachment> IntelTimelineAttachments => Set<IntelTimelineAttachment>();
+    public DbSet<IntelReportLink> IntelReportLinks => Set<IntelReportLink>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -292,6 +298,56 @@ public class AppDbContext : DbContext
             e.Property(dw => dw.Tags).HasColumnType("jsonb");
             e.HasOne(dw => dw.AddedByUser).WithMany().HasForeignKey(dw => dw.AddedByUserId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(dw => dw.Country).WithMany().HasForeignKey(dw => dw.CountryCode).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // IntelReport
+        modelBuilder.Entity<IntelReport>(e =>
+        {
+            e.HasIndex(ir => ir.CountryCode);
+            e.HasIndex(ir => ir.Status);
+            e.HasIndex(ir => ir.Type);
+            e.HasIndex(ir => ir.CreatedAt);
+            e.HasOne(ir => ir.Country).WithMany().HasForeignKey(ir => ir.CountryCode);
+            e.HasOne(ir => ir.CreatedByUser).WithMany().HasForeignKey(ir => ir.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // IntelReportCountry
+        modelBuilder.Entity<IntelReportCountry>(e =>
+        {
+            e.HasKey(irc => new { irc.IntelReportId, irc.CountryCode });
+            e.HasOne(irc => irc.IntelReport).WithMany(ir => ir.AffectedCountries).HasForeignKey(irc => irc.IntelReportId);
+            e.HasOne(irc => irc.Country).WithMany().HasForeignKey(irc => irc.CountryCode);
+        });
+
+        // IntelReportAttachment
+        modelBuilder.Entity<IntelReportAttachment>(e =>
+        {
+            e.HasOne(ira => ira.IntelReport).WithMany(ir => ir.Attachments).HasForeignKey(ira => ira.IntelReportId);
+        });
+
+        // IntelTimelineEntry
+        modelBuilder.Entity<IntelTimelineEntry>(e =>
+        {
+            e.HasIndex(ite => ite.IntelReportId);
+            e.HasIndex(ite => ite.CreatedAt);
+            e.HasOne(ite => ite.IntelReport).WithMany(ir => ir.TimelineEntries).HasForeignKey(ite => ite.IntelReportId);
+            e.HasOne(ite => ite.User).WithMany().HasForeignKey(ite => ite.UserId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // IntelTimelineAttachment
+        modelBuilder.Entity<IntelTimelineAttachment>(e =>
+        {
+            e.HasOne(ita => ita.TimelineEntry).WithMany(ite => ite.Attachments).HasForeignKey(ita => ita.TimelineEntryId);
+        });
+
+        // IntelReportLink
+        modelBuilder.Entity<IntelReportLink>(e =>
+        {
+            e.HasIndex(irl => irl.SourceReportId);
+            e.HasIndex(irl => irl.TargetReportId);
+            e.HasOne(irl => irl.SourceReport).WithMany(ir => ir.SourceLinks).HasForeignKey(irl => irl.SourceReportId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(irl => irl.TargetReport).WithMany(ir => ir.TargetLinks).HasForeignKey(irl => irl.TargetReportId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(irl => irl.CreatedByUser).WithMany().HasForeignKey(irl => irl.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
         });
 
         // ExternalSearchQuery

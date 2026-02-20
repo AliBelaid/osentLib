@@ -103,6 +103,7 @@ builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<IDnsService, DnsService>();
 builder.Services.AddScoped<IDomainWatchlistService, DomainWatchlistService>();
 builder.Services.AddScoped<IStatsService, StatsService>();
+builder.Services.AddScoped<IIntelReportService, IntelReportService>();
 builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.TwitterSearchProvider>();
 builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.RedditSearchProvider>();
 builder.Services.AddScoped<AUSentinel.Api.Services.ExternalSearch.NewsApiProvider>();

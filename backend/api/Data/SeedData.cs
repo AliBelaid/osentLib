@@ -14,7 +14,8 @@ public static class SeedData
             new Role { Id = 1, Name = RoleNames.Viewer, Description = "Can view news, vote, and see dashboards" },
             new Role { Id = 2, Name = RoleNames.Editor, Description = "Can create and edit bulletins" },
             new Role { Id = 3, Name = RoleNames.CountryAdmin, Description = "Can manage country-level settings, publish bulletins, manage alert rules" },
-            new Role { Id = 4, Name = RoleNames.AUAdmin, Description = "Full access across all countries" }
+            new Role { Id = 4, Name = RoleNames.AUAdmin, Description = "Full access across all countries" },
+            new Role { Id = 5, Name = RoleNames.DataEntry, Description = "Can create and manage OSINT intelligence entries" }
         };
         db.Roles.AddRange(roles);
 

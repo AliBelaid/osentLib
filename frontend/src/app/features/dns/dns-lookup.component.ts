@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -74,6 +75,9 @@ import { CreateWatchlistEntryRequest } from '@core/models';
             <div class="header-actions">
               <button mat-icon-button (click)="addToWatchlist()" matTooltip="Add to Watchlist">
                 <mat-icon>add_alert</mat-icon>
+              </button>
+              <button mat-icon-button (click)="createIntelReport()" matTooltip="Create Intelligence Report">
+                <mat-icon>shield</mat-icon>
               </button>
             </div>
           </mat-card-header>
@@ -544,6 +548,7 @@ import { CreateWatchlistEntryRequest } from '@core/models';
   `]
 })
 export class DnsLookupComponent {
+  private router = inject(Router);
   domain = '';
   loading = signal(false);
   result = signal<any>(null);
@@ -606,6 +611,18 @@ export class DnsLookupComponent {
       },
       error: (error) => {
         this.snackBar.open(error.error?.error || 'Failed to add to watchlist', 'Close', { duration: 5000 });
+      }
+    });
+  }
+
+  createIntelReport(): void {
+    if (!this.result()) return;
+    const r = this.result()!;
+    this.router.navigate(['/intelligence/new'], {
+      queryParams: {
+        title: `DNS Analysis: ${r.domain}`,
+        content: `Domain: ${r.domain}\nRisk Score: ${r.riskScore}/100\nSuspicious: ${r.isSuspicious}\nIP: ${r.ipAddress || 'N/A'}\nCountry: ${r.ipCountry || 'N/A'}\nRegistrar: ${r.whoisRegistrar || 'N/A'}\nRisk Factors: ${(r.riskFactors || []).join(', ')}`,
+        type: 'surveillance'
       }
     });
   }

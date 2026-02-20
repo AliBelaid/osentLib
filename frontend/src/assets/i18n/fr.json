@@ -70,7 +70,8 @@
     "countryIntel": "Intel Pays",
     "incidents": "Incidents",
     "socialSearch": "Recherche Médias Sociaux",
-    "submitReport": "Soumettre un Rapport"
+    "submitReport": "Soumettre un Rapport",
+    "intelligence": "Renseignements"
   },
   "socialSearch": {
     "title": "Recherche OSINT Médias Sociaux",
@@ -284,7 +285,8 @@
     "viewer": "Observateur",
     "editor": "\u00c9diteur",
     "countryAdmin": "Administrateur pays",
-    "auAdmin": "Administrateur UA"
+    "auAdmin": "Administrateur UA",
+    "dataEntry": "Saisie de Données"
   },
   "languages": {
     "en": "Anglais",
@@ -478,5 +480,49 @@
       "hours": "heures",
       "searchPlaceholder": "Rechercher des incidents..."
     }
+  },
+  "intel": {
+    "title": "Rapports de Renseignements",
+    "subtitle": "Gestion des rapports de renseignements OSINT",
+    "records": "enregistrements",
+    "newReport": "Nouveau Rapport de Renseignement",
+    "editReport": "Modifier le Rapport de Renseignement",
+    "createReport": "Créer un Rapport de Renseignement",
+    "reportTitle": "Titre du Rapport",
+    "reportContent": "Contenu Détaillé",
+    "reportType": "Type de Rapport",
+    "typeThreat": "Menace",
+    "typeIncident": "Incident",
+    "typeSurveillance": "Surveillance",
+    "typeReport": "Rapport",
+    "severity": "Sévérité",
+    "sevInfo": "Info",
+    "sevLow": "Faible",
+    "sevModerate": "Modéré",
+    "sevElevated": "Élevé",
+    "sevHigh": "Haut",
+    "sevCritical": "Critique",
+    "sourceInfo": "Information Source",
+    "affectedCountries": "Pays Affectés",
+    "attachments": "Pièces Jointes",
+    "dragDrop": "Glissez-déposez les fichiers ici ou cliquez pour parcourir",
+    "uploadAttachment": "Télécharger une Pièce Jointe",
+    "filterStatus": "Statut",
+    "filterType": "Type",
+    "statusActive": "Actif",
+    "statusClosed": "Fermé",
+    "totalReports": "Total des Rapports",
+    "noReports": "Aucun Rapport de Renseignement",
+    "noReportsDesc": "Aucun rapport de renseignement trouvé correspondant à vos critères.",
+    "closeReport": "Fermer le Rapport",
+    "reopenReport": "Rouvrir le Rapport",
+    "linkedReports": "Rapports Liés",
+    "linkReport": "Lier un Rapport",
+    "linkType": "Type de Lien",
+    "searchReports": "Rechercher des rapports par titre...",
+    "timeline": "Chronologie",
+    "addComment": "Ajouter un commentaire...",
+    "postComment": "Publier le Commentaire",
+    "myReports": "Mes Rapports de Renseignements"
   }
 }

@@ -70,7 +70,8 @@
     "countryIntel": "Country Intel",
     "incidents": "Incidents",
     "socialSearch": "Social Media Search",
-    "submitReport": "Submit Report"
+    "submitReport": "Submit Report",
+    "intelligence": "Intelligence"
   },
   "dashboard": {
     "title": "OSINT Dashboard",
@@ -249,7 +250,8 @@
     "viewer": "Viewer",
     "editor": "Editor",
     "countryAdmin": "Country Admin",
-    "auAdmin": "AU Admin"
+    "auAdmin": "AU Admin",
+    "dataEntry": "Data Entry"
   },
   "languages": {
     "en": "English",
@@ -478,5 +480,49 @@
       "hours": "hours",
       "searchPlaceholder": "Search incidents..."
     }
+  },
+  "intel": {
+    "title": "Intelligence Reports",
+    "subtitle": "OSINT intelligence report management",
+    "records": "records",
+    "newReport": "New Intelligence Report",
+    "editReport": "Edit Intelligence Report",
+    "createReport": "Create Intelligence Report",
+    "reportTitle": "Report Title",
+    "reportContent": "Detailed Content",
+    "reportType": "Report Type",
+    "typeThreat": "Threat",
+    "typeIncident": "Incident",
+    "typeSurveillance": "Surveillance",
+    "typeReport": "Report",
+    "severity": "Severity",
+    "sevInfo": "Info",
+    "sevLow": "Low",
+    "sevModerate": "Moderate",
+    "sevElevated": "Elevated",
+    "sevHigh": "High",
+    "sevCritical": "Critical",
+    "sourceInfo": "Source Information",
+    "affectedCountries": "Affected Countries",
+    "attachments": "Attachments",
+    "dragDrop": "Drag & drop files here or click to browse",
+    "uploadAttachment": "Upload Attachment",
+    "filterStatus": "Status",
+    "filterType": "Type",
+    "statusActive": "Active",
+    "statusClosed": "Closed",
+    "totalReports": "Total Reports",
+    "noReports": "No Intelligence Reports",
+    "noReportsDesc": "No intelligence reports found matching your criteria.",
+    "closeReport": "Close Report",
+    "reopenReport": "Reopen Report",
+    "linkedReports": "Linked Reports",
+    "linkReport": "Link Report",
+    "linkType": "Link Type",
+    "searchReports": "Search reports by title...",
+    "timeline": "Timeline",
+    "addComment": "Add a comment...",
+    "postComment": "Post Comment",
+    "myReports": "My Intelligence Reports"
   }
 }

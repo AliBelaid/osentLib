@@ -699,3 +699,108 @@ export interface TimelineBucketDto {
   articleCount: number;
   avgThreatLevel: number;
 }
+
+// Intelligence Report Models
+export interface IntelReportDto {
+  id: string;
+  title: string;
+  content: string;
+  type: string;
+  severity: number;
+  status: string;
+  sourceInfo?: string;
+  countryCode: string;
+  createdByUserId: string;
+  createdByName: string;
+  createdAt: string;
+  updatedAt?: string;
+  closedAt?: string;
+  affectedCountryCodes: string[];
+  attachments: IntelReportAttachmentDto[];
+  timelineCount: number;
+}
+
+export interface IntelReportSummaryDto {
+  id: string;
+  title: string;
+  type: string;
+  severity: number;
+  status: string;
+  countryCode: string;
+  createdByName: string;
+  createdAt: string;
+  timelineCount: number;
+  attachmentCount: number;
+}
+
+export interface IntelReportAttachmentDto {
+  id: number;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  uploadedAt: string;
+}
+
+export interface IntelTimelineEntryDto {
+  id: number;
+  intelReportId: string;
+  userId: string;
+  userName: string;
+  content: string;
+  entryType: string;
+  createdAt: string;
+  attachments: IntelTimelineAttachmentDto[];
+}
+
+export interface IntelTimelineAttachmentDto {
+  id: number;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  uploadedAt: string;
+}
+
+export interface IntelReportLinkDto {
+  id: number;
+  sourceReportId: string;
+  sourceReportTitle: string;
+  targetReportId: string;
+  targetReportTitle: string;
+  linkType: string;
+  createdByName: string;
+  createdAt: string;
+}
+
+export interface IntelReportListResult {
+  items: IntelReportSummaryDto[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface CreateIntelReportRequest {
+  title: string;
+  content: string;
+  type: string;
+  severity: number;
+  sourceInfo?: string;
+  affectedCountryCodes?: string[];
+}
+
+export interface UpdateIntelReportRequest {
+  title?: string;
+  content?: string;
+  type?: string;
+  severity?: number;
+  sourceInfo?: string;
+  affectedCountryCodes?: string[];
+}
+
+export interface CreateTimelineEntryRequest {
+  content: string;
+}
+
+export interface CreateIntelReportLinkRequest {
+  targetReportId: string;
+  linkType: string;
+}

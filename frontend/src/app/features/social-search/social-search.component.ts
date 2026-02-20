@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -244,6 +245,9 @@ interface ProviderOption {
                         </a>
                         <button mat-button class="analyze-btn" (click)="analyzeItem(item)">
                           <mat-icon>psychology</mat-icon> {{ 'socialSearch.analyze' | translate }}
+                        </button>
+                        <button mat-button class="link-btn" (click)="createIntelReport(item)">
+                          <mat-icon>shield</mat-icon> {{ 'intel.createReport' | translate }}
                         </button>
                         @if (getHashtags(item).length > 0) {
                           <div class="result-tags">
@@ -616,6 +620,7 @@ interface ProviderOption {
   `]
 })
 export class SocialSearchComponent implements OnInit {
+  private router = inject(Router);
   query = '';
   searchType = 'keyword';
   showFilters = false;
@@ -784,5 +789,15 @@ export class SocialSearchComponent implements OnInit {
     if (m['issuer'] !== undefined) info.push({ key: 'issuer', label: 'Issuer', value: '' + m['issuer'], icon: 'verified', color: '#4CAF50' });
 
     return info;
+  }
+
+  createIntelReport(item: ExternalSearchItem): void {
+    this.router.navigate(['/intelligence/new'], {
+      queryParams: {
+        title: item.title,
+        content: item.content?.substring(0, 500) || '',
+        type: 'report'
+      }
+    });
   }
 }

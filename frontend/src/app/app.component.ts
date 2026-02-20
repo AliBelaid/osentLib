@@ -58,6 +58,10 @@ import { LanguageSelectorComponent } from './shared/components/language-selector
               <mat-icon matListItemIcon>assignment</mat-icon>
               <span>{{ 'nav.submitReport' | translate }}</span>
             </a>
+            <a mat-list-item routerLink="/intelligence" routerLinkActive="active">
+              <mat-icon matListItemIcon>shield</mat-icon>
+              <span>{{ 'nav.intelligence' | translate }}</span>
+            </a>
             <a mat-list-item routerLink="/maps" routerLinkActive="active">
               <mat-icon matListItemIcon>public</mat-icon>
               <span>{{ 'nav.maps' | translate }}</span>

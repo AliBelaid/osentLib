@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -68,6 +68,9 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
             <a [href]="article.url" target="_blank" mat-raised-button>
               <mat-icon>open_in_new</mat-icon> Read Original
             </a>
+            <button mat-raised-button color="accent" (click)="createIntelReport()">
+              <mat-icon>shield</mat-icon> Create Intelligence Report
+            </button>
           </div>
 
           <app-vote-widget [articleId]="article.id" [currentVote]="article.userVote" [stats]="article.voteStats!" />
@@ -87,10 +90,21 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
 export class NewsDetailComponent implements OnInit {
   article: NewsDetailDto | null = null;
 
-  constructor(private route: ActivatedRoute, private newsService: NewsService) {}
+  constructor(private route: ActivatedRoute, private newsService: NewsService, private router: Router) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id')!;
     this.newsService.getDetail(id).subscribe(data => this.article = data);
+  }
+
+  createIntelReport() {
+    if (!this.article) return;
+    this.router.navigate(['/intelligence/new'], {
+      queryParams: {
+        title: this.article.title,
+        content: this.article.summary || this.article.body?.substring(0, 500) || '',
+        type: 'report'
+      }
+    });
   }
 }

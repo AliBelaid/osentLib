@@ -21,4 +21,5 @@ public static class RoleNames
     public const string Editor = "Editor";
     public const string CountryAdmin = "CountryAdmin";
     public const string AUAdmin = "AUAdmin";
+    public const string DataEntry = "DataEntry";
 }

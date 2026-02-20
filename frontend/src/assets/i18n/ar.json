@@ -70,7 +70,8 @@
     "countryIntel": "استخبارات الدول",
     "incidents": "الحوادث",
     "socialSearch": "بحث وسائل التواصل",
-    "submitReport": "إرسال تقرير"
+    "submitReport": "إرسال تقرير",
+    "intelligence": "الاستخبارات"
   },
   "socialSearch": {
     "title": "بحث استخبارات وسائل التواصل الاجتماعي",
@@ -284,7 +285,8 @@
     "viewer": "مشاهد",
     "editor": "محرر",
     "countryAdmin": "مدير الدولة",
-    "auAdmin": "مدير الاتحاد الأفريقي"
+    "auAdmin": "مدير الاتحاد الأفريقي",
+    "dataEntry": "إدخال البيانات"
   },
   "languages": {
     "en": "الإنجليزية",
@@ -478,5 +480,49 @@
       "hours": "ساعات",
       "searchPlaceholder": "البحث في الحوادث..."
     }
+  },
+  "intel": {
+    "title": "تقارير الاستخبارات",
+    "subtitle": "إدارة تقارير استخبارات المصادر المفتوحة",
+    "records": "سجلات",
+    "newReport": "تقرير استخباراتي جديد",
+    "editReport": "تعديل التقرير الاستخباراتي",
+    "createReport": "إنشاء تقرير استخباراتي",
+    "reportTitle": "عنوان التقرير",
+    "reportContent": "المحتوى التفصيلي",
+    "reportType": "نوع التقرير",
+    "typeThreat": "تهديد",
+    "typeIncident": "حادث",
+    "typeSurveillance": "مراقبة",
+    "typeReport": "تقرير",
+    "severity": "الخطورة",
+    "sevInfo": "معلومات",
+    "sevLow": "منخفض",
+    "sevModerate": "متوسط",
+    "sevElevated": "مرتفع",
+    "sevHigh": "عالي",
+    "sevCritical": "حرج",
+    "sourceInfo": "معلومات المصدر",
+    "affectedCountries": "الدول المتأثرة",
+    "attachments": "المرفقات",
+    "dragDrop": "اسحب وأفلت الملفات هنا أو انقر للتصفح",
+    "uploadAttachment": "رفع مرفق",
+    "filterStatus": "الحالة",
+    "filterType": "النوع",
+    "statusActive": "نشط",
+    "statusClosed": "مغلق",
+    "totalReports": "إجمالي التقارير",
+    "noReports": "لا توجد تقارير استخباراتية",
+    "noReportsDesc": "لم يتم العثور على تقارير استخباراتية تطابق معاييرك.",
+    "closeReport": "إغلاق التقرير",
+    "reopenReport": "إعادة فتح التقرير",
+    "linkedReports": "التقارير المرتبطة",
+    "linkReport": "ربط تقرير",
+    "linkType": "نوع الرابط",
+    "searchReports": "البحث في التقارير بالعنوان...",
+    "timeline": "الجدول الزمني",
+    "addComment": "أضف تعليقاً...",
+    "postComment": "نشر التعليق",
+    "myReports": "تقاريري الاستخباراتية"
   }
 }

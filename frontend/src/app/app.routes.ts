@@ -62,6 +62,24 @@ export const routes: Routes = [
         loadComponent: () => import('./features/reports/submit-report.component').then(m => m.SubmitReportComponent)
       },
       {
+        path: 'intelligence',
+        loadComponent: () => import('./features/intel/intel-list.component').then(m => m.IntelListComponent)
+      },
+      {
+        path: 'intelligence/new',
+        loadComponent: () => import('./features/intel/intel-form.component').then(m => m.IntelFormComponent),
+        canActivate: [roleGuard('DataEntry', 'Editor', 'CountryAdmin', 'AUAdmin')]
+      },
+      {
+        path: 'intelligence/:id',
+        loadComponent: () => import('./features/intel/intel-detail.component').then(m => m.IntelDetailComponent)
+      },
+      {
+        path: 'intelligence/:id/edit',
+        loadComponent: () => import('./features/intel/intel-form.component').then(m => m.IntelFormComponent),
+        canActivate: [roleGuard('DataEntry', 'Editor', 'CountryAdmin', 'AUAdmin')]
+      },
+      {
         path: 'alerts',
         loadComponent: () => import('./features/alerts/alert-list.component').then(m => m.AlertListComponent)
       },

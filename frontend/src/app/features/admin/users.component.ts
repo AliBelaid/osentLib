@@ -157,6 +157,7 @@ import { UserDto, CountryDto, CreateUserRequest, UpdateUserRequest } from '@core
             <mat-label>Roles</mat-label>
             <mat-select [(ngModel)]="form.roles" multiple>
               <mat-option value="Viewer">Viewer</mat-option>
+              <mat-option value="DataEntry">DataEntry</mat-option>
               <mat-option value="Editor">Editor</mat-option>
               <mat-option value="CountryAdmin">CountryAdmin</mat-option>
               <mat-option value="AUAdmin">AUAdmin</mat-option>

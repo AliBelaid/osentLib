@@ -1,0 +1,25 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace AUSentinel.Api.Data.Entities;
+
+public class IntelReportAttachment
+{
+    public int Id { get; set; }
+
+    public Guid IntelReportId { get; set; }
+
+    [MaxLength(500)]
+    public string FileName { get; set; } = string.Empty;
+
+    [MaxLength(1000)]
+    public string StoragePath { get; set; } = string.Empty;
+
+    [MaxLength(100)]
+    public string ContentType { get; set; } = string.Empty;
+
+    public long SizeBytes { get; set; }
+
+    public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
+
+    public IntelReport IntelReport { get; set; } = null!;
+}
