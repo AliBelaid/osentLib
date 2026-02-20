@@ -436,7 +436,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
 
     .input-icon {
       position: absolute;
-      left: 12px;
+      inset-inline-start: 12px;
       font-size: 18px;
       width: 18px;
       height: 18px;
@@ -447,7 +447,8 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
 
     .cyber-input {
       width: 100%;
-      padding: 10px 14px 10px 40px;
+      padding-block: 10px;
+      padding-inline: 40px 14px;
       background: var(--bg-input);
       border: 1px solid rgba(102, 126, 234, 0.2);
       border-radius: 8px;
@@ -468,7 +469,8 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     }
 
     .cyber-select {
-      padding: 10px 14px;
+      padding-block: 10px;
+      padding-inline: 14px 32px;
       background: var(--bg-input);
       border: 1px solid rgba(102, 126, 234, 0.2);
       border-radius: 8px;
@@ -482,8 +484,12 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235a6b80'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 12px center;
-      padding-right: 32px;
       font-family: inherit;
+    }
+
+    :host-context([dir=rtl]) .cyber-select {
+      padding-inline: 32px 14px;
+      background-position: left 12px center;
     }
 
     .cyber-select:focus {
@@ -560,12 +566,13 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
       background: var(--bg-card);
       border: 1px solid var(--border-default);
       border-radius: 12px;
-      padding: 24px 24px 20px 28px;
+      padding-block: 24px 20px;
+      padding-inline: 28px 24px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
-      border-left-width: 4px;
-      border-left-style: solid;
+      border-inline-start-width: 4px;
+      border-inline-start-style: solid;
       animation: fadeInUp 0.5s ease both;
     }
 
@@ -592,7 +599,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     /* Threat level left border colors */
 
     .threat-border-green {
-      border-left-color: #00e676;
+      border-inline-start-color: #00e676;
     }
 
     .threat-border-green:hover {
@@ -600,7 +607,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     }
 
     .threat-border-yellow {
-      border-left-color: #ffea00;
+      border-inline-start-color: #ffea00;
     }
 
     .threat-border-yellow:hover {
@@ -608,7 +615,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     }
 
     .threat-border-orange {
-      border-left-color: #ff9100;
+      border-inline-start-color: #ff9100;
     }
 
     .threat-border-orange:hover {
@@ -616,7 +623,7 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
     }
 
     .threat-border-red {
-      border-left-color: #ff1744;
+      border-inline-start-color: #ff1744;
     }
 
     .threat-border-red:hover {
@@ -931,7 +938,8 @@ import { BookmarkButtonComponent } from '../../shared/components/bookmark-button
       }
 
       .article-card {
-        padding: 16px 16px 14px 20px;
+        padding-block: 16px 14px;
+        padding-inline: 20px 16px;
       }
 
       .card-header-row {
